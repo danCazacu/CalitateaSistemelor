@@ -78,8 +78,15 @@ public class Field {
         }
 
         return true;
+    }
 
-
-
+    @Override
+    public int hashCode() {
+        int superHash = super.hashCode();
+        if(isIntValueSet())
+            superHash+=getIntValue().hashCode();
+        if(isStringValueSet())
+            superHash-=getStringValue().hashCode();
+        return superHash;
     }
 }
