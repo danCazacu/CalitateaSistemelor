@@ -1,19 +1,23 @@
 package main.model;
 
-public class Field {
+public class Field{
     private String stringValue;
     private Integer intValue;
     private Column.Type type;
+
     public Field(){
         stringValue = null;
         intValue = null;
     }
+
     public Field(String val){
         setValue(val);
     }
+
     public Field(int val){
         setValue(val);
     }
+
     /**
      * Call isStringValueSet before this in order to avoid NPE
      *
@@ -28,6 +32,7 @@ public class Field {
         this.intValue = null;
         this.type = Column.Type.STRING;
     }
+
     /**
      * Call isIntValueSet before this in order to avoid NPE
      *
@@ -78,8 +83,15 @@ public class Field {
         }
 
         return true;
+    }
 
-
-
+    @Override
+    public int hashCode() {
+        int superHash = super.hashCode();
+        if(isIntValueSet())
+            superHash+=getIntValue().hashCode();
+        if(isStringValueSet())
+            superHash-=getStringValue().hashCode();
+        return superHash;
     }
 }
