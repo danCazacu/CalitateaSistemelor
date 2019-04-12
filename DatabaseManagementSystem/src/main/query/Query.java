@@ -35,7 +35,7 @@ public class Query {
 
         Map<Column, List<Field>> tableData = table.getData();
         for (Column col : tableData.keySet()) {
-            if (col.getName().equals(columnName)) {
+            if (col.getName().equalsIgnoreCase(columnName)) {
                 if (!col.getType().equals(value.getType())) {
                     throw new WrongTypeInColumnException(col.getType(), value.getType(), col.getName());
                 }

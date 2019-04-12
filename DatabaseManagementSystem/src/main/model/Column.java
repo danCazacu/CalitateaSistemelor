@@ -21,4 +21,18 @@ public class Column {
         return type;
     }
 
+    @Override
+    public int hashCode() {
+        int superHash = super.hashCode();
+        superHash+=name.hashCode()+type.hashCode();
+        return superHash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof Column))
+            return false;
+        Column column = (Column)obj;
+        return this.name.equalsIgnoreCase(column.name) && this.type.equals(column.type);
+    }
 }
