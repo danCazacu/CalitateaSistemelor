@@ -33,6 +33,11 @@ public class Table {
         return data;
     }
 
+    /**
+     *
+     * @return a list with all column names as string
+     * You can use get getColumnsByColumnNames to get them as Column class instance
+     */
     public List<String> getColumnNames() {
         List<String> colNames = new ArrayList<>();
         for (Column col : data.keySet()) {
@@ -41,18 +46,38 @@ public class Table {
         return colNames;
     }
 
+    /**
+     * Uses equalsIgnoreCase for match
+     * @param columnName
+     * @return Columns instance with name, NULL if no such column
+     */
+    public Column getColumn(String columnName){
+        for (Column column:data.keySet()) {
+            if(column.getName().equalsIgnoreCase(columnName))
+                return column;
+        }
+        return null;
+    }
+    /**
+     *
+     * @param columnNames
+     * @return a list of all columns as Column class instances
+     */
     public List<Column> getColumnsByColumnNames(List<String> columnNames) {
         List<Column> columns = new ArrayList<>();
-        for (String column : columnNames) {
-            for (Column col : data.keySet()) {
-                if (col.getName().equals(column)) {
-                    columns.add(col);
-                }
-            }
+        for (String columnName:columnNames) {
+            Column column = getColumn(columnName);
+            if(column!=null)
+                columns.add(column);
         }
         return columns;
     }
 
+    /**
+     *
+     * @param rowNumber
+     * @return a row with mapping from Column to Field
+     */
     public Map<Column, Field> getRow(int rowNumber) {
         Map<Column, Field> row = new HashMap<>();
         if (rowNumber < 0)
@@ -77,7 +102,7 @@ public class Table {
         //check for incompatible column types
         for (String columnName : row.keySet()) {
             for (Column col : data.keySet()) {
-                if (col.getName().equals(columnName)) {
+                if (col.getName().equalsIgnoreCase(columnName)) {
                     if (!col.getType().equals(row.get(columnName).getType()))
                         throw new WrongTypeInColumnException(col.getType(), row.get(columnName).getType(), columnName);
                 }
@@ -86,7 +111,7 @@ public class Table {
         //if all ok add data
         for (String columnName : row.keySet()) {
             for (Column col : data.keySet()) {
-                if (col.getName().equals(columnName)) {
+                if (col.getName().equalsIgnoreCase(columnName)) {
                     data.get(col).add(row.get(columnName));
                 }
             }
@@ -94,5 +119,38 @@ public class Table {
         }
     }
 
+    @Override
+    public int hashCode() {
+        int superHash = super.hashCode();
+        for (Column column: data.keySet()) {
+            superHash+= column.hashCode();
+            for (Field field:this.data.get(column)) {
+                superHash+=field.hashCode();
+            }
+        }
+        return superHash;
+    }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Table))
+            return false;
+        Table table = (Table) obj;
+        if (!this.name.equalsIgnoreCase(table.name))
+            return false;
+        for (Column column : this.data.keySet()) {
+            if (!table.data.containsKey(column))
+                return false;
+            else {
+                List<Field> otherTableColumnData = table.data.get(column);
+                for (Field field : this.data.get(column)) {
+                    if(!otherTableColumnData.contains(field))
+                        return false;
+                }
+            }
+        }
+        return true;
+
+
+    }
 }
