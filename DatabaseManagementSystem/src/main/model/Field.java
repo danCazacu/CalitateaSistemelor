@@ -60,6 +60,11 @@ public class Field{
         return type;
     }
 
+    /**
+     * Uses equalsIgnoreCase for string value match
+     * @param obj
+     * @return
+     */
     @Override
     public boolean equals(Object obj) {
         if(!(obj instanceof Field)) {
