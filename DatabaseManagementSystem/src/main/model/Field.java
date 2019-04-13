@@ -1,5 +1,7 @@
 package main.model;
 
+import main.exception.FieldValueNotSet;
+
 public class Field{
     private String stringValue;
     private Integer intValue;
@@ -19,11 +21,12 @@ public class Field{
     }
 
     /**
-     * Call isStringValueSet before this in order to avoid NPE
-     *
      * @return value as String
+     * @throws FieldValueNotSet
      */
-    public String getStringValue() {
+    public String getStringValue() throws FieldValueNotSet {
+        if(!isStringValueSet())
+            throw new FieldValueNotSet(this);
         return stringValue;
     }
 
@@ -34,11 +37,12 @@ public class Field{
     }
 
     /**
-     * Call isIntValueSet before this in order to avoid NPE
-     *
      * @return value as Integer
+     * @throws FieldValueNotSet
      */
-    public Integer getIntValue() {
+    public Integer getIntValue() throws FieldValueNotSet {
+        if(!isIntValueSet())
+            throw new FieldValueNotSet(this);
         return intValue;
     }
 
@@ -72,6 +76,8 @@ public class Field{
         }
 
         Field field = (Field) obj;
+        if(field.hashCode()!=this.hashCode())
+            return false;
         if(!field.getType().equals(this.getType()))
             return false;
         if(field.isIntValueSet()!=this.isIntValueSet())
@@ -79,12 +85,20 @@ public class Field{
         if(field.isStringValueSet()!=this.isStringValueSet())
             return false;
         if(field.isStringValueSet()){
-            if(!field.getStringValue().equals(this.getStringValue()))
-                return false;
+            try {
+                if(!field.getStringValue().equals(this.getStringValue()))
+                    return false;
+            } catch (FieldValueNotSet fieldValueNotSet) {
+                fieldValueNotSet.printStackTrace();
+            }
         }
         if(field.isIntValueSet()){
-            if(!field.getIntValue().equals(this.getIntValue()))
-                return false;
+            try {
+                if(!field.getIntValue().equals(this.getIntValue()))
+                    return false;
+            } catch (FieldValueNotSet fieldValueNotSet) {
+                fieldValueNotSet.printStackTrace();
+            }
         }
 
         return true;
@@ -93,10 +107,39 @@ public class Field{
     @Override
     public int hashCode() {
         int superHash = super.hashCode();
-        if(isIntValueSet())
-            superHash+=getIntValue().hashCode();
-        if(isStringValueSet())
-            superHash-=getStringValue().hashCode();
+        if(isIntValueSet()) {
+            try {
+                superHash+=getIntValue().hashCode();
+            } catch (FieldValueNotSet fieldValueNotSet) {
+                fieldValueNotSet.printStackTrace();
+            }
+        }
+        if(isStringValueSet()) {
+            try {
+                superHash-=getStringValue().hashCode();
+            } catch (FieldValueNotSet fieldValueNotSet) {
+                fieldValueNotSet.printStackTrace();
+            }
+        }
         return superHash;
+    }
+
+    @Override
+    public String toString() {
+        if(isStringValueSet()) {
+            try {
+                return getStringValue();
+            } catch (FieldValueNotSet fieldValueNotSet) {
+                fieldValueNotSet.printStackTrace();
+            }
+        }
+        if(isIntValueSet()) {
+            try {
+                return getIntValue().toString();
+            } catch (FieldValueNotSet fieldValueNotSet) {
+                fieldValueNotSet.printStackTrace();
+            }
+        }
+        return "Field.toString not working";
     }
 }

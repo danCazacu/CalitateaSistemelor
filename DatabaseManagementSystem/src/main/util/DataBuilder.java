@@ -1,7 +1,7 @@
 package main.util;
 
 import main.exception.InexistentColumn;
-import main.exception.WrongTypeInColumnException;
+import main.exception.TypeMismatchException;
 import main.model.Column;
 import main.model.DatabaseManagementSystem;
 import main.model.Field;
@@ -29,7 +29,7 @@ public class DataBuilder {
         row.put("school",new Field("INFORMATICA"));
         try {
             table.insert(row);
-        } catch (WrongTypeInColumnException | InexistentColumn e) {
+        } catch (TypeMismatchException | InexistentColumn e) {
             e.printStackTrace();
         }
 
@@ -40,7 +40,7 @@ public class DataBuilder {
         row.put("school",new Field("INFORMATICA"));
         try {
             table.insert(row);
-        } catch (WrongTypeInColumnException | InexistentColumn e) {
+        } catch (TypeMismatchException | InexistentColumn e) {
             e.printStackTrace();
         }
 
@@ -51,7 +51,7 @@ public class DataBuilder {
         row.put("school",new Field("INFORMATICA"));
         try {
             table.insert(row);
-        } catch (WrongTypeInColumnException | InexistentColumn e) {
+        } catch (TypeMismatchException | InexistentColumn e) {
             e.printStackTrace();
         }
     }
@@ -70,7 +70,7 @@ public class DataBuilder {
         row.put("school",new Field("INFORMATICA"));
         try {
             table.insert(row);
-        } catch (WrongTypeInColumnException | InexistentColumn e) {
+        } catch (TypeMismatchException | InexistentColumn e) {
             e.printStackTrace();
         }
 
@@ -81,7 +81,7 @@ public class DataBuilder {
         row.put("school",new Field("INFORMATICA"));
         try {
             table.insert(row);
-        } catch (WrongTypeInColumnException | InexistentColumn e) {
+        } catch (TypeMismatchException | InexistentColumn e) {
             e.printStackTrace();
         }
 
@@ -92,7 +92,7 @@ public class DataBuilder {
         row.put("school",new Field("INFORMATICA"));
         try {
             table.insert(row);
-        } catch (WrongTypeInColumnException | InexistentColumn e) {
+        } catch (TypeMismatchException | InexistentColumn e) {
             e.printStackTrace();
         }
     }
