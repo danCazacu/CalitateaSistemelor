@@ -2,18 +2,18 @@ package main.graphicalInterface;
 
 import javax.swing.*;
 
-public class DeleteDialog {
+public class ConfirmDialog {
 
     String title;
     String message;
 
-    public DeleteDialog(String title, String message){
+    public ConfirmDialog(String title, String message){
 
         this.title = title;
         this.message = message;
     }
 
-    public boolean confirmDelete(){
+    public boolean confirm(){
 
         int dialogResult = JOptionPane.showConfirmDialog (null, message, title,
                 JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
