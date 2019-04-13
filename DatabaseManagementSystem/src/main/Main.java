@@ -1,5 +1,6 @@
 package main;
 
+import main.graphicalInterface.MainWindow;
 import main.model.Column;
 import main.model.DatabaseManagementSystem;
 import main.model.Field;
@@ -14,6 +15,10 @@ import java.util.Map;
 public class Main {
 
     public static void main(String[] args) {
+
+        MainWindow mainFrame = new MainWindow();
+        mainFrame.open();
+
         DataBuilder.buildeDataOnce();
         DataBuilder.buildeDataSecondTime();
     }
