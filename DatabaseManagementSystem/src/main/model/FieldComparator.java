@@ -4,12 +4,31 @@ import main.exception.NotSameFieldType;
 
 public class FieldComparator {
     public enum Sign {
-        EQUAL,
-        LESS_THAN,
-        GREATER_THAN,
-        EQUAL_LESS_THAN,
-        EQUAL_GREATER_THAN,
-        DIFFERENT
+        EQUAL("="),
+        LESS_THAN("<"),
+        GREATER_THAN(">"),
+        EQUAL_LESS_THAN("<="),
+        EQUAL_GREATER_THAN(">="),
+        DIFFERENT("<>");
+
+        private String value;
+
+        Sign(String s) {
+            this.value = s;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public static FieldComparator.Sign getEnum(String value) {
+            for (FieldComparator.Sign sign : FieldComparator.Sign.values())
+                if (sign.getValue().equalsIgnoreCase(value)) {
+                    return sign;
+                }
+
+            throw new IllegalArgumentException();
+        }
     }
 
 

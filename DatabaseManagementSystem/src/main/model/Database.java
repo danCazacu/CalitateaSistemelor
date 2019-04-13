@@ -1,7 +1,5 @@
 package main.model;
 
-import main.query.Query;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,19 +91,6 @@ public class Database {
         }
         return null;
     }
-
-    /**
-     * Entry point for selection
-     * @param selectColumns - columns that should be selected
-     * @return Query object to continue selection
-     */
-    public Query select(List<Column> selectColumns) {
-        Query query = new Query();
-        query.setDatabase(this);
-        query.setSelectedColumns(selectColumns);
-        return query;
-    }
-
     @Override
     public int hashCode() {
         int superHash = super.hashCode();

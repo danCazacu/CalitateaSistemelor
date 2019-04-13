@@ -1,7 +1,6 @@
 package main.service;
 
-import main.exception.InvalidCommandException;
-import main.util.Constants;
+import main.exception.InvalidCommand;
 
 import java.util.Scanner;
 
@@ -15,7 +14,7 @@ public class CommandLineParser {
 
         }
     }
-    private void parser(String line) throws InvalidCommandException {
+    private void parser(String line) throws InvalidCommand {
         //this is just ideas, tried to do it but seems to much to do it at work
 //        String[] split = line.split("\\s+");
 //        String action = split[0];
@@ -24,7 +23,7 @@ public class CommandLineParser {
 //            case Constants.DELETE:
 //            case Constants.UPDATE:
 //            case Constants.SELECT:
-//                default: throw new InvalidCommandException();
+//                default: throw new InvalidCommand();
 //        }
     }
 

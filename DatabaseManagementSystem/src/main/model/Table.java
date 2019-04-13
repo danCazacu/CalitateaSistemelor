@@ -1,13 +1,14 @@
 package main.model;
 
+import main.exception.ColumnAlreadyExists;
 import main.exception.InexistentColumn;
+import main.exception.NotSameFieldType;
 import main.exception.WrongTypeInColumnException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class Table {
     private Map<Column, List<Field>> data;
@@ -34,7 +35,6 @@ public class Table {
     }
 
     /**
-     *
      * @return a list with all column names as string
      * You can use get getColumnsByColumnNames to get them as Column class instance
      */
@@ -48,33 +48,33 @@ public class Table {
 
     /**
      * Uses equalsIgnoreCase for match
+     *
      * @param columnName
      * @return Columns instance with name, NULL if no such column
      */
-    public Column getColumn(String columnName){
-        for (Column column:data.keySet()) {
-            if(column.getName().equalsIgnoreCase(columnName))
+    public Column getColumn(String columnName) {
+        for (Column column : data.keySet()) {
+            if (column.getName().equalsIgnoreCase(columnName))
                 return column;
         }
         return null;
     }
+
     /**
-     *
      * @param columnNames
      * @return a list of all columns as Column class instances
      */
     public List<Column> getColumnsByColumnNames(List<String> columnNames) {
         List<Column> columns = new ArrayList<>();
-        for (String columnName:columnNames) {
+        for (String columnName : columnNames) {
             Column column = getColumn(columnName);
-            if(column!=null)
+            if (column != null)
                 columns.add(column);
         }
         return columns;
     }
 
     /**
-     *
      * @param rowNumber
      * @return a row with mapping from Column to Field
      */
@@ -119,13 +119,76 @@ public class Table {
         }
     }
 
+    /**
+     * Use this as where clause. Then use other functions as actions over the result.
+     * @param columnName
+     * @param sign
+     * @param value
+     * @return All rows from this table that match with input parameters.
+     * @throws WrongTypeInColumnException
+     * @throws NotSameFieldType
+     */
+    public Map<Column, List<Field>> where(String columnName, FieldComparator.Sign sign, Field value) throws WrongTypeInColumnException, NotSameFieldType {
+        FieldComparator comparator = new FieldComparator();
+        //prepare result
+        Map<Column, List<Field>> result = new HashMap<>();
+        for (Column col : this.getData().keySet()) {
+            result.put(col, new ArrayList<>());
+        }
+
+        Map<Column, List<Field>> tableData = this.getData();
+        for (Column col : tableData.keySet()) {
+            if (col.getName().equalsIgnoreCase(columnName)) {
+                if (!col.getType().equals(value.getType())) {
+                    throw new WrongTypeInColumnException(col.getType(), value.getType(), col.getName());
+                }
+
+                List<Field> columnData = tableData.get(col);
+                for (Field field : columnData) {
+                    if (comparator.compareWithSign(field,value,sign)) {
+                        Map<Column, Field> row = this.getRow(columnData.indexOf(field));
+                        for (Column rowColumn : row.keySet()) {
+                            result.get(rowColumn).add(row.get(rowColumn));
+                        }
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     *
+     * @param data returned by where function
+     * @param selectColumns columns that should remain after filtering
+     * @return trims data parameter and leaves only selected columns
+     */
+    public Map<Column,List<Field>> select(Map<Column, List<Field>> data, List<Column> selectColumns){
+        for (Column column: data.keySet()) {
+            if(!selectColumns.contains(column)){
+                data.remove(column);
+            }
+        }
+        return data;
+    }
+
+    public void deleteColumn(Column column){
+        data.remove(column);
+    }
+
+    public void insertColumn(Column column, List<Field> data) throws ColumnAlreadyExists {
+        if(this.data.keySet().contains(column))
+            throw new ColumnAlreadyExists(column.getName());
+        this.data.put(column,data);
+    }
+
     @Override
     public int hashCode() {
         int superHash = super.hashCode();
-        for (Column column: data.keySet()) {
-            superHash+= column.hashCode();
-            for (Field field:this.data.get(column)) {
-                superHash+=field.hashCode();
+        for (Column column : data.keySet()) {
+            superHash += column.hashCode();
+            for (Field field : this.data.get(column)) {
+                superHash += field.hashCode();
             }
         }
         return superHash;
@@ -144,13 +207,11 @@ public class Table {
             else {
                 List<Field> otherTableColumnData = table.data.get(column);
                 for (Field field : this.data.get(column)) {
-                    if(!otherTableColumnData.contains(field))
+                    if (!otherTableColumnData.contains(field))
                         return false;
                 }
             }
         }
         return true;
-
-
     }
 }
