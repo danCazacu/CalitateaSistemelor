@@ -1,5 +1,6 @@
 package main.graphicalInterface.database;
 
+import main.graphicalInterface.CreatePopUp;
 import main.graphicalInterface.DeleteDialog;
 import main.model.Database;
 import main.model.DatabaseManagementSystem;
@@ -13,8 +14,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import static main.graphicalInterface.GIConstants.DATABASES_TITLE;
-import static main.graphicalInterface.GIConstants.ENABLE_BUTTON_ToolTipText;
+import static main.graphicalInterface.GIConstants.*;
 
 /**
  * The frame for Database(s)
@@ -27,6 +27,7 @@ import static main.graphicalInterface.GIConstants.ENABLE_BUTTON_ToolTipText;
  * DELETE (disabled default; enabled when user select something from Database(s) list)
  */
 public class DatabaseFrame extends JPanel implements ListSelectionListener {
+
 
     private DatabaseManagementSystem databaseManagementSystem;
 
@@ -99,6 +100,8 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
     }
 
     private void populateList() {
+
+        listModel.clear();
         for (Database database : databaseManagementSystem.getDatabases()) {
 
             listModel.addElement(database.getName());
@@ -151,6 +154,27 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
         public void actionPerformed(ActionEvent e) {
 
             //TODO Create action
+            CreatePopUp createPopUp = new CreatePopUp(CREATE_NEW_DATABASE_TITLE );
+            Object input = createPopUp.openPopUp(CREATE_NEW_DATABASE_MESSAGE, false);
+
+            while( input != null){
+                // user didn't pressed Cancel
+                if(input.toString().trim().equals("")){
+
+                    // can't add table with empty name
+                    input = createPopUp.openPopUp(CREATE_NEW_DATABASE_EMPTY_NAME, true);
+                }
+                else if (databaseManagementSystem.getDatabase(input.toString().trim()) != null) {
+
+                        //already exist a database with this name, reopen popup with proper message
+                        input = createPopUp.openPopUp(CREATE_NEW_DATABASE_EXISTING_NAME, true);
+                } else {
+
+                    databaseManagementSystem.createDatabase(input.toString().trim());
+                    populateList();
+                    break;
+                }
+            }
         }
     }
 
