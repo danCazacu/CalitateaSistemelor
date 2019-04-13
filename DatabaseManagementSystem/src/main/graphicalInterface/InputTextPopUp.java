@@ -2,10 +2,10 @@ package main.graphicalInterface;
 
 import javax.swing.*;
 
-public class CreatePopUp {
+public class InputTextPopUp {
 
     private String title;
-    public CreatePopUp(String title){
+    public InputTextPopUp(String title){
 
         this.title = (title);
     }
