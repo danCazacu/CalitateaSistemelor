@@ -1,9 +1,6 @@
 package main.model;
 
-import main.exception.ColumnAlreadyExists;
-import main.exception.InexistentColumn;
-import main.exception.NotSameFieldType;
-import main.exception.WrongTypeInColumnException;
+import main.exception.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -91,7 +88,7 @@ public class Table {
     /**
      * @param row - map where key is column name and field is the value that need to be inserted into that column
      */
-    public void insert(Map<String, Field> row) throws WrongTypeInColumnException, InexistentColumn {
+    public void insert(Map<String, Field> row) throws TypeMismatchException, InexistentColumn {
         List<String> columnNames = getColumnNames();
         //check for invalid column names
         for (String columnName : row.keySet()) {
@@ -104,7 +101,7 @@ public class Table {
             for (Column col : data.keySet()) {
                 if (col.getName().equalsIgnoreCase(columnName)) {
                     if (!col.getType().equals(row.get(columnName).getType()))
-                        throw new WrongTypeInColumnException(col.getType(), row.get(columnName).getType(), columnName);
+                        throw new TypeMismatchException(col.getType(), row.get(columnName).getType(), columnName);
                 }
             }
         }
@@ -125,10 +122,9 @@ public class Table {
      * @param sign
      * @param value
      * @return All rows from this table that match with input parameters.
-     * @throws WrongTypeInColumnException
-     * @throws NotSameFieldType
+     * @throws TypeMismatchException
      */
-    public Map<Column, List<Field>> where(String columnName, FieldComparator.Sign sign, Field value) throws WrongTypeInColumnException, NotSameFieldType {
+    public Map<Column, List<Field>> where(String columnName, FieldComparator.Sign sign, Field value) throws TypeMismatchException {
         FieldComparator comparator = new FieldComparator();
         //prepare result
         Map<Column, List<Field>> result = new HashMap<>();
@@ -140,7 +136,7 @@ public class Table {
         for (Column col : tableData.keySet()) {
             if (col.getName().equalsIgnoreCase(columnName)) {
                 if (!col.getType().equals(value.getType())) {
-                    throw new WrongTypeInColumnException(col.getType(), value.getType(), col.getName());
+                    throw new TypeMismatchException(col.getType(), value.getType(), col.getName());
                 }
 
                 List<Field> columnData = tableData.get(col);
@@ -172,14 +168,31 @@ public class Table {
         return data;
     }
 
+    public int getNumberOfRows(){
+        Column column = (Column) data.keySet().toArray()[0];
+        return data.get(column).size();
+    }
+
     public void deleteColumn(Column column){
         data.remove(column);
     }
 
-    public void insertColumn(Column column, List<Field> data) throws ColumnAlreadyExists {
+    public void insertColumn(Column column) throws ColumnAlreadyExists {
         if(this.data.keySet().contains(column))
             throw new ColumnAlreadyExists(column.getName());
-        this.data.put(column,data);
+        if(column.getType().equals(Column.Type.STRING)){
+            ArrayList<Field> columnData= new ArrayList<>();
+            for(int i=0; i<getNumberOfRows();i++){
+                columnData.add(new Field(""));
+            }
+        }
+        if (column.getType().equals(Column.Type.INT)){
+            ArrayList<Field> columnData= new ArrayList<>();
+            for(int i=0; i<getNumberOfRows();i++){
+                columnData.add(new Field(0));
+            }
+
+        }
     }
 
     @Override
@@ -213,5 +226,40 @@ public class Table {
             }
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(this.getName()).append("\n");
+        for (Column column: data.keySet()) {
+            stringBuilder.append(column.getName()+" | ");
+        }
+        stringBuilder.append("\n");
+        for(int i=0; i<getNumberOfRows(); i++){
+            for (Column column: data.keySet()) {
+                stringBuilder.append(data.get(column).get(i).toString()+" | ");
+            }
+            stringBuilder.append("\n");
+        }
+        return stringBuilder.toString();
+    }
+    public static String toString(Map<Column, List<Field>> input){
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Column column: input.keySet()) {
+            stringBuilder.append(column.getName()+" | ");
+        }
+
+        Column reference = (Column) input.keySet().toArray()[0];
+        int size = input.get(reference).size();
+
+        stringBuilder.append("\n");
+        for(int i=0; i<size; i++){
+            for (Column column: input.keySet()) {
+                stringBuilder.append(input.get(column).get(i).toString()+" | ");
+            }
+            stringBuilder.append("\n");
+        }
+        return stringBuilder.toString();
     }
 }
