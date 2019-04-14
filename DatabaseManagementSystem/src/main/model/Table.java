@@ -1,7 +1,10 @@
 package main.model;
 
 import main.exception.*;
+import main.persistance.PersistenceContants;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -118,6 +121,7 @@ public class Table {
 
     /**
      * Use this as where clause. Then use other functions as actions over the result.
+     *
      * @param columnName
      * @param sign
      * @param value
@@ -141,7 +145,7 @@ public class Table {
 
                 List<Field> columnData = tableData.get(col);
                 for (Field field : columnData) {
-                    if (comparator.compareWithSign(field,value,sign)) {
+                    if (comparator.compareWithSign(field, value, sign)) {
                         Map<Column, Field> row = this.getRow(columnData.indexOf(field));
                         for (Column rowColumn : row.keySet()) {
                             result.get(rowColumn).add(row.get(rowColumn));
@@ -154,41 +158,40 @@ public class Table {
     }
 
     /**
-     *
-     * @param data returned by where function
+     * @param data          returned by where function
      * @param selectColumns columns that should remain after filtering
      * @return trims data parameter and leaves only selected columns
      */
-    public Map<Column,List<Field>> select(Map<Column, List<Field>> data, List<Column> selectColumns){
-        for (Column column: data.keySet()) {
-            if(!selectColumns.contains(column)){
+    public Map<Column, List<Field>> select(Map<Column, List<Field>> data, List<Column> selectColumns) {
+        for (Column column : data.keySet()) {
+            if (!selectColumns.contains(column)) {
                 data.remove(column);
             }
         }
         return data;
     }
 
-    public int getNumberOfRows(){
+    public int getNumberOfRows() {
         Column column = (Column) data.keySet().toArray()[0];
         return data.get(column).size();
     }
 
-    public void deleteColumn(Column column){
+    public void deleteColumn(Column column) {
         data.remove(column);
     }
 
     public void insertColumn(Column column) throws ColumnAlreadyExists {
-        if(this.data.keySet().contains(column))
+        if (this.data.keySet().contains(column))
             throw new ColumnAlreadyExists(column.getName());
-        if(column.getType().equals(Column.Type.STRING)){
-            ArrayList<Field> columnData= new ArrayList<>();
-            for(int i=0; i<getNumberOfRows();i++){
+        if (column.getType().equals(Column.Type.STRING)) {
+            ArrayList<Field> columnData = new ArrayList<>();
+            for (int i = 0; i < getNumberOfRows(); i++) {
                 columnData.add(new Field(""));
             }
         }
-        if (column.getType().equals(Column.Type.INT)){
-            ArrayList<Field> columnData= new ArrayList<>();
-            for(int i=0; i<getNumberOfRows();i++){
+        if (column.getType().equals(Column.Type.INT)) {
+            ArrayList<Field> columnData = new ArrayList<>();
+            for (int i = 0; i < getNumberOfRows(); i++) {
                 columnData.add(new Field(0));
             }
 
@@ -232,34 +235,66 @@ public class Table {
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(this.getName()).append("\n");
-        for (Column column: data.keySet()) {
-            stringBuilder.append(column.getName()+" | ");
+        for (Column column : data.keySet()) {
+            stringBuilder.append(column.getName() + " | ");
         }
         stringBuilder.append("\n");
-        for(int i=0; i<getNumberOfRows(); i++){
-            for (Column column: data.keySet()) {
-                stringBuilder.append(data.get(column).get(i).toString()+" | ");
+        for (int i = 0; i < getNumberOfRows(); i++) {
+            for (Column column : data.keySet()) {
+                stringBuilder.append(data.get(column).get(i).toString() + " | ");
             }
             stringBuilder.append("\n");
         }
         return stringBuilder.toString();
     }
-    public static String toString(Map<Column, List<Field>> input){
+
+    public static String toString(Map<Column, List<Field>> input) {
         StringBuilder stringBuilder = new StringBuilder();
-        for (Column column: input.keySet()) {
-            stringBuilder.append(column.getName()+" | ");
+        for (Column column : input.keySet()) {
+            stringBuilder.append(column.getName() + " | ");
         }
 
         Column reference = (Column) input.keySet().toArray()[0];
         int size = input.get(reference).size();
 
         stringBuilder.append("\n");
-        for(int i=0; i<size; i++){
-            for (Column column: input.keySet()) {
-                stringBuilder.append(input.get(column).get(i).toString()+" | ");
+        for (int i = 0; i < size; i++) {
+            for (Column column : input.keySet()) {
+                stringBuilder.append(input.get(column).get(i).toString() + " | ");
             }
             stringBuilder.append("\n");
         }
         return stringBuilder.toString();
+    }
+
+    public void persist(OutputStream outputstream) throws IOException {
+
+        outputstream.write(PersistenceContants.START_TABLE.getBytes());
+        outputstream.write("\n".getBytes());
+        outputstream.write(this.getName().getBytes());
+        outputstream.write("\n".getBytes());
+
+        for (Column column : data.keySet()) {
+            outputstream.write(PersistenceContants.START_COLUMN.getBytes());
+            outputstream.write("\n".getBytes());
+            outputstream.write(column.getName().getBytes());
+            outputstream.write("\n".getBytes());
+            outputstream.write(column.getType().toString().getBytes());
+            outputstream.write("\n".getBytes());
+
+            for (Field field:data.get(column)) {
+                try {
+                    field.persist(outputstream);
+                } catch (FieldValueNotSet fieldValueNotSet) {
+                    fieldValueNotSet.printStackTrace();
+                }
+            }
+            outputstream.write(PersistenceContants.END_COLUMN.getBytes());
+            outputstream.write("\n".getBytes());
+        }
+
+
+        outputstream.write(PersistenceContants.END_TABLE.getBytes());
+        outputstream.write("\n".getBytes());
     }
 }
