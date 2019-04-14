@@ -5,6 +5,7 @@ import main.graphicalInterface.InputTextPopUp;
 import main.graphicalInterface.table.TableFrame;
 import main.model.Database;
 import main.model.DatabaseManagementSystem;
+import main.util.DataBuilder;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -42,7 +43,7 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
     public DatabaseFrame() {
 
         this.setLayout(null);
-        this.setBounds(20, 20, 350, 750);
+        this.setBounds(0, 20, 350, 750);
 
         databaseManagementSystem = DatabaseManagementSystem.getInstance();
         tableFrame = TableFrame.getInstance();
@@ -52,7 +53,7 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
          */
         titleLabel = new JLabel(DATABASES_TITLE, SwingConstants.CENTER);
         titleLabel.setFont(new Font("Serif", Font.BOLD, 20));
-        titleLabel.setBounds(0, 0, 350, 20);
+        titleLabel.setBounds(0, 20, 350, 20);
 
         /*
         Database(s) List
@@ -68,7 +69,7 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
         databasesList.setVisibleRowCount(-1); //display maximum number of items possible in the available space
 
         scrollDatabasesPanel = new JScrollPane(databasesList);
-        scrollDatabasesPanel.setBounds(20, 25, 330, 400);
+        scrollDatabasesPanel.setBounds(20, 45, 330, 400);
 
         scrollDatabasesPanel.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollDatabasesPanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -78,17 +79,17 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
          */
         btnCreate = new JButton();
         btnCreate.setText("Create Database");
-        btnCreate.setBounds(90, 460, 200, 50);
+        btnCreate.setBounds(90, 480, 200, 50);
         btnCreate.addActionListener(new CreateListener());
 
         btnUpdate = new JButton();
         btnUpdate.setText("Update Database");
-        btnUpdate.setBounds(90, 540, 200, 50);
+        btnUpdate.setBounds(90, 560, 200, 50);
         btnUpdate.addActionListener(new UpdateListener());
 
         btnDelete = new JButton();
         btnDelete.setText("Delete Database");
-        btnDelete.setBounds(90, 620, 200, 50);
+        btnDelete.setBounds(90, 640, 200, 50);
         btnDelete.addActionListener(new DeleteListener());
 
         //default Update and Delete Buttons are disabled

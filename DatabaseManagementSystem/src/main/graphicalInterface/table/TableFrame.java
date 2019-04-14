@@ -53,7 +53,7 @@ public class TableFrame extends JPanel implements ListSelectionListener {
     private TableFrame() {
 
         this.setLayout(null);
-        this.setBounds(420, 40, 350, 750);
+        this.setBounds(0, 40, 350, 750);
 
         databaseManagementSystem = DatabaseManagementSystem.getInstance();
 
@@ -70,7 +70,7 @@ public class TableFrame extends JPanel implements ListSelectionListener {
         }
         titleLabel = new JLabel(title, SwingConstants.CENTER);
         titleLabel.setFont(new Font("Serif", Font.BOLD, 20));
-        titleLabel.setBounds(400, 20, 350, 20);
+        titleLabel.setBounds(0, 20, 350, 20);
 
         /*
         Table(s) List
@@ -86,7 +86,7 @@ public class TableFrame extends JPanel implements ListSelectionListener {
         tablesList.setVisibleRowCount(-1); //display maximum number of items possible in the available space
 
         scrollTablesPanel = new JScrollPane(tablesList);
-        scrollTablesPanel.setBounds(420, 45, 330, 400);
+        scrollTablesPanel.setBounds(0, 45, 330, 400);
 
         scrollTablesPanel.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollTablesPanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -96,17 +96,17 @@ public class TableFrame extends JPanel implements ListSelectionListener {
          */
         btnCreate = new JButton();
         btnCreate.setText("Create Table");
-        btnCreate.setBounds(490, 480, 200, 50);
+        btnCreate.setBounds(90, 480, 200, 50);
         btnCreate.addActionListener(new CreateListener());
 
         btnUpdate = new JButton();
         btnUpdate.setText("Update Table");
-        btnUpdate.setBounds(490, 560, 200, 50);
+        btnUpdate.setBounds(90, 560, 200, 50);
         btnUpdate.addActionListener(new UpdateListener());
 
         btnDelete = new JButton();
         btnDelete.setText("Delete Table");
-        btnDelete.setBounds(490, 640, 200, 50);
+        btnDelete.setBounds(90, 640, 200, 50);
         btnDelete.addActionListener(new DeleteListener());
 
         //by default, Update and Delete Buttons are disabled

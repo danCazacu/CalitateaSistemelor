@@ -35,4 +35,5 @@ public class GIConstants {
     /*
     Records Constants
      */
+    public static final String RECORDS_TITLE = "Record(s)";
 }
