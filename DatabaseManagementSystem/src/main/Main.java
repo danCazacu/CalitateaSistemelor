@@ -5,6 +5,7 @@ import main.model.Column;
 import main.model.DatabaseManagementSystem;
 import main.model.Field;
 import main.model.Table;
+import main.persistance.DatabasePersistance;
 import main.util.DataBuilder;
 
 import java.util.ArrayList;
@@ -16,12 +17,9 @@ public class Main {
 
     public static void main(String[] args) {
 
-
-        DataBuilder.buildeDataOnce();
-        DataBuilder.buildeDataSecondTime();
-
         MainWindow mainFrame = new MainWindow();
         mainFrame.open();
 
+        new DatabasePersistance().persist();
     }
 }

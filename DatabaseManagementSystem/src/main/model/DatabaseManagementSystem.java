@@ -1,5 +1,8 @@
 package main.model;
 
+import main.persistance.DatabasePersistance;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,8 +10,14 @@ public class DatabaseManagementSystem {
     private List<Database> databases;
     private static DatabaseManagementSystem instance = null;
     public static synchronized DatabaseManagementSystem getInstance(){
-        if(instance == null)
+        if(instance == null) {
             instance = new DatabaseManagementSystem();
+            try {
+                new DatabasePersistance().load();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         return instance;
     }
     private DatabaseManagementSystem() {
@@ -92,5 +101,16 @@ public class DatabaseManagementSystem {
                 return database;
         }
         return null;
+    }
+
+    public void persist(OutputStream outputstream) throws IOException {
+        for (Database database:databases) {
+            database.persist(outputstream);
+        }
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        new DatabasePersistance().persist();
     }
 }
