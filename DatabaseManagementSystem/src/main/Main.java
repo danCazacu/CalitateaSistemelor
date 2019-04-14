@@ -16,10 +16,12 @@ public class Main {
 
     public static void main(String[] args) {
 
-        MainWindow mainFrame = new MainWindow();
-        mainFrame.open();
 
         DataBuilder.buildeDataOnce();
         DataBuilder.buildeDataSecondTime();
+
+        MainWindow mainFrame = new MainWindow();
+        mainFrame.open();
+
     }
 }

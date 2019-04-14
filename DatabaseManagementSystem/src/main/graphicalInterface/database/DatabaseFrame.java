@@ -2,9 +2,9 @@ package main.graphicalInterface.database;
 
 import main.graphicalInterface.ConfirmDialog;
 import main.graphicalInterface.InputTextPopUp;
+import main.graphicalInterface.table.TableFrame;
 import main.model.Database;
 import main.model.DatabaseManagementSystem;
-import main.util.DataBuilder;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -28,8 +28,8 @@ import static main.graphicalInterface.GIConstants.*;
  */
 public class DatabaseFrame extends JPanel implements ListSelectionListener {
 
-
     private DatabaseManagementSystem databaseManagementSystem;
+    private TableFrame tableFrame;
 
     private JLabel titleLabel;
     private JList databasesList;
@@ -45,9 +45,7 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
         this.setBounds(20, 20, 350, 750);
 
         databaseManagementSystem = DatabaseManagementSystem.getInstance();
-
-        DataBuilder.buildeDataOnce();
-        DataBuilder.buildeDataSecondTime();
+        tableFrame = TableFrame.getInstance();
 
         /*
         TITLE
@@ -127,9 +125,11 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
 
         if (databasesList.getSelectedIndex() > -1) {
 
+            tableFrame.setSelectedDatabase(listModel.get(databasesList.getSelectedIndex()).toString());
             enableDeleteUpdateButtons();
         } else {
 
+            tableFrame.setSelectedDatabase(null);
             disableUpdateDeleteButtons();
         }
     }
@@ -153,7 +153,6 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
     class CreateListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
 
-            //TODO Create action
             InputTextPopUp inputTextPopUp = new InputTextPopUp(CREATE_NEW_DATABASE_TITLE );
             Object input = inputTextPopUp.openPopUp(ENTER_DATABASE_MESSAGE, false);
 
@@ -181,12 +180,11 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
     class UpdateListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
 
-            //TODO Update action
             int index = databasesList.getSelectedIndex();
             String currentName = listModel.get(index).toString();
 
             InputTextPopUp inputTextPopUp = new InputTextPopUp(UPDATE_DATABASE_TITLE );
-            Object input = inputTextPopUp.openPopUp(ENTER_DATABASE_MESSAGE, false);
+            Object input = inputTextPopUp.openPopUp(ENTER_NEW_DATABASE_MESSAGE, false);
 
             while( input != null){
                 // user didn't pressed Cancel
