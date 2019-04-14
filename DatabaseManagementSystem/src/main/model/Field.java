@@ -1,6 +1,10 @@
 package main.model;
 
 import main.exception.FieldValueNotSet;
+import main.persistance.PersistenceContants;
+
+import java.io.IOException;
+import java.io.OutputStream;
 
 public class Field{
     private String stringValue;
@@ -10,6 +14,7 @@ public class Field{
     public Field(){
         stringValue = null;
         intValue = null;
+
     }
 
     public Field(String val){
@@ -141,5 +146,15 @@ public class Field{
             }
         }
         return "Field.toString not working";
+    }
+
+    public void persist(OutputStream outputstream) throws IOException, FieldValueNotSet {
+        if(isStringValueSet()) {
+            outputstream.write((this.getStringValue()+"\n").getBytes());
+
+        }
+        if(isIntValueSet()) {
+            outputstream.write((this.getIntValue().toString() + "\n").getBytes());
+        }
     }
 }

@@ -1,5 +1,9 @@
 package main.model;
 
+import main.persistance.PersistenceContants;
+
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -113,5 +117,22 @@ public class Database {
                 return false;
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return this.getName();
+    }
+
+    public void persist(OutputStream outputstream) throws IOException {
+        outputstream.write(PersistenceContants.START_DATABASE.getBytes());
+        outputstream.write("\n".getBytes());
+        outputstream.write(this.getName().getBytes());
+        outputstream.write("\n".getBytes());
+        for (Table table: tables) {
+            table.persist(outputstream);
+        }
+        outputstream.write(PersistenceContants.END_DATABASE.getBytes());
+        outputstream.write("\n".getBytes());
     }
 }
