@@ -6,7 +6,6 @@ import main.graphicalInterface.PersistenceActionListener;
 import main.graphicalInterface.table.TableFrame;
 import main.model.Database;
 import main.model.DatabaseManagementSystem;
-import main.util.DataBuilder;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -14,7 +13,6 @@ import javax.swing.event.ListSelectionListener;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import static main.graphicalInterface.GIConstants.*;
 
@@ -40,6 +38,7 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
     private JButton btnCreate;
     private JButton btnUpdate;
     private JButton btnDelete;
+    private JButton btnImportTable;
 
     public DatabaseFrame() {
 
@@ -80,21 +79,26 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
          */
         btnCreate = new JButton();
         btnCreate.setText("Create Database");
-        btnCreate.setBounds(90, 480, 200, 50);
+        btnCreate.setBounds(90, 490, 200, 50);
         btnCreate.addActionListener(new CreateListener());
 
         btnUpdate = new JButton();
         btnUpdate.setText("Update Database");
-        btnUpdate.setBounds(90, 560, 200, 50);
+        btnUpdate.setBounds(90, 550, 200, 50);
         btnUpdate.addActionListener(new UpdateListener());
 
         btnDelete = new JButton();
         btnDelete.setText("Delete Database");
-        btnDelete.setBounds(90, 640, 200, 50);
+        btnDelete.setBounds(90, 610, 200, 50);
         btnDelete.addActionListener(new DeleteListener());
 
+        btnImportTable = new JButton();
+        btnImportTable.setText("Import Table");
+        btnImportTable.setBounds(90, 670, 200, 50);
+        btnImportTable.addActionListener(new ImportListener());
+
         //default Update and Delete Buttons are disabled
-        disableUpdateDeleteButtons();
+        disableUpdateDeleteImportButtons();
 
         addPanelObjects();
     }
@@ -115,6 +119,7 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
         this.add(btnCreate);
         this.add(btnUpdate);
         this.add(btnDelete);
+        this.add(btnImportTable);
     }
 
     /**
@@ -128,28 +133,32 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
         if (databasesList.getSelectedIndex() > -1) {
 
             tableFrame.setSelectedDatabase(listModel.get(databasesList.getSelectedIndex()).toString());
-            enableDeleteUpdateButtons();
+            enableDeleteUpdateImportButtons();
         } else {
 
             tableFrame.setSelectedDatabase(null);
-            disableUpdateDeleteButtons();
+            disableUpdateDeleteImportButtons();
         }
     }
 
-    private void enableDeleteUpdateButtons() {
+    private void enableDeleteUpdateImportButtons() {
 
         btnUpdate.setEnabled(true);
         btnDelete.setEnabled(true);
+        btnImportTable.setEnabled(true);
+        btnImportTable.setToolTipText("Import table in the selected database");
     }
 
-    private void disableUpdateDeleteButtons() {
+    private void disableUpdateDeleteImportButtons() {
 
         btnUpdate.setEnabled(false);
-        btnUpdate.setToolTipText(ENABLE_BUTTON_ToolTipText);
+        btnUpdate.setToolTipText(ENABLE_BUTTON_DATABASE_ToolTipText);
 
         btnDelete.setEnabled(false);
-        btnUpdate.setToolTipText(ENABLE_BUTTON_ToolTipText);
+        btnUpdate.setToolTipText(ENABLE_BUTTON_DATABASE_ToolTipText);
 
+        btnImportTable.setEnabled(false);
+        btnImportTable.setToolTipText(ENABLE_BUTTON_DATABASE_ToolTipText);
     }
 
     class CreateListener extends PersistenceActionListener {
@@ -250,8 +259,16 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
 
             if (listModel.getSize() == 0) { //No database left, disable update,delete buttons
 
-                disableUpdateDeleteButtons();
+                disableUpdateDeleteImportButtons();
             }
+        }
+    }
+
+    class ImportListener extends PersistenceActionListener {
+        @Override
+        public void beforePersist(ActionEvent e) {
+
+            //TODO call the csv importer
         }
     }
 }

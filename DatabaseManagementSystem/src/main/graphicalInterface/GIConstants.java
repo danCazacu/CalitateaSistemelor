@@ -6,8 +6,9 @@ public class GIConstants {
     GENERAL Constants
      */
     public static final String DATABASE_MANAGEMENT_SYSTEM_TITLE = "Database Management System";
-    public static final String ENABLE_BUTTON_ToolTipText = "You need to select a Database from the list to enable the button.";
+    public static final String ENABLE_BUTTON_DATABASE_ToolTipText = "You need to select a Database from the list to enable the button.";
 
+    public static final String ENABLE_BUTTON_TABLE_ToolTipText = "You need to select a Table from the list to enable the button.";
     /*
     DATABASE(S) Constants
      */

@@ -12,7 +12,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import static main.graphicalInterface.GIConstants.*;
@@ -40,6 +39,7 @@ public class TableFrame extends JPanel implements ListSelectionListener {
     private JButton btnCreate;
     private JButton btnUpdate;
     private JButton btnDelete;
+    private JButton btnExportTable;
 
     private String selectedDatabase;
 
@@ -100,21 +100,26 @@ public class TableFrame extends JPanel implements ListSelectionListener {
          */
         btnCreate = new JButton();
         btnCreate.setText("Create Table");
-        btnCreate.setBounds(90, 480, 200, 50);
+        btnCreate.setBounds(90, 490, 200, 50);
         btnCreate.addActionListener(new CreateListener());
 
         btnUpdate = new JButton();
         btnUpdate.setText("Update Table");
-        btnUpdate.setBounds(90, 560, 200, 50);
+        btnUpdate.setBounds(90, 550, 200, 50);
         btnUpdate.addActionListener(new UpdateListener());
 
         btnDelete = new JButton();
         btnDelete.setText("Delete Table");
-        btnDelete.setBounds(90, 640, 200, 50);
+        btnDelete.setBounds(90, 610, 200, 50);
         btnDelete.addActionListener(new DeleteListener());
 
+        btnExportTable = new JButton();
+        btnExportTable.setText("Export Table");
+        btnExportTable.setBounds(90, 670, 200, 50);
+        btnExportTable.addActionListener(new ExportListener());
+
         //by default, Update and Delete Buttons are disabled
-        disableUpdateDeleteButtons();
+        disableUpdateDeleteExportButtons();
 
         addPanelObjects();
     }
@@ -138,6 +143,7 @@ public class TableFrame extends JPanel implements ListSelectionListener {
         this.add(btnCreate);
         this.add(btnUpdate);
         this.add(btnDelete);
+        this.add(btnExportTable);
     }
 
     /**
@@ -150,29 +156,33 @@ public class TableFrame extends JPanel implements ListSelectionListener {
 
         if (tablesList.getSelectedIndex() > -1) {
 
-            enableDeleteUpdateButtons();
+            enableDeleteUpdateExportButtons();
             tableContentFrame.setSelectedDatabase(selectedDatabase);
             tableContentFrame.setSelectedTable(listModel.get(tablesList.getSelectedIndex()).toString());
         } else {
 
-            disableUpdateDeleteButtons();
+            disableUpdateDeleteExportButtons();
         }
     }
 
-    private void enableDeleteUpdateButtons() {
+    private void enableDeleteUpdateExportButtons() {
 
         btnUpdate.setEnabled(true);
         btnDelete.setEnabled(true);
+        btnExportTable.setEnabled(true);
+        btnExportTable.setToolTipText("Export the selected table into .csv file format.");
     }
 
-    private void disableUpdateDeleteButtons() {
+    private void disableUpdateDeleteExportButtons() {
 
         btnUpdate.setEnabled(false);
-        btnUpdate.setToolTipText(ENABLE_BUTTON_ToolTipText);
+        btnUpdate.setToolTipText(ENABLE_BUTTON_DATABASE_ToolTipText);
 
         btnDelete.setEnabled(false);
-        btnUpdate.setToolTipText(ENABLE_BUTTON_ToolTipText);
+        btnDelete.setToolTipText(ENABLE_BUTTON_DATABASE_ToolTipText);
 
+        btnExportTable.setEnabled(false);
+        btnExportTable.setToolTipText(ENABLE_BUTTON_TABLE_ToolTipText);
     }
 
     class CreateListener extends PersistenceActionListener {
@@ -270,8 +280,15 @@ public class TableFrame extends JPanel implements ListSelectionListener {
 
             if (listModel.getSize() == 0) { //No table left, disable update,delete buttons
 
-                disableUpdateDeleteButtons();
+                disableUpdateDeleteExportButtons();
             }
+        }
+    }
+
+    class ExportListener extends PersistenceActionListener {
+        @Override
+        public void beforePersist(ActionEvent e) {
+
         }
     }
 

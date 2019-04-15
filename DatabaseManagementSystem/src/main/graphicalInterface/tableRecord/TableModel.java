@@ -5,6 +5,7 @@ import main.model.Field;
 import main.model.Table;
 
 import javax.swing.table.AbstractTableModel;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -13,9 +14,24 @@ public class TableModel extends AbstractTableModel {
     private Table table ;
     private Class[] colTypes;
     private String[] columnNames ;
-    private Vector data;
+
+    private List<Field> data ;
+
+    /**
+     * This empty implementation is provided so users don't have to implement
+     * this method if their data model is not editable.
+     *
+     * @param aValue      value to assign to cell
+     * @param rowIndex    row of cell
+     * @param columnIndex column of cell
+     */
+    @Override
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        super.setValueAt(aValue, rowIndex, columnIndex);
+    }
 
     public TableModel(Table table) throws FieldValueNotSet {
+
 
         this.table = table;
         List<String> columnNamesList = table.getColumnNames();
@@ -23,13 +39,15 @@ public class TableModel extends AbstractTableModel {
         columnNames = new String[columnNamesList.size()];
         columnNamesList.toArray(columnNames);
 
-         colTypes = new Class[columnNamesList.size()];
+        colTypes = new Class[columnNamesList.size()];
 
-         int count = 0;
-         for(String colName: columnNames){
+        int count = 0;
+        for(String colName: columnNames){
 
-             colTypes[count++] = table.getColumn(colName).getType().getClass();
-         }
+            colTypes[count++] = table.getColumn(colName).getType().getClass();
+        }
+
+        data = new ArrayList<Field>();
 
         for(int colCount = 0;  colCount < columnNames.length ; colCount++) {
 
@@ -46,11 +64,13 @@ public class TableModel extends AbstractTableModel {
                         setValueAt(field.getStringValue(), rowCount++, colCount);
                     }
                 }
+
+            //data = new ArrayList<Field>(lstFields);
+
             }
         }
-
-
     }
+
 
     /**
      * Returns the number of rows in the model. A
@@ -97,11 +117,7 @@ public class TableModel extends AbstractTableModel {
         return columnNames[col];
     }
     public Class getColumnClass(int col) {
-        if (col == 2) {
-            return Double.class;
-        }
-        else {
-            return String.class;
-        }
+
+        return colTypes[col];
     }
 }

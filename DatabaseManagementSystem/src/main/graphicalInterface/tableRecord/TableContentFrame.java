@@ -7,9 +7,8 @@ import main.model.DatabaseManagementSystem;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-import static main.graphicalInterface.GIConstants.ENABLE_BUTTON_ToolTipText;
+import static main.graphicalInterface.GIConstants.ENABLE_BUTTON_TABLE_ToolTipText;
 import static main.graphicalInterface.GIConstants.RECORDS_TITLE;
 
 public class TableContentFrame  extends JPanel {
@@ -110,10 +109,10 @@ public class TableContentFrame  extends JPanel {
     private void disableUpdateDeleteButtons() {
 
         btnUpdate.setEnabled(false);
-        btnUpdate.setToolTipText(ENABLE_BUTTON_ToolTipText);
+        btnUpdate.setToolTipText(ENABLE_BUTTON_TABLE_ToolTipText);
 
         btnDelete.setEnabled(false);
-        btnUpdate.setToolTipText(ENABLE_BUTTON_ToolTipText);
+        btnUpdate.setToolTipText(ENABLE_BUTTON_TABLE_ToolTipText);
 
     }
 
