@@ -1,10 +1,7 @@
 package main;
 
 import main.graphicalInterface.MainWindow;
-import main.model.Column;
-import main.model.DatabaseManagementSystem;
-import main.model.Field;
-import main.model.Table;
+import main.model.*;
 import main.persistance.DatabasePersistance;
 import main.util.DataBuilder;
 
@@ -16,10 +13,12 @@ import java.util.Map;
 public class Main {
 
     public static void main(String[] args) {
+        DatabaseManagementSystem.getInstance();
+        CsvService.writeDataLineByLine("E:\\Facultate\\Master\\Anul I, semestrul II\\Radulescu\\test.csv");
+//        MainWindow mainFrame = new MainWindow();
+//        mainFrame.open();
+//
+//        new DatabasePersistance().persist();
 
-        MainWindow mainFrame = new MainWindow();
-        mainFrame.open();
-
-        new DatabasePersistance().persist();
     }
 }

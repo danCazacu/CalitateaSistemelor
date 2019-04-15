@@ -93,7 +93,7 @@ public class DatabasePersistance {
         return arrayList;
     }
 
-    private String cwd() {
+    public static String cwd() {
         Path currentRelativePath = Paths.get("");
         return currentRelativePath.toAbsolutePath().toString();
     }
