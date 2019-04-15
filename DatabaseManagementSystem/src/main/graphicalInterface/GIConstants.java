@@ -17,6 +17,7 @@ public class GIConstants {
     public static final String ENTER_NEW_DATABASE_MESSAGE = "Enter new Database name: ";
     public static final String CREATE_NEW_DATABASE_EMPTY_NAME = "Can't add database with empty name\nEnter a valid Database name: ";
     public static final String WRONG_DATABASE_NAME_ALREADY_EXISTS = "Already exist a database with this name\nEnter another Database name: ";
+    public static final String WRONG_DATABASE_NAME_ESCAPE_CHARACTER = "Can't add database name that contains -> \" \nEnter a valid Database name: ";
     public static final String UPDATE_DATABASE_TITLE = "Update Database";
     public static final String UPDATE_DATABASE_EMPTY_NAME = "Can't rename database with empty name\nEnter a valid Database name: ";
 
@@ -29,6 +30,7 @@ public class GIConstants {
     public static final String ENTER_NEW_TABLE_MESSAGE = "Enter new Table name: ";
     public static final String CREATE_NEW_TABLE_EMPTY_NAME = "Can't add table with empty name\nEnter a valid Table name: ";
     public static final String WRONG_TABLE_NAME_ALREADY_EXISTS = "Already exist in the database a table with this name\nEnter another Table name: ";
+    public static final String WRONG_TABLE_NAME_ESCAPE_CHARACTER = "Can't add table name that contains -> \" \nEnter a valid Table name: ";
     public static final String UPDATE_TABLE_TITLE = "Update Table";
     public static final String UPDATE_TABLE_EMPTY_NAME = "Can't rename table with empty name\nEnter a valid Table name: ";
 

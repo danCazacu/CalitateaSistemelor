@@ -192,7 +192,10 @@ public class TableFrame extends JPanel implements ListSelectionListener {
 
                     //already exist a database with this name, reopen popup with proper message
                     input = inputTextPopUp.openPopUp(WRONG_TABLE_NAME_ALREADY_EXISTS, true);
-                } else {
+                } else if(input.toString().trim().contains("\"")) {
+
+                    input = inputTextPopUp.openPopUp(WRONG_TABLE_NAME_ESCAPE_CHARACTER, true);
+                }else{
 
                     databaseManagementSystem.getDatabase(selectedDatabase).createTable(input.toString(), new ArrayList<>());
                     populateList();
@@ -222,7 +225,10 @@ public class TableFrame extends JPanel implements ListSelectionListener {
 
                     //already exist a table in the selected database with this name, reopen popup with proper message
                     input = inputTextPopUp.openPopUp(WRONG_TABLE_NAME_ALREADY_EXISTS, true);
-                } else {
+                } else if(input.toString().trim().contains("\"")) {
+
+                    input = inputTextPopUp.openPopUp(WRONG_TABLE_NAME_ESCAPE_CHARACTER, true);
+                }else{
 
                     String newName = input.toString().trim();
 

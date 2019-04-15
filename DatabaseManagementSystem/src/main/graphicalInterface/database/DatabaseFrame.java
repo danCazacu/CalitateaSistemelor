@@ -171,7 +171,10 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
 
                     //already exist a database with this name, reopen popup with proper message
                     input = inputTextPopUp.openPopUp(WRONG_DATABASE_NAME_ALREADY_EXISTS, true);
-                } else {
+                } else if(input.toString().trim().contains("\"")) {
+
+                    input = inputTextPopUp.openPopUp(WRONG_DATABASE_NAME_ESCAPE_CHARACTER, true);
+                }else{
 
                     databaseManagementSystem.createDatabase(input.toString().trim());
                     populateList();
@@ -202,7 +205,10 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
 
                     //already exist a database with this name, reopen popup with proper message
                     input = inputTextPopUp.openPopUp(WRONG_DATABASE_NAME_ALREADY_EXISTS, true);
-                } else {
+                } else if(input.toString().trim().contains("\"")) {
+
+                    input = inputTextPopUp.openPopUp(WRONG_DATABASE_NAME_ESCAPE_CHARACTER, true);
+                }else{
 
                     String newName = input.toString().trim();
 
