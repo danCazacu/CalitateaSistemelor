@@ -3,10 +3,13 @@ package main.graphicalInterface;
 import main.graphicalInterface.database.DatabaseFrame;
 import main.graphicalInterface.table.TableFrame;
 import main.graphicalInterface.tableRecord.TableContentFrame;
+import main.persistance.DatabasePersistance;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import static main.graphicalInterface.GIConstants.DATABASE_MANAGEMENT_SYSTEM_TITLE;
 
@@ -23,6 +26,19 @@ public class MainWindow extends JFrame {
         tableContentFrame = TableContentFrame.getInstance();
 
         this.setTitle(DATABASE_MANAGEMENT_SYSTEM_TITLE);
+        this.addWindowListener(new WindowAdapter() {
+            /**
+             * Invoked when a window is in the process of being closed.
+             * The close operation can be overridden at this point.
+             *
+             * @param e
+             */
+            @Override
+            public void windowClosing(WindowEvent e) {
+
+                new DatabasePersistance().persist();
+            }
+        });
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         //this.setLayout(null);

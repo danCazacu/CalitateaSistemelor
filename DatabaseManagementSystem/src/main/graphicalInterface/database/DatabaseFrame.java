@@ -2,6 +2,7 @@ package main.graphicalInterface.database;
 
 import main.graphicalInterface.ConfirmDialog;
 import main.graphicalInterface.InputTextPopUp;
+import main.graphicalInterface.PersistenceActionListener;
 import main.graphicalInterface.table.TableFrame;
 import main.model.Database;
 import main.model.DatabaseManagementSystem;
@@ -151,8 +152,10 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
 
     }
 
-    class CreateListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
+    class CreateListener extends PersistenceActionListener {
+
+        @Override
+        public void beforePersist(ActionEvent e) {
 
             InputTextPopUp inputTextPopUp = new InputTextPopUp(CREATE_NEW_DATABASE_TITLE );
             Object input = inputTextPopUp.openPopUp(ENTER_DATABASE_MESSAGE, false);
@@ -166,8 +169,8 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
                 }
                 else if (databaseManagementSystem.getDatabase(input.toString().trim()) != null) {
 
-                        //already exist a database with this name, reopen popup with proper message
-                        input = inputTextPopUp.openPopUp(WRONG_DATABASE_NAME_ALREADY_EXISTS, true);
+                    //already exist a database with this name, reopen popup with proper message
+                    input = inputTextPopUp.openPopUp(WRONG_DATABASE_NAME_ALREADY_EXISTS, true);
                 } else {
 
                     databaseManagementSystem.createDatabase(input.toString().trim());
@@ -178,8 +181,9 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
         }
     }
 
-    class UpdateListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
+    class UpdateListener extends PersistenceActionListener {
+        @Override
+        public void beforePersist(ActionEvent e) {
 
             int index = databasesList.getSelectedIndex();
             String currentName = listModel.get(index).toString();
@@ -220,8 +224,9 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
         }
     }
 
-    class DeleteListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
+    class DeleteListener extends PersistenceActionListener {
+        @Override
+        public void beforePersist(ActionEvent e) {
 
             int index = databasesList.getSelectedIndex();
 
@@ -234,7 +239,7 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
             if(delete) {
 
                 databaseManagementSystem.deleteDatabase(listModel.get(index).toString());
-                listModel.remove(index);
+                populateList();
             }
 
             if (listModel.getSize() == 0) { //No database left, disable update,delete buttons

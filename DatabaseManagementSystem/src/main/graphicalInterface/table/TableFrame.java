@@ -2,6 +2,8 @@ package main.graphicalInterface.table;
 
 import main.graphicalInterface.ConfirmDialog;
 import main.graphicalInterface.InputTextPopUp;
+import main.graphicalInterface.PersistenceActionListener;
+import main.graphicalInterface.tableRecord.TableContentFrame;
 import main.model.DatabaseManagementSystem;
 import main.model.Table;
 
@@ -29,6 +31,7 @@ public class TableFrame extends JPanel implements ListSelectionListener {
 
     private static TableFrame tableFrame;
     private DatabaseManagementSystem databaseManagementSystem;
+    private TableContentFrame tableContentFrame;
 
     private JLabel titleLabel;
     private JList tablesList;
@@ -56,6 +59,7 @@ public class TableFrame extends JPanel implements ListSelectionListener {
         this.setBounds(0, 40, 350, 750);
 
         databaseManagementSystem = DatabaseManagementSystem.getInstance();
+        tableContentFrame = TableContentFrame.getInstance();
 
         /*
         TITLE
@@ -147,6 +151,8 @@ public class TableFrame extends JPanel implements ListSelectionListener {
         if (tablesList.getSelectedIndex() > -1) {
 
             enableDeleteUpdateButtons();
+            tableContentFrame.setSelectedDatabase(selectedDatabase);
+            tableContentFrame.setSelectedTable(listModel.get(tablesList.getSelectedIndex()).toString());
         } else {
 
             disableUpdateDeleteButtons();
@@ -169,8 +175,9 @@ public class TableFrame extends JPanel implements ListSelectionListener {
 
     }
 
-    class CreateListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
+    class CreateListener extends PersistenceActionListener {
+        @Override
+        public void beforePersist(ActionEvent e) {
 
             InputTextPopUp inputTextPopUp = new InputTextPopUp(CREATE_NEW_TABLE_TITLE);
             Object input = inputTextPopUp.openPopUp(ENTER_TABLE_MESSAGE, false);
@@ -195,8 +202,9 @@ public class TableFrame extends JPanel implements ListSelectionListener {
         }
     }
 
-    class UpdateListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
+    class UpdateListener extends PersistenceActionListener {
+        @Override
+        public void beforePersist(ActionEvent e) {
 
             int index = tablesList.getSelectedIndex();
             String currentName = listModel.get(index).toString();
@@ -236,8 +244,9 @@ public class TableFrame extends JPanel implements ListSelectionListener {
         }
     }
 
-    class DeleteListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
+    class DeleteListener extends PersistenceActionListener {
+        @Override
+        public void beforePersist(ActionEvent e) {
 
             int index = tablesList.getSelectedIndex();
 
