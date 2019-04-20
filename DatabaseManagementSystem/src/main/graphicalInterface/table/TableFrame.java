@@ -2,6 +2,8 @@ package main.graphicalInterface.table;
 
 import main.graphicalInterface.ConfirmDialog;
 import main.graphicalInterface.InputTextPopUp;
+import main.graphicalInterface.PersistenceActionListener;
+import main.graphicalInterface.tableRecord.TableContentFrame;
 import main.model.DatabaseManagementSystem;
 import main.model.Table;
 
@@ -10,7 +12,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import static main.graphicalInterface.GIConstants.*;
@@ -29,6 +30,7 @@ public class TableFrame extends JPanel implements ListSelectionListener {
 
     private static TableFrame tableFrame;
     private DatabaseManagementSystem databaseManagementSystem;
+    private TableContentFrame tableContentFrame;
 
     private JLabel titleLabel;
     private JList tablesList;
@@ -37,6 +39,7 @@ public class TableFrame extends JPanel implements ListSelectionListener {
     private JButton btnCreate;
     private JButton btnUpdate;
     private JButton btnDelete;
+    private JButton btnExportTable;
 
     private String selectedDatabase;
 
@@ -56,6 +59,7 @@ public class TableFrame extends JPanel implements ListSelectionListener {
         this.setBounds(0, 40, 350, 750);
 
         databaseManagementSystem = DatabaseManagementSystem.getInstance();
+        tableContentFrame = TableContentFrame.getInstance();
 
         /*
         TITLE
@@ -96,21 +100,26 @@ public class TableFrame extends JPanel implements ListSelectionListener {
          */
         btnCreate = new JButton();
         btnCreate.setText("Create Table");
-        btnCreate.setBounds(90, 480, 200, 50);
+        btnCreate.setBounds(90, 490, 200, 50);
         btnCreate.addActionListener(new CreateListener());
 
         btnUpdate = new JButton();
         btnUpdate.setText("Update Table");
-        btnUpdate.setBounds(90, 560, 200, 50);
+        btnUpdate.setBounds(90, 550, 200, 50);
         btnUpdate.addActionListener(new UpdateListener());
 
         btnDelete = new JButton();
         btnDelete.setText("Delete Table");
-        btnDelete.setBounds(90, 640, 200, 50);
+        btnDelete.setBounds(90, 610, 200, 50);
         btnDelete.addActionListener(new DeleteListener());
 
+        btnExportTable = new JButton();
+        btnExportTable.setText("Export Table");
+        btnExportTable.setBounds(90, 670, 200, 50);
+        btnExportTable.addActionListener(new ExportListener());
+
         //by default, Update and Delete Buttons are disabled
-        disableUpdateDeleteButtons();
+        disableUpdateDeleteExportButtons();
 
         addPanelObjects();
     }
@@ -134,6 +143,7 @@ public class TableFrame extends JPanel implements ListSelectionListener {
         this.add(btnCreate);
         this.add(btnUpdate);
         this.add(btnDelete);
+        this.add(btnExportTable);
     }
 
     /**
@@ -146,31 +156,38 @@ public class TableFrame extends JPanel implements ListSelectionListener {
 
         if (tablesList.getSelectedIndex() > -1) {
 
-            enableDeleteUpdateButtons();
+            enableDeleteUpdateExportButtons();
+            tableContentFrame.setSelectedDatabase(selectedDatabase);
+            tableContentFrame.setSelectedTable(listModel.get(tablesList.getSelectedIndex()).toString());
         } else {
 
-            disableUpdateDeleteButtons();
+            disableUpdateDeleteExportButtons();
         }
     }
 
-    private void enableDeleteUpdateButtons() {
+    private void enableDeleteUpdateExportButtons() {
 
         btnUpdate.setEnabled(true);
         btnDelete.setEnabled(true);
+        btnExportTable.setEnabled(true);
+        btnExportTable.setToolTipText("Export the selected table into .csv file format.");
     }
 
-    private void disableUpdateDeleteButtons() {
+    private void disableUpdateDeleteExportButtons() {
 
         btnUpdate.setEnabled(false);
-        btnUpdate.setToolTipText(ENABLE_BUTTON_ToolTipText);
+        btnUpdate.setToolTipText(ENABLE_BUTTON_DATABASE_ToolTipText);
 
         btnDelete.setEnabled(false);
-        btnUpdate.setToolTipText(ENABLE_BUTTON_ToolTipText);
+        btnDelete.setToolTipText(ENABLE_BUTTON_DATABASE_ToolTipText);
 
+        btnExportTable.setEnabled(false);
+        btnExportTable.setToolTipText(ENABLE_BUTTON_TABLE_ToolTipText);
     }
 
-    class CreateListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
+    class CreateListener extends PersistenceActionListener {
+        @Override
+        public void beforePersist(ActionEvent e) {
 
             InputTextPopUp inputTextPopUp = new InputTextPopUp(CREATE_NEW_TABLE_TITLE);
             Object input = inputTextPopUp.openPopUp(ENTER_TABLE_MESSAGE, false);
@@ -185,7 +202,10 @@ public class TableFrame extends JPanel implements ListSelectionListener {
 
                     //already exist a database with this name, reopen popup with proper message
                     input = inputTextPopUp.openPopUp(WRONG_TABLE_NAME_ALREADY_EXISTS, true);
-                } else {
+                } else if(input.toString().trim().contains("\"")) {
+
+                    input = inputTextPopUp.openPopUp(WRONG_TABLE_NAME_ESCAPE_CHARACTER, true);
+                }else{
 
                     databaseManagementSystem.getDatabase(selectedDatabase).createTable(input.toString(), new ArrayList<>());
                     populateList();
@@ -195,8 +215,9 @@ public class TableFrame extends JPanel implements ListSelectionListener {
         }
     }
 
-    class UpdateListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
+    class UpdateListener extends PersistenceActionListener {
+        @Override
+        public void beforePersist(ActionEvent e) {
 
             int index = tablesList.getSelectedIndex();
             String currentName = listModel.get(index).toString();
@@ -214,7 +235,10 @@ public class TableFrame extends JPanel implements ListSelectionListener {
 
                     //already exist a table in the selected database with this name, reopen popup with proper message
                     input = inputTextPopUp.openPopUp(WRONG_TABLE_NAME_ALREADY_EXISTS, true);
-                } else {
+                } else if(input.toString().trim().contains("\"")) {
+
+                    input = inputTextPopUp.openPopUp(WRONG_TABLE_NAME_ESCAPE_CHARACTER, true);
+                }else{
 
                     String newName = input.toString().trim();
 
@@ -236,8 +260,9 @@ public class TableFrame extends JPanel implements ListSelectionListener {
         }
     }
 
-    class DeleteListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
+    class DeleteListener extends PersistenceActionListener {
+        @Override
+        public void beforePersist(ActionEvent e) {
 
             int index = tablesList.getSelectedIndex();
 
@@ -255,8 +280,15 @@ public class TableFrame extends JPanel implements ListSelectionListener {
 
             if (listModel.getSize() == 0) { //No table left, disable update,delete buttons
 
-                disableUpdateDeleteButtons();
+                disableUpdateDeleteExportButtons();
             }
+        }
+    }
+
+    class ExportListener extends PersistenceActionListener {
+        @Override
+        public void beforePersist(ActionEvent e) {
+
         }
     }
 

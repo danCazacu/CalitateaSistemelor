@@ -1,22 +1,21 @@
 package main.graphicalInterface.tableRecord;
 
-import main.graphicalInterface.database.DatabaseFrame;
-import main.graphicalInterface.table.TableFrame;
+import main.exception.FieldValueNotSet;
+import main.graphicalInterface.PersistenceActionListener;
 import main.model.DatabaseManagementSystem;
 
 import javax.swing.*;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-import static main.graphicalInterface.GIConstants.ENABLE_BUTTON_ToolTipText;
+import static main.graphicalInterface.GIConstants.ENABLE_BUTTON_TABLE_ToolTipText;
 import static main.graphicalInterface.GIConstants.RECORDS_TITLE;
 
 public class TableContentFrame  extends JPanel {
 
     private static TableContentFrame tableContentFrame;
     private String selectedTable;
+    private String selectedDatabase;
     private DatabaseManagementSystem databaseManagementSystem;
 
     private JLabel titleLabel;
@@ -24,6 +23,9 @@ public class TableContentFrame  extends JPanel {
     private JButton btnInsert;
     private JButton btnUpdate;
     private JButton btnDelete;
+    private JTable tableContent;
+    private JScrollPane scrollPane;
+    private TableModel myTableModel;
 
     public static TableContentFrame getInstance(){
 
@@ -52,7 +54,14 @@ public class TableContentFrame  extends JPanel {
         /*
         TABLE RECORDS
          */
+        tableContent = new JTable();
+        populateTable();
 
+        scrollPane = new JScrollPane(tableContent);
+        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setBounds(0, 45, 350, 400);
+        scrollPane.setViewportView(tableContent);
 
         /*
         BUTTONS
@@ -86,6 +95,7 @@ public class TableContentFrame  extends JPanel {
     private void addPanelObjects() {
 
         this.add(titleLabel);
+        this.add(scrollPane);
         this.add(btnSelect);
         this.add(btnInsert);
         this.add(btnUpdate);
@@ -101,41 +111,74 @@ public class TableContentFrame  extends JPanel {
     private void disableUpdateDeleteButtons() {
 
         btnUpdate.setEnabled(false);
-        btnUpdate.setToolTipText(ENABLE_BUTTON_ToolTipText);
+        btnUpdate.setToolTipText(ENABLE_BUTTON_TABLE_ToolTipText);
 
         btnDelete.setEnabled(false);
-        btnUpdate.setToolTipText(ENABLE_BUTTON_ToolTipText);
+        btnUpdate.setToolTipText(ENABLE_BUTTON_TABLE_ToolTipText);
 
     }
 
-    class SelectListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
+    class SelectListener extends PersistenceActionListener {
+        @Override
+        public void beforePersist(ActionEvent e) {
 
         }
     }
 
-    class InsertListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
+    class InsertListener extends PersistenceActionListener {
+        @Override
+        public void beforePersist(ActionEvent e) {
 
         }
     }
 
-    class UpdateListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
+    class UpdateListener extends PersistenceActionListener {
+        @Override
+        public void beforePersist(ActionEvent e) {
 
         }
     }
 
-    class DeleteListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
+    class DeleteListener extends PersistenceActionListener {
+        @Override
+        public void beforePersist(ActionEvent e) {
 
         }
     }
 
 
-    private void populateList() {
+    private void populateTable() {
 
+        if(selectedDatabase != null && selectedTable != null) {
 
+            try {
+                myTableModel = new TableModel(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable));
+            } catch (FieldValueNotSet fieldValueNotSet) {
+
+                fieldValueNotSet.printStackTrace();
+            }
+
+            tableContent = new JTable(myTableModel);
+
+            System.out.println(myTableModel.getColumnCount() + "\t" + myTableModel.getRowCount());
+           /* for(int colCount = 0;  colCount < columns.length ; colCount++) {
+
+                List<Field> lstFields = modelTable.getData().get(modelTable.getColumn(columns[colCount]));
+                if (lstFields != null) {
+                    int rowCount = 0;
+                    for (Field field : lstFields) {
+
+                        if (field.isIntValueSet()) {
+
+                            tableContent.setValueAt(field.getIntValue(), rowCount++, colCount );
+                        } else {
+
+                            tableContent.setValueAt(field.getStringValue(), rowCount++, colCount +);
+                        }
+                    }
+                }
+            }*/
+        }
     }
 
     public void setSelectedTable(String selectedTable) {
@@ -151,6 +194,13 @@ public class TableContentFrame  extends JPanel {
         }
 
         this.titleLabel.setText(title);
-        populateList();
+
+        populateTable();
+        scrollPane.setViewportView(tableContent);
+    }
+
+    public void setSelectedDatabase(String selectedDatabase) {
+
+        this.selectedDatabase = selectedDatabase;
     }
 }
