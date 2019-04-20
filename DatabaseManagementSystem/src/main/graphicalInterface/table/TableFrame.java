@@ -74,7 +74,7 @@ public class TableFrame extends JPanel implements ListSelectionListener {
         }
         titleLabel = new JLabel(title, SwingConstants.CENTER);
         titleLabel.setFont(new Font("Serif", Font.BOLD, 20));
-        titleLabel.setBounds(0, 20, 350, 20);
+        titleLabel.setBounds(0, 20, 350, 25);
 
         /*
         Table(s) List
