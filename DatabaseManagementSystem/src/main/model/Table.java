@@ -172,8 +172,15 @@ public class Table {
     }
 
     public int getNumberOfRows() {
-        Column column = (Column) data.keySet().toArray()[0];
-        return data.get(column).size();
+
+        //check if the table has anything in it
+        if(data.keySet().size() > 0 ){
+
+            Column column = (Column) data.keySet().toArray()[0];
+            return data.get(column).size();
+        }
+
+        return 0;
     }
 
     public void deleteColumn(Column column) {

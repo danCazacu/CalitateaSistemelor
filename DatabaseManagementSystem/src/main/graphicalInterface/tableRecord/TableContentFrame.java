@@ -54,12 +54,14 @@ public class TableContentFrame  extends JPanel {
         /*
         TABLE RECORDS
          */
+        tableContent = new JTable();
         populateTable();
 
         scrollPane = new JScrollPane(tableContent);
         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setBounds(0, 45, 350, 400);
+        scrollPane.setViewportView(tableContent);
 
         /*
         BUTTONS
@@ -152,10 +154,13 @@ public class TableContentFrame  extends JPanel {
             try {
                 myTableModel = new TableModel(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable));
             } catch (FieldValueNotSet fieldValueNotSet) {
+
                 fieldValueNotSet.printStackTrace();
             }
 
             tableContent = new JTable(myTableModel);
+
+            System.out.println(myTableModel.getColumnCount() + "\t" + myTableModel.getRowCount());
            /* for(int colCount = 0;  colCount < columns.length ; colCount++) {
 
                 List<Field> lstFields = modelTable.getData().get(modelTable.getColumn(columns[colCount]));
@@ -191,6 +196,7 @@ public class TableContentFrame  extends JPanel {
         this.titleLabel.setText(title);
 
         populateTable();
+        scrollPane.setViewportView(tableContent);
     }
 
     public void setSelectedDatabase(String selectedDatabase) {

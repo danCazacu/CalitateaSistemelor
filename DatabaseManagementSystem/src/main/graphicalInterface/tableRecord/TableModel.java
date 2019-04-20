@@ -1,76 +1,41 @@
 package main.graphicalInterface.tableRecord;
 
 import main.exception.FieldValueNotSet;
-import main.model.Field;
+import main.model.Column;
 import main.model.Table;
 
 import javax.swing.table.AbstractTableModel;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
 
 public class TableModel extends AbstractTableModel {
 
     private Table table ;
-    private Class[] colTypes;
-    private String[] columnNames ;
-
-    private List<Field> data ;
-
-    /**
-     * This empty implementation is provided so users don't have to implement
-     * this method if their data model is not editable.
-     *
-     * @param aValue      value to assign to cell
-     * @param rowIndex    row of cell
-     * @param columnIndex column of cell
-     */
-    @Override
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        super.setValueAt(aValue, rowIndex, columnIndex);
-    }
+    private String[] columnNames;
+    private Class[] columnTypes;
+    private Object[][] data;
 
     public TableModel(Table table) throws FieldValueNotSet {
 
-
         this.table = table;
-        List<String> columnNamesList = table.getColumnNames();
+        columnNames = new String[table.getColumnNames().size()];
+        columnTypes = new Class[table.getColumnNames().size()];
 
-        columnNames = new String[columnNamesList.size()];
-        columnNamesList.toArray(columnNames);
+        for(int i = 0; i < table.getColumnNames().size(); i++){
 
-        colTypes = new Class[columnNamesList.size()];
+            columnNames[i] = table.getColumnNames().get(i);
 
-        int count = 0;
-        for(String colName: columnNames){
+            if(table.getColumn(table.getColumnNames().get(i)).getType().equals(Column.Type.INT)){
 
-            colTypes[count++] = table.getColumn(colName).getType().getClass();
-        }
+                columnTypes[i] = Integer.class;
+            }else {
 
-        data = new ArrayList<Field>();
-
-        for(int colCount = 0;  colCount < columnNames.length ; colCount++) {
-
-            List<Field> lstFields = table.getData().get(table.getColumn(columnNames[colCount]));
-            if (lstFields != null) {
-                int rowCount = 0;
-                for (Field field : lstFields) {
-
-                    if (field.isIntValueSet()) {
-
-                        setValueAt(field.getIntValue(), rowCount++, colCount );
-                    } else {
-
-                        setValueAt(field.getStringValue(), rowCount++, colCount);
-                    }
-                }
-
-            //data = new ArrayList<Field>(lstFields);
-
+                columnTypes[i] = String.class;
             }
         }
-    }
 
+        data = new Object[table.getNumberOfRows()][table.getColumnNames().size()];
+
+        System.out.println();
+    }
 
     /**
      * Returns the number of rows in the model. A
@@ -96,7 +61,21 @@ public class TableModel extends AbstractTableModel {
      */
     @Override
     public int getColumnCount() {
-        return columnNames.length;
+        return table.getColumnNames().size();
+    }
+
+    /**
+     * Returns a default name for the column using spreadsheet conventions:
+     * A, B, C, ... Z, AA, AB, etc.  If <code>column</code> cannot be found,
+     * returns an empty string.
+     *
+     * @param column the column being queried
+     * @return a string containing the default name of <code>column</code>
+     */
+    @Override
+    public String getColumnName(int column) {
+
+        return columnNames[column];
     }
 
     /**
@@ -109,15 +88,59 @@ public class TableModel extends AbstractTableModel {
      */
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        return 0 ;
+
+        if(columnTypes[columnIndex].equals(Integer.class)){
+
+            return 0;
+        }
+
+        return "0";
     }
 
-    public String getColumnName(int col) {
+    /**
+     * Returns false.  This is the default implementation for all cells.
+     *
+     * @param rowIndex    the row being queried
+     * @param columnIndex the column being queried
+     * @return false
+     */
+    @Override
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
 
-        return columnNames[col];
+        return false;
     }
-    public Class getColumnClass(int col) {
 
-        return colTypes[col];
+    /**
+     * This empty implementation is provided so users don't have to implement
+     * this method if their data model is not editable.
+     *
+     * @param aValue      value to assign to cell
+     * @param rowIndex    row of cell
+     * @param columnIndex column of cell
+     */
+    @Override
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+
+        if(columnTypes[columnIndex].equals(Integer.class)){
+
+            data[rowIndex][columnIndex] = 0;
+        }else{
+
+            data[rowIndex][columnIndex] = "0";
+        }
+
+        fireTableCellUpdated(rowIndex, columnIndex);
+    }
+
+    /**
+     * Returns <code>Object.class</code> regardless of <code>columnIndex</code>.
+     *
+     * @param columnIndex the column being queried
+     * @return the Object.class
+     */
+    @Override
+    public Class<?> getColumnClass(int columnIndex) {
+
+        return columnTypes[columnIndex];
     }
 }
