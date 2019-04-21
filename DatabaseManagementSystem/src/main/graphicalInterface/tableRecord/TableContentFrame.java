@@ -1,5 +1,6 @@
 package main.graphicalInterface.tableRecord;
 
+import com.sun.org.apache.xalan.internal.xsltc.runtime.Operators;
 import main.exception.*;
 import main.graphicalInterface.ConfirmDialog;
 import main.graphicalInterface.PersistenceActionListener;
@@ -340,6 +341,73 @@ public class TableContentFrame extends JPanel {
         @Override
         public void beforePersist(ActionEvent e) {
 
+
+            String title = "Update fields values using WHERE clause";
+            UpdateFieldPanel updateFieldPanel = null;
+
+            try {
+                updateFieldPanel = new UpdateFieldPanel(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable));
+            } catch (DoesNotExist doesNotExist) {
+                //doesNotExist.printStackTrace();
+            }
+
+            Object result = updateFieldPanel.openPopUp(title, false);
+            while (!result.equals(JOptionPane.CANCEL_OPTION) && updateFieldPanel != null) {
+
+                try {
+
+                    String setNewValue = updateFieldPanel.txtNewValue.getText().trim();
+                    if(setNewValue.isEmpty())
+                        throw new InvalidEmptyName("Empty new value to be set");
+                    FilteringService.validate(setNewValue);
+
+                    String matchValue = updateFieldPanel.textMatchValue.getText().trim();
+                    if(matchValue.isEmpty())
+                        throw new InvalidEmptyName("Empty new value to do the match");
+                    FilteringService.validate(matchValue);
+
+                    Column selectedColumn = (Column) updateFieldPanel.lstColumns.getSelectedItem();
+                    FieldComparator.Sign selectedOperator = (FieldComparator.Sign) updateFieldPanel.cbOperators.getSelectedItem();
+
+                    Field matchValueField = new Field();
+                    Field newValueField = new Field();
+
+                    if(selectedColumn.getType().equals(Column.Type.INT)){
+
+                        matchValueField.isIntValueSet();
+                        newValueField.isIntValueSet();
+
+                        try {
+                            matchValueField.setValue(Integer.parseInt(matchValue));
+                            newValueField.setValue(Integer.parseInt(setNewValue));
+                        }catch (NumberFormatException exceptionNumber) {
+
+                            throw new TypeMismatchException(Column.Type.STRING, Column.Type.INT, selectedColumn.getName());
+                        }
+
+                    }else{
+
+                        matchValueField.isStringValueSet();
+                        newValueField.isStringValueSet();
+
+                        matchValueField.setValue(matchValue);
+                        newValueField.setValue(setNewValue);
+                    }
+
+                    Table selectedTableDB =  databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable);
+
+
+                    selectedTableDB.updateWhere(selectedColumn.getName(), selectedOperator, matchValueField, newValueField );
+                    setSelectedTable(selectedTable);
+
+                    break; // all worked fine; can go further
+                } catch (InvalidEmptyName | InvalidValue | TypeMismatchException exception) {
+
+                    result = updateFieldPanel.openPopUp(exception.getMessage(), true);
+                } catch (DoesNotExist ignored) {
+
+                }
+            }
         }
     }
 
