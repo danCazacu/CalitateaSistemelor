@@ -8,6 +8,7 @@ import main.graphicalInterface.InputTextPopUp;
 import main.graphicalInterface.PersistenceActionListener;
 import main.graphicalInterface.table.TableFrame;
 import main.graphicalInterface.tableRecord.InvalidEmptyName;
+import main.model.CsvService;
 import main.model.Database;
 import main.model.DatabaseManagementSystem;
 import main.model.Table;
@@ -15,6 +16,7 @@ import main.model.Table;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -284,8 +286,22 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
     class ImportListener extends PersistenceActionListener {
         @Override
         public void beforePersist(ActionEvent e) {
+            int index = databasesList.getSelectedIndex();
+            String currentName = listModel.get(index).toString();
 
-            //TODO call the csv importer
+
+            JFileChooser chooser = new JFileChooser();
+            FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                    "CSV Files", "csv");
+            chooser.setFileFilter(filter);
+            int returnVal = chooser.showOpenDialog(btnImportTable);
+            String absPath = chooser.getSelectedFile().getAbsolutePath();
+            boolean result = CsvService.importDataLineByLine(absPath, currentName);
+            if (!result) {
+                JOptionPane.showMessageDialog(null, "This table name does not exist.");
+            } else {
+                JOptionPane.showMessageDialog(null, "The file was successfully imported.");
+            }
         }
     }
 }
