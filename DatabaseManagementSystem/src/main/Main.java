@@ -15,10 +15,10 @@ public class Main {
     public static void main(String[] args) {
         DatabaseManagementSystem.getInstance();
         CsvService.writeDataLineByLine("E:\\Facultate\\Master\\Anul I, semestrul II\\Radulescu\\test.csv");
-//        MainWindow mainFrame = new MainWindow();
-//        mainFrame.open();
-//
-//        new DatabasePersistance().persist();
+        MainWindow mainFrame = new MainWindow();
+        mainFrame.open();
+
+        new DatabasePersistance().persist();
 
     }
 }

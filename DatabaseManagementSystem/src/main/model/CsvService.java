@@ -1,6 +1,5 @@
 package main.model;
 
-import com.opencsv.CSVWriter;
 import main.exception.FieldValueNotSet;
 import main.persistance.DatabasePersistance;
 
