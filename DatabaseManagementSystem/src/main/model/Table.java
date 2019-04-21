@@ -250,6 +250,9 @@ public class Table {
 
     public static String toString(Map<Column, List<Field>> input) {
         StringBuilder stringBuilder = new StringBuilder();
+        if(input.keySet().size() == 0)
+            return stringBuilder.toString();
+
         for (Column column : input.keySet()) {
             stringBuilder.append(column.getName() + " | ");
         }
