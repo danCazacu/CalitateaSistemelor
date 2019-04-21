@@ -12,8 +12,17 @@
   
   #### INSERT
   -insert database [name] - insert database store
+  
   -insert table [table_name] into [database_name]
+  
   -insert column [column_name] [column_type] into [table_name] from [database_name]
   
   #### SELECT 
   -select [columnname1,columnname2,columnname3] from [table_name] from [database_name] where [column_name] [operator] [value]
+
+  #### UPDATE
+  -update database [database_name] name [new_database_name]
+  
+  -update table [table_name] from [database_name] name 
+  
+  -update data [table_name] from [database_name] set [column_name] = [value] where [column_name] [operator] [value]
