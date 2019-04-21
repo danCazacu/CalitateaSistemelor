@@ -217,8 +217,10 @@ public class Table {
     }
 
     public void insertColumn(Column column) throws ColumnAlreadyExists {
-        if (this.data.keySet().contains(column))
-            throw new ColumnAlreadyExists(column.getName());
+        for (Column col: this.data.keySet()) {
+            if(col.getName().equalsIgnoreCase(column.getName()))
+                throw new ColumnAlreadyExists(column.getName());
+        }
 
         this.data.put(column,new ArrayList<>());
         if (column.getType().equals(Column.Type.STRING)) {
