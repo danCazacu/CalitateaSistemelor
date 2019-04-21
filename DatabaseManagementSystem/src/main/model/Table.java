@@ -114,13 +114,17 @@ public class Table {
             }
         }
         //if all ok add data
-        for (String columnName : row.keySet()) {
-            for (Column col : data.keySet()) {
-                if (col.getName().equalsIgnoreCase(columnName)) {
-                    data.get(col).add(row.get(columnName));
-                }
+        for (Column col: data.keySet()) {
+            if(row.containsKey(col.getName())){
+                data.get(col).add(row.get(col.getName()));
+            } else{ // add a defalt value
+                Field field = new Field();
+                if(col.getType().equals(Column.Type.INT))
+                    field.setValue(0);
+                if(col.getType().equals(Column.Type.STRING))
+                    field.setValue("");
+                data.get(col).add(field);
             }
-
         }
     }
 

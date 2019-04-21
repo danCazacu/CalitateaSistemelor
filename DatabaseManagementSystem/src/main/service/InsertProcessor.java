@@ -1,13 +1,12 @@
 package main.service;
 
 import main.exception.*;
-import main.model.Column;
-import main.model.Database;
-import main.model.DatabaseManagementSystem;
-import main.model.Table;
+import main.model.*;
 import main.util.Constants;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class InsertProcessor {
 
@@ -18,9 +17,8 @@ public class InsertProcessor {
         String type = line[1];
         switch (type.toLowerCase()) {
             case Constants.INTO:
-//                processInsertInto(line);
-//                break;
-                throw new InvalidCommand("Not yet implemented");
+                processInsertInto(line);
+                break;
             case Constants.TABLE:
                 processInsertTable(line);
                 break;
@@ -33,6 +31,45 @@ public class InsertProcessor {
             default:
                 throw new InvalidCommand("Mission into/table/database/column keyword after delete");
 
+        }
+    }
+
+    private void processInsertInto(String[] line) throws InvalidCommand {
+        if (line.length <= 2)
+            throw new InvalidCommand("Missing table name");
+        if (line.length <= 3 || !line[3].equalsIgnoreCase(Constants.FROM))
+            throw new InvalidCommand("Missing from keyword after table name");
+        if (line.length <= 4)
+            throw new InvalidCommand("Missing database name after from keyword");
+        if (line.length <= 5 || !line[5].equalsIgnoreCase(Constants.VALUE))
+            throw new InvalidCommand("Missing value keyword after database name");
+        if (line.length <= 6) {
+            throw new InvalidCommand("Mising data for insert: [column_name1]=[value1],[column_name2]=[value2],[column_name3]=[value3]");
+        }
+
+        try {
+            Database database = DatabaseManagementSystem.getInstance().getDatabase(line[4]);
+            Table table = database.getTable(line[2]);
+            String val = line[6];
+            Map<String, Field> row = new HashMap<>();
+            for (String property : val.split(",")) {
+                if (property.split("=").length != 2)
+                    throw new InvalidCommand("This is not good: " + property);
+                String columnName = property.split("=")[0];
+                Column column = table.getColumn(columnName);
+                String value = property.split("=")[1];
+                Field field = new Field();
+                if(column.getType().equals(Column.Type.STRING)){
+                    field.setValue(value);
+                }
+                if(column.getType().equals(Column.Type.INT)){
+                    field.setValue(Integer.parseInt(value));
+                }
+                row.put(column.getName(),field);
+            }
+            table.insert(row);
+        } catch (DoesNotExist | TypeMismatchException | InexistentColumn | InvalidValue e) {
+            throw new InvalidCommand(e.getMessage());
         }
     }
 

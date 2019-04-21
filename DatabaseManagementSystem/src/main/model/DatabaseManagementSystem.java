@@ -20,7 +20,7 @@ public class DatabaseManagementSystem {
             try {
                 new DatabasePersistance().load();
             } catch (IOException | InvalidValue | AlreadyExists e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
             }
         }
         return instance;

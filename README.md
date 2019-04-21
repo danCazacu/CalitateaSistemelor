@@ -17,6 +17,8 @@
   
   -insert column [column_name] [column_type] into [table_name] from [database_name]
   
+  -insert into [table_name] from [database_name] value [column_name1]=[value1],[column_name2]=[value2],[column_name3]=[value3]
+  
   #### SELECT 
   -select [columnname1,columnname2,columnname3] from [table_name] from [database_name] where [column_name] [operator] [value]
 
