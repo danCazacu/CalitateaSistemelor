@@ -36,6 +36,11 @@ public class Column {
         this.type = type;
     }
 
+    public void setName(String name) throws InvalidValue {
+        validate(name);
+        this.name = name;
+    }
+
     public String getName() {
         return name;
     }
@@ -47,15 +52,18 @@ public class Column {
     @Override
     public int hashCode() {
         int superHash = super.hashCode();
-        superHash += name.hashCode() + type.hashCode();
+        superHash += type.hashCode();
         return superHash;
     }
 
     @Override
     public boolean equals(Object obj) {
+        if(this == obj)
+            return true;
         if (!(obj instanceof Column))
             return false;
         Column column = (Column) obj;
+
         return this.name.equalsIgnoreCase(column.name) && this.type.equals(column.type);
     }
 }

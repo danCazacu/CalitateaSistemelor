@@ -1,6 +1,7 @@
 package main.service;
 
 import main.exception.InvalidCommand;
+import main.persistance.DatabasePersistance;
 import main.util.Constants;
 
 import java.util.Scanner;
@@ -13,6 +14,7 @@ public class CommandLineParser {
         while (true) {
             try {
                 parse(scanner.nextLine());
+                new DatabasePersistance().persist();
             } catch (InvalidCommand invalidCommand) {
                 System.out.println(invalidCommand.getMessage());
             }
@@ -20,7 +22,6 @@ public class CommandLineParser {
     }
 
     private void parse(String line) throws InvalidCommand {
-        //this is just ideas, tried to do it but seems to much to do it at work
         String[] split = line.split("\\s+");
         if (split.length > 0) {
             String action = split[0];
