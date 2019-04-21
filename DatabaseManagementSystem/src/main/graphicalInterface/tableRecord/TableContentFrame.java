@@ -1,23 +1,19 @@
 package main.graphicalInterface.tableRecord;
 
-import main.exception.ColumnAlreadyExists;
-import main.exception.DoesNotExist;
-import main.exception.FieldValueNotSet;
-import main.exception.InvalidValue;
+import main.exception.*;
 import main.graphicalInterface.ConfirmDialog;
+import main.graphicalInterface.InputTextPopUp;
 import main.graphicalInterface.PersistenceActionListener;
-import main.model.Column;
-import main.model.DatabaseManagementSystem;
-import main.model.FieldComparator;
+import main.model.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import static main.graphicalInterface.GIConstants.ENABLE_BUTTON_TABLE_ToolTipText;
-import static main.graphicalInterface.GIConstants.RECORDS_TITLE;
+import static main.graphicalInterface.GIConstants.*;
 
 public class TableContentFrame extends JPanel {
 
@@ -135,21 +131,95 @@ public class TableContentFrame extends JPanel {
         @Override
         public void beforePersist(ActionEvent e) {
 
+            String title = "Please select columns and optionally add where clause";
             SelectPanel selectPanel = null;
+
             try {
                 selectPanel = new SelectPanel(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable));
-            } catch (DoesNotExist ignored) {
-               // doesNotExist.printStackTrace();
+            } catch (DoesNotExist doesNotExist) {
+                doesNotExist.printStackTrace();
             }
 
-            String title = "Please select columns and optionally add where clause";
-            int messageType = JOptionPane.QUESTION_MESSAGE;
+            Object result = selectPanel.openPopUp(title, false);
+            while (!result.equals(JOptionPane.CANCEL_OPTION) && selectPanel != null) {
+                try {
 
-            int result = JOptionPane.showConfirmDialog(null, selectPanel,
-                    title, JOptionPane.OK_CANCEL_OPTION, messageType);
-            if (result == JOptionPane.OK_OPTION) {
+                    if (selectPanel.getLstColumns().getSelectedValuesList().size() == 0) {
 
+                        throw new InvalidColumnSelection();
+                    }
 
+                    Table originalTable = databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable);
+                    List<Column> lstSelectedColumns = new ArrayList<>();
+                    List<SelectPanel.CheckListItem> selectedItems = selectPanel.getLstColumns().getSelectedValuesList();
+
+                    for (int i = 0; i < selectedItems.size(); i++) {
+
+                        Column column = originalTable.getColumn(String.valueOf(selectedItems.get(i)));
+                        lstSelectedColumns.add(column);
+                    }
+
+                    if (selectPanel.getWhereCheckBox().isSelected()) {
+
+                        FieldComparator.Sign operator = (FieldComparator.Sign) selectPanel.getCbOperators().getSelectedItem();
+                        //System.out.println("operator: " + operator);
+
+                        String matchValue = selectPanel.getTextMatchValue().getText().trim();
+                        //System.out.println("value: " + matchValue);
+
+                        if (matchValue.isEmpty()) {
+                            throw new InvalidEmptyName("Can't do match with empty value");
+                        }
+
+                        if (lstSelectedColumns.get(0).getType().equals(Column.Type.INT)) {
+
+                            try {
+                                Integer.parseInt(matchValue);
+                            } catch (NumberFormatException exceptionNumber) {
+
+                                throw new TypeMismatchException(Column.Type.STRING, Column.Type.INT, lstSelectedColumns.get(0).getName());
+
+                            }
+                        }
+
+                        List<Column> lstAllColumns = new ArrayList<>();
+
+                        Table filteredTable = new Table(originalTable.getName(), new ArrayList<>(originalTable.getData().keySet()));
+
+                        Field field = new Field();
+                        if(lstSelectedColumns.get(0).getType().equals(Column.Type.INT)){
+
+                            field.isIntValueSet();
+                            field.setValue(Integer.parseInt(matchValue));
+                        }else{
+
+                            field.isStringValueSet();
+                            field.setValue(matchValue);
+                        }
+
+                        Map<Column, List<Field>> filteredRows = originalTable.where(lstSelectedColumns.get(0).getName(), operator, field);
+                        for (Column col : filteredTable.getData().keySet()) {
+                            filteredTable.getData().put(col, filteredRows.get(col));
+                        }
+
+                        new ShowTableAfterSelect(filteredTable);
+                    } else {
+
+                        Table filteredTable = new Table(originalTable.getName(), lstSelectedColumns);
+                        Map<Column, List<Field>> selectResult = originalTable.select(originalTable.getData(), lstSelectedColumns);
+                        for (Column col : filteredTable.getData().keySet()) {
+                            filteredTable.getData().put(col, selectResult.get(col));
+                        }
+                        new ShowTableAfterSelect(filteredTable);
+                    }
+
+                    break;
+                } catch (InvalidEmptyName | InvalidColumnSelection | TypeMismatchException exception) {
+
+                    result = selectPanel.openPopUp(exception.getMessage(), true);
+                } catch (FieldValueNotSet | DoesNotExist | InvalidValue ignored) {
+                    //fieldValueNotSet.printStackTrace();
+                }
             }
         }
     }
@@ -186,7 +256,7 @@ public class TableContentFrame extends JPanel {
 
                     try {
 
-                        if(columnName.getText().trim().isEmpty())
+                        if (columnName.getText().trim().isEmpty())
                             throw new InvalidEmptyName();
                         Column newColumn = new Column(columnName.getText().trim(), (Column.Type) combo.getSelectedItem());
 
@@ -200,7 +270,7 @@ public class TableContentFrame extends JPanel {
                         title = exception.getMessage();
                         messageType = JOptionPane.ERROR_MESSAGE;
                     }
-                }else{
+                } else {
 
                     cancelPressed = true;
                 }
@@ -292,12 +362,10 @@ public class TableContentFrame extends JPanel {
         if (selectedDatabase != null && selectedTable != null) {
 
             try {
-                myTableModel = new TableModel(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable));
-            } catch (FieldValueNotSet fieldValueNotSet) {
+                myTableModel = new TableModel(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable), false);
+            } catch (FieldValueNotSet | DoesNotExist fieldValueNotSet) {
 
-                fieldValueNotSet.printStackTrace();
-            } catch (DoesNotExist ignored) {
-                //doesNotExist.printStackTrace();
+                //fieldValueNotSet.printStackTrace();
             }
 
             tableContent = new JTable(myTableModel);

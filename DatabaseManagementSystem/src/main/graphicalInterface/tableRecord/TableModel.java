@@ -15,38 +15,69 @@ public class TableModel extends AbstractTableModel {
     private String[] columnNames;
     private Class[] columnTypes;
     private Object[][] data;
+    private  boolean selectedPressed = false;
 
-    public TableModel(){}
+    public TableModel() {
+    }
 
-    public TableModel(Table inputTable) throws FieldValueNotSet {
+    public TableModel(Table inputTable, boolean selectPressed) throws FieldValueNotSet {
 
         this.table = inputTable;
-        columnNames = new String[this.table.getColumnNames().size() + 1];
-        columnTypes = new Class[this.table.getColumnNames().size() + 1];
+        this.selectedPressed = selectPressed;
 
-        columnNames[0] = "Select";
-        columnTypes[0] = Boolean.class;
+        if (!selectPressed) {
+            columnNames = new String[this.table.getColumnNames().size() + 1];
+            columnTypes = new Class[this.table.getColumnNames().size() + 1];
+
+            columnNames[0] = "Select";
+            columnTypes[0] = Boolean.class;
+        } else {
+
+            columnNames = new String[this.table.getColumnNames().size()];
+            columnTypes = new Class[this.table.getColumnNames().size()];
+        }
 
         for (int i = 0; i < this.table.getColumnNames().size(); i++) {
 
-            columnNames[i + 1] = this.table.getColumnNames().get(i);
+            if (!selectPressed) {
+                columnNames[i + 1] = this.table.getColumnNames().get(i);
+            } else {
+
+                columnNames[i] = this.table.getColumnNames().get(i);
+            }
 
             try {
                 if (this.table.getColumn(this.table.getColumnNames().get(i)).getType().equals(Column.Type.INT)) {
 
-                    columnTypes[i + 1] = Integer.class;
+                    if (!selectPressed) {
+                        columnTypes[i + 1] = Integer.class;
+                    } else {
+
+                        columnTypes[i] = Integer.class;
+                    }
                 } else {
 
-                    columnTypes[i + 1] = String.class;
+                    if (!selectPressed) {
+                        columnTypes[i + 1] = String.class;
+                    } else {
+
+                        columnTypes[i] = String.class;
+                    }
                 }
             } catch (DoesNotExist ignored) {
-               // doesNotExist.printStackTrace();
+                // doesNotExist.printStackTrace();
             }
         }
 
-        data = new Object[this.table.getNumberOfRows()][this.table.getColumnNames().size() + 1];
+        if (!selectPressed) {
 
-        int columnIndex = 1;
+            data = new Object[this.table.getNumberOfRows()][this.table.getColumnNames().size() + 1];
+        } else {
+
+            data = new Object[this.table.getNumberOfRows()][this.table.getColumnNames().size()];
+        }
+
+        int columnIndex = selectPressed ? 0 : 1;
         for (Column column : this.table.getData().keySet()) {
 
             List<Field> fieldValues = this.table.getData().get(column);
@@ -66,9 +97,12 @@ public class TableModel extends AbstractTableModel {
         }
 
         //set the first column to false: Boolean (not selected)
-        for (int i = 0; i < this.table.getNumberOfRows(); i++) {
+        if (!selectPressed) {
+            for (int i = 0; i < this.table.getNumberOfRows(); i++) {
 
-            data[i][0] = false;
+                data[i][0] = false;
+
+            }
         }
     }
 
@@ -96,6 +130,10 @@ public class TableModel extends AbstractTableModel {
      */
     @Override
     public int getColumnCount() {
+        if(selectedPressed){
+
+            return this.table.getColumnNames().size();
+        }
         return this.table.getColumnNames().size() + 1;
     }
 
@@ -137,7 +175,7 @@ public class TableModel extends AbstractTableModel {
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
 
-        if (columnIndex == 0) {
+        if (columnIndex == 0 && !selectedPressed) {
 
             return true;
         }
@@ -167,7 +205,7 @@ public class TableModel extends AbstractTableModel {
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 
-        if (columnIndex == 0) {
+        if (columnIndex == 0 && !selectedPressed) {
 
             if (data[rowIndex][columnIndex].equals(Boolean.FALSE)) {
 

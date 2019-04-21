@@ -1,17 +1,18 @@
 package main.graphicalInterface.tableRecord;
 
-import javafx.scene.control.CheckBox;
 import main.model.FieldComparator;
 import main.model.Table;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-public class SelectPanel extends JPanel {
+
+public class SelectPanel {
 
     JLabel lblColumns;
-    JList<CheckBox> lstColumns;
+    JList<CheckListItem> lstColumns;
 
     JCheckBox whereCheckBox;
 
@@ -24,44 +25,12 @@ public class SelectPanel extends JPanel {
     JPanel panelWHERE;
     JPanel contentPanel;
 
-    /* JComboBox<FieldComparator.Sign> comboOperators = new JComboBox(FieldComparator.Sign.values());
-            JTextField matchValue = new JTextField(20);
+    public SelectPanel( Table table) {
 
-            JCheckBox checkBoxWhere = new JCheckBox("WHERE");
-
-            GridLayout layout = new GridLayout();
-            layout.setColumns(1);
-
-            JPanel insertColumnPanel = new JPanel(layout);
-            //insertColumnPanel.add(new JLabel("Please enter the column name and select the column type")); //message
-
-            insertColumnPanel.add(new JLabel("Columns: "));
-            //TODO add combo with selection
-            //insertColumnPanel.add(Box.createHorizontalStrut(5)); // a spacer
-
-            insertColumnPanel.add(checkBoxWhere);
-
-            //insertColumnPanel.add(new JLabel("Operator:"));
-            insertColumnPanel.add(comboOperators);
-
-            JPanel matchPanel = new JPanel();
-            matchPanel.add(new JLabel("Value: "));
-            matchPanel.add(matchValue);
-
-            insertColumnPanel.add(matchPanel);*/
-
-    public SelectPanel(Table table) {
-
-        this.contentPanel = this;
+        contentPanel = new JPanel();
         lblColumns = new JLabel("Columns: ");
 
-        //DefaultListModel<JCheckBox> cbListModel = new DefaultListModel<JCheckBox>();
-        lstColumns = new JList<>();
-
-        for(String columnName: table.getColumnNames()){
-
-            lstColumns.add(new JCheckBox(columnName));
-        }
+        lstColumns = new JList(table.getColumnNames().toArray());
 
         whereCheckBox = new JCheckBox("WHERE");
 
@@ -78,29 +47,104 @@ public class SelectPanel extends JPanel {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
 
                     panelWHERE.setVisible(true);
-                   /* contentPanel.add(panelWHERE);
+                    contentPanel.repaint();
                     contentPanel.revalidate();
-                    contentPanel.repaint();*/
+
+                    if(lstColumns.getSelectedValuesList().size() > 1){
+
+                        //deselect values; let user select only ONE value if wants to use WHERE clause
+                        lstColumns.clearSelection();
+                        lstColumns.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                        lstColumns.setToolTipText("You can select only one value if you use WHERE clause");
+                    }
                 } else {
 
-                    //contentPanel.remove(panelWHERE);
-                    //contentPanel.revalidate();
+                    lstColumns.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
                     panelWHERE.setVisible(false);
+                    lstColumns.setToolTipText("You can select more than one value if you don't use WHERE clause");
                 }
             }
         });
 
         panelWHERE = new JPanel();
-        panelWHERE.setVisible(false);
+       // panelWHERE.setVisible(false);
         panelWHERE.add(lblOperator);
         panelWHERE.add(cbOperators);
         panelWHERE.add(lblMatchValue);
         panelWHERE.add(textMatchValue);
 
-        this.add(lblColumns);
-        this.add(lstColumns);
-        this.add(whereCheckBox);
+        contentPanel.add(lblColumns);
+        contentPanel.add(lstColumns);
+        contentPanel.add(whereCheckBox);
 
-        this.add(panelWHERE);
+        contentPanel.add(panelWHERE);
+
+    }
+
+    public Object openPopUp(String title, boolean isReopened) {
+
+        Object result = null;
+        if (isReopened) {
+
+            result = JOptionPane.showConfirmDialog(null, contentPanel,
+                    title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+        } else {
+
+            result = JOptionPane.showConfirmDialog(null, contentPanel,
+                    title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+        }
+        return result;
+    }
+
+    class CheckListItem {
+
+        private String label;
+        private boolean isSelected = false;
+
+        public CheckListItem(String label) {
+            this.label = label;
+        }
+
+        public boolean isSelected() {
+            return isSelected;
+        }
+
+        public void setSelected(boolean isSelected) {
+            this.isSelected = isSelected;
+        }
+
+        @Override
+        public String toString() {
+            return label;
+        }
+    }
+
+    class CheckListRenderer extends JCheckBox implements ListCellRenderer {
+        public Component getListCellRendererComponent(JList list, Object value,
+                                                      int index, boolean isSelected, boolean hasFocus) {
+            setEnabled(list.isEnabled());
+            setSelected(((CheckListItem) value).isSelected());
+            setFont(list.getFont());
+            setBackground(list.getBackground());
+            setForeground(list.getForeground());
+            setText(value.toString());
+            return this;
+        }
+    }
+
+    public JList<CheckListItem> getLstColumns() {
+        return lstColumns;
+    }
+
+    public JCheckBox getWhereCheckBox() {
+        return whereCheckBox;
+    }
+
+    public JComboBox<FieldComparator.Sign> getCbOperators() {
+        return cbOperators;
+    }
+
+    public JTextField getTextMatchValue() {
+        return textMatchValue;
     }
 }
