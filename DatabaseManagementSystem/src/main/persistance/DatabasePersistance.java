@@ -1,6 +1,8 @@
 package main.persistance;
 
+import main.exception.AlreadyExists;
 import main.exception.InexistentColumn;
+import main.exception.InvalidValue;
 import main.exception.TypeMismatchException;
 import main.model.*;
 
@@ -27,7 +29,7 @@ public class DatabasePersistance {
     }
 
 
-    public void load() throws IOException {
+    public void load() throws IOException, InvalidValue, AlreadyExists {
         FileReader fileReader = new FileReader(PATH_FILE);
         BufferedReader bufferedReader = new BufferedReader(fileReader);
         String line = bufferedReader.readLine();
@@ -40,7 +42,7 @@ public class DatabasePersistance {
         }
     }
 
-    private void loadDatabase(BufferedReader bufferedReader, Database database) throws IOException {
+    private void loadDatabase(BufferedReader bufferedReader, Database database) throws IOException, InvalidValue, AlreadyExists {
         String line = bufferedReader.readLine();
         while (line.equalsIgnoreCase(PersistenceContants.START_TABLE)) {
             String tableName = bufferedReader.readLine();
@@ -50,7 +52,7 @@ public class DatabasePersistance {
         }
     }
 
-    private Table loadTable(BufferedReader bufferedReader, String tableName) throws IOException {
+    private Table loadTable(BufferedReader bufferedReader, String tableName) throws IOException, InvalidValue {
         String line = bufferedReader.readLine();
         Map<Column, List<Field>> data = new HashMap<>();
         int rowCount = 0;
@@ -78,7 +80,7 @@ public class DatabasePersistance {
         return table;
     }
 
-    private ArrayList<Field> loadData(BufferedReader bufferedReader, Column.Type type, ArrayList<Field> arrayList) throws IOException {
+    private ArrayList<Field> loadData(BufferedReader bufferedReader, Column.Type type, ArrayList<Field> arrayList) throws IOException, InvalidValue {
         String line = bufferedReader.readLine();
         while (!line.equalsIgnoreCase(PersistenceContants.END_COLUMN)) {
             if (type.equals(Column.Type.INT)) {

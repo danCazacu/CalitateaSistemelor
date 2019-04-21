@@ -1,7 +1,13 @@
 package main.graphicalInterface.table;
 
+import main.exception.AlreadyExists;
+import main.exception.DoesNotExist;
+import main.exception.InvalidValue;
 import main.graphicalInterface.ConfirmDialog;
 import main.graphicalInterface.InputTextPopUp;
+import main.graphicalInterface.PersistenceActionListener;
+import main.graphicalInterface.tableRecord.InvalidEmptyName;
+import main.graphicalInterface.tableRecord.TableContentFrame;
 import main.graphicalInterface.database.DatabaseFrame;
 import main.model.CsvService;
 import main.model.DatabaseManagementSystem;
@@ -12,7 +18,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import static main.graphicalInterface.GIConstants.*;
@@ -31,6 +36,7 @@ public class TableFrame extends JPanel implements ListSelectionListener {
 
     private static TableFrame tableFrame;
     private DatabaseManagementSystem databaseManagementSystem;
+    private TableContentFrame tableContentFrame;
 
     private JLabel titleLabel;
     private JList tablesList;
@@ -39,7 +45,7 @@ public class TableFrame extends JPanel implements ListSelectionListener {
     private JButton btnCreate;
     private JButton btnUpdate;
     private JButton btnDelete;
-    private JButton btnExport;
+    private JButton btnExportTable;
 
     private JButton btnImport;
     private String selectedDatabase;
@@ -60,6 +66,7 @@ public class TableFrame extends JPanel implements ListSelectionListener {
         this.setBounds(0, 40, 350, 750);
 
         databaseManagementSystem = DatabaseManagementSystem.getInstance();
+        tableContentFrame = TableContentFrame.getInstance();
 
         /*
         TITLE
@@ -74,7 +81,7 @@ public class TableFrame extends JPanel implements ListSelectionListener {
         }
         titleLabel = new JLabel(title, SwingConstants.CENTER);
         titleLabel.setFont(new Font("Serif", Font.BOLD, 20));
-        titleLabel.setBounds(0, 20, 350, 20);
+        titleLabel.setBounds(0, 20, 350, 25);
 
         /*
         Table(s) List
@@ -100,31 +107,26 @@ public class TableFrame extends JPanel implements ListSelectionListener {
          */
         btnCreate = new JButton();
         btnCreate.setText("Create Table");
-        btnCreate.setBounds(90, 460, 200, 50);
+        btnCreate.setBounds(90, 490, 200, 50);
         btnCreate.addActionListener(new CreateListener());
 
         btnUpdate = new JButton();
         btnUpdate.setText("Update Table");
-        btnUpdate.setBounds(90, 520, 200, 50);
+        btnUpdate.setBounds(90, 550, 200, 50);
         btnUpdate.addActionListener(new UpdateListener());
 
         btnDelete = new JButton();
         btnDelete.setText("Delete Table");
-        btnDelete.setBounds(90, 580, 200, 50);
+        btnDelete.setBounds(90, 610, 200, 50);
         btnDelete.addActionListener(new DeleteListener());
 
-        btnExport = new JButton();
-        btnExport.setText("Export table");
-        btnExport.setBounds(90, 640, 200, 50);
-        btnExport.addActionListener(new ExportListener());
-
-        btnImport = new JButton();
-        btnImport.setText("Import table");
-        btnImport.setBounds(90, 700, 200, 50);
-        btnImport.addActionListener(new ImportListener());
+        btnExportTable = new JButton();
+        btnExportTable.setText("Export Table");
+        btnExportTable.setBounds(90, 670, 200, 50);
+        btnExportTable.addActionListener(new ExportListener());
 
         //by default, Update and Delete Buttons are disabled
-        disableUpdateDeleteButtons();
+        disableUpdateDeleteExportButtons();
 
         addPanelObjects();
     }
@@ -134,9 +136,13 @@ public class TableFrame extends JPanel implements ListSelectionListener {
         listModel.clear();
 
         if (selectedDatabase != null) {
-            for (Table table : databaseManagementSystem.getDatabase(selectedDatabase).getTables()) {
+            try {
+                for (Table table : databaseManagementSystem.getDatabase(selectedDatabase).getTables()) {
 
-                listModel.addElement(table.getName());
+                    listModel.addElement(table.getName());
+                }
+            } catch (DoesNotExist ignored) {
+                //doesNotExist.printStackTrace();
             }
         }
     }
@@ -148,7 +154,7 @@ public class TableFrame extends JPanel implements ListSelectionListener {
         this.add(btnCreate);
         this.add(btnUpdate);
         this.add(btnDelete);
-        this.add(btnExport);
+        this.add(btnExportTable);
         this.add(btnImport);
     }
 
@@ -162,60 +168,67 @@ public class TableFrame extends JPanel implements ListSelectionListener {
 
         if (tablesList.getSelectedIndex() > -1) {
 
-            enableDeleteUpdateButtons();
+            enableDeleteUpdateExportButtons();
+            tableContentFrame.setSelectedDatabase(selectedDatabase);
+            tableContentFrame.setSelectedTable(listModel.get(tablesList.getSelectedIndex()).toString());
         } else {
 
-            disableUpdateDeleteButtons();
+            tableContentFrame.setSelectedTable(null);
+            disableUpdateDeleteExportButtons();
         }
     }
 
-    private void enableDeleteUpdateButtons() {
+    private void enableDeleteUpdateExportButtons() {
 
         btnUpdate.setEnabled(true);
         btnDelete.setEnabled(true);
-        btnExport.setEnabled(true);
+        btnExportTable.setEnabled(true);
+        btnExportTable.setToolTipText("Export the selected table into .csv file format.");
     }
 
-    private void disableUpdateDeleteButtons() {
+    private void disableUpdateDeleteExportButtons() {
 
         btnUpdate.setEnabled(false);
-        btnUpdate.setToolTipText(ENABLE_BUTTON_ToolTipText);
+        btnUpdate.setToolTipText(ENABLE_BUTTON_DATABASE_ToolTipText);
 
         btnDelete.setEnabled(false);
-        btnUpdate.setToolTipText(ENABLE_BUTTON_ToolTipText);
+        btnDelete.setToolTipText(ENABLE_BUTTON_DATABASE_ToolTipText);
 
-        btnExport.setEnabled(false);
-        btnUpdate.setToolTipText(ENABLE_BUTTON_ToolTipText);
+        btnExportTable.setEnabled(false);
+        btnExportTable.setToolTipText(ENABLE_BUTTON_TABLE_ToolTipText);
     }
 
-    class CreateListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
+    class CreateListener extends PersistenceActionListener {
+        @Override
+        public void beforePersist(ActionEvent e) {
 
             InputTextPopUp inputTextPopUp = new InputTextPopUp(CREATE_NEW_TABLE_TITLE);
             Object input = inputTextPopUp.openPopUp(ENTER_TABLE_MESSAGE, false);
 
             while (input != null) {
-                // user didn't pressed Cancel
-                if (input.toString().trim().equals("")) {
 
-                    // can't add table with empty name
-                    input = inputTextPopUp.openPopUp(CREATE_NEW_TABLE_EMPTY_NAME, true);
-                } else if (databaseManagementSystem.getDatabase(selectedDatabase).getTable(input.toString().trim()) != null) {
+                try {
+                    // user didn't pressed Cancel
+                    if (input.toString().trim().equals("")) {
 
-                    //already exist a database with this name, reopen popup with proper message
-                    input = inputTextPopUp.openPopUp(WRONG_TABLE_NAME_ALREADY_EXISTS, true);
-                } else {
-
+                        // can't add table with empty name
+                        throw new InvalidEmptyName();
+                    }
                     databaseManagementSystem.getDatabase(selectedDatabase).createTable(input.toString(), new ArrayList<>());
                     populateList();
                     break;
+
+                } catch (AlreadyExists | InvalidEmptyName | DoesNotExist | InvalidValue exception) {
+
+                    input = inputTextPopUp.openPopUp(exception.getMessage(), true);
                 }
             }
         }
     }
 
-    class UpdateListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
+    class UpdateListener extends PersistenceActionListener {
+        @Override
+        public void beforePersist(ActionEvent e) {
 
             int index = tablesList.getSelectedIndex();
             String currentName = listModel.get(index).toString();
@@ -225,15 +238,12 @@ public class TableFrame extends JPanel implements ListSelectionListener {
 
             while (input != null) {
                 // user didn't pressed Cancel
-                if (input.toString().trim().equals("")) {
+                try {
+                    if (input.toString().trim().equals("")) {
 
-                    // can't rename table to empty name
-                    input = inputTextPopUp.openPopUp(UPDATE_TABLE_EMPTY_NAME, true);
-                } else if (databaseManagementSystem.getDatabase(selectedDatabase).getTable(input.toString().trim()) != null) {
-
-                    //already exist a table in the selected database with this name, reopen popup with proper message
-                    input = inputTextPopUp.openPopUp(WRONG_TABLE_NAME_ALREADY_EXISTS, true);
-                } else {
+                        // can't rename table to empty name
+                        throw new InvalidEmptyName();
+                    }
 
                     String newName = input.toString().trim();
 
@@ -245,18 +255,33 @@ public class TableFrame extends JPanel implements ListSelectionListener {
 
                     if (update) {
 
+                        Table existTable = null;
+                        try {
+                            existTable = databaseManagementSystem.getDatabase(selectedDatabase).getTable(newName);
+
+                        } catch (DoesNotExist ignored) {
+                        }
+                        if (existTable != null) {
+
+                            throw new AlreadyExists(newName);
+                        }
                         databaseManagementSystem.getDatabase(selectedDatabase).getTable(currentName).setName(newName);
                         populateList();
+                        disableUpdateDeleteExportButtons();
                     }
-
                     break;
+                } catch (InvalidEmptyName | DoesNotExist | InvalidValue | AlreadyExists exception) {
+
+                    input = inputTextPopUp.openPopUp(exception.getMessage(), true);
+
                 }
             }
         }
     }
 
-    class DeleteListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
+    class DeleteListener extends PersistenceActionListener {
+        @Override
+        public void beforePersist(ActionEvent e) {
 
             int index = tablesList.getSelectedIndex();
 
@@ -268,13 +293,18 @@ public class TableFrame extends JPanel implements ListSelectionListener {
 
             if (delete) {
 
-                databaseManagementSystem.getDatabase(selectedDatabase).deleteTable(listModel.get(index).toString());
-                listModel.remove(index);
+                try {
+                    databaseManagementSystem.getDatabase(selectedDatabase).deleteTable(listModel.get(index).toString());
+                } catch (DoesNotExist ignored) {
+                    //doesNotExist.printStackTrace();
+                }
+                //listModel.remove(index);
+                populateList();
             }
 
             if (listModel.getSize() == 0) { //No table left, disable update,delete buttons
 
-                disableUpdateDeleteButtons();
+                disableUpdateDeleteExportButtons();
             }
         }
     }
