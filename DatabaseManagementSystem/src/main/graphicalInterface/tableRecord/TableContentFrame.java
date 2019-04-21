@@ -12,6 +12,7 @@ import javax.swing.event.TableModelEvent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -290,6 +291,65 @@ public class TableContentFrame extends JPanel {
         @Override
         public void beforePersist(ActionEvent e) {
 
+            String title = "Insert Record";
+            InsertRecordPanel insertRecordPanel = null;
+
+            try {
+                insertRecordPanel = new InsertRecordPanel(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable));
+            } catch (DoesNotExist doesNotExist) {
+            }
+
+            Object result = insertRecordPanel.openPopUp(title, false);
+            while (!result.equals(JOptionPane.CANCEL_OPTION) && insertRecordPanel != null) {
+
+                try {
+
+                    Table selectedTableDB = databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable);
+
+                    Map<JLabel, JTextField> mapColumnValue = insertRecordPanel.mapColumnNameValue;
+                    Map<String, Field> row = new HashMap<>();
+
+                    for (JLabel label : mapColumnValue.keySet()) {
+
+                        JTextField value = mapColumnValue.get(label);
+
+                        if (!value.getText().isEmpty()) {
+
+                            Column column = selectedTableDB.getColumn(label.getText());
+                            FilteringService.validate(value.getText());
+                            Field newField = new Field();
+
+                            if (column.getType().equals(Column.Type.INT)) {
+                                try {
+
+                                    newField.isIntValueSet();
+                                    newField.setValue(Integer.parseInt(value.getText()));
+
+                                } catch (NumberFormatException numberFormatException) {
+
+                                    throw new TypeMismatchException(Column.Type.INT, Column.Type.STRING, label.getText());
+                                }
+                            } else {
+
+                                newField.isStringValueSet();
+                                newField.setValue(value.getText());
+                            }
+
+                            row.put(column.getName(), newField);
+                        }
+                    }
+
+                    selectedTableDB.insert(row);
+                    setSelectedTable(selectedTable);
+
+                    break; // all worked fine; can go further
+                } catch (InvalidValue | TypeMismatchException exception) {
+
+                    result = insertRecordPanel.openPopUp(exception.getMessage(), true);
+                } catch (DoesNotExist | InexistentColumn ignored) {
+
+                }
+            }
         }
     }
 
@@ -313,11 +373,11 @@ public class TableContentFrame extends JPanel {
                     Column columnToBeRenamed = (Column) updateColumnNamePanel.lstColumns.getSelectedItem();
                     String newName = updateColumnNamePanel.txtNewColumnName.getText().trim();
 
-                    if(newName.isEmpty())
+                    if (newName.isEmpty())
                         throw new InvalidEmptyName("You can not rename with empty!");
 
-                    Table selectedTableDB =  databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable);
-                    if(selectedTableDB.getColumnNames().contains(newName))
+                    Table selectedTableDB = databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable);
+                    if (selectedTableDB.getColumnNames().contains(newName))
                         throw new AlreadyExists(newName);
 
                     FilteringService.validate(newName);
@@ -353,12 +413,12 @@ public class TableContentFrame extends JPanel {
                 try {
 
                     String setNewValue = updateFieldPanel.txtNewValue.getText().trim();
-                    if(setNewValue.isEmpty())
+                    if (setNewValue.isEmpty())
                         throw new InvalidEmptyName("Empty new value to be set");
                     FilteringService.validate(setNewValue);
 
                     String matchValue = updateFieldPanel.textMatchValue.getText().trim();
-                    if(matchValue.isEmpty())
+                    if (matchValue.isEmpty())
                         throw new InvalidEmptyName("Empty new value to do the match");
                     FilteringService.validate(matchValue);
 
@@ -368,7 +428,7 @@ public class TableContentFrame extends JPanel {
                     Field matchValueField = new Field();
                     Field newValueField = new Field();
 
-                    if(selectedColumn.getType().equals(Column.Type.INT)){
+                    if (selectedColumn.getType().equals(Column.Type.INT)) {
 
                         matchValueField.isIntValueSet();
                         newValueField.isIntValueSet();
@@ -376,12 +436,12 @@ public class TableContentFrame extends JPanel {
                         try {
                             matchValueField.setValue(Integer.parseInt(matchValue));
                             newValueField.setValue(Integer.parseInt(setNewValue));
-                        }catch (NumberFormatException exceptionNumber) {
+                        } catch (NumberFormatException exceptionNumber) {
 
                             throw new TypeMismatchException(Column.Type.STRING, Column.Type.INT, selectedColumn.getName());
                         }
 
-                    }else{
+                    } else {
 
                         matchValueField.isStringValueSet();
                         newValueField.isStringValueSet();
@@ -390,10 +450,10 @@ public class TableContentFrame extends JPanel {
                         newValueField.setValue(setNewValue);
                     }
 
-                    Table selectedTableDB =  databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable);
+                    Table selectedTableDB = databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable);
 
 
-                    selectedTableDB.updateWhere(selectedColumn.getName(), selectedOperator, matchValueField, newValueField );
+                    selectedTableDB.updateWhere(selectedColumn.getName(), selectedOperator, matchValueField, newValueField);
                     setSelectedTable(selectedTable);
 
                     break; // all worked fine; can go further
