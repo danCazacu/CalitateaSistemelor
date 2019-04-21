@@ -2,6 +2,8 @@ package main.graphicalInterface.table;
 
 import main.graphicalInterface.ConfirmDialog;
 import main.graphicalInterface.InputTextPopUp;
+import main.graphicalInterface.database.DatabaseFrame;
+import main.model.CsvService;
 import main.model.DatabaseManagementSystem;
 import main.model.Table;
 
@@ -37,7 +39,9 @@ public class TableFrame extends JPanel implements ListSelectionListener {
     private JButton btnCreate;
     private JButton btnUpdate;
     private JButton btnDelete;
+    private JButton btnExport;
 
+    private JButton btnImport;
     private String selectedDatabase;
 
     public static TableFrame getInstance() {
@@ -96,18 +100,28 @@ public class TableFrame extends JPanel implements ListSelectionListener {
          */
         btnCreate = new JButton();
         btnCreate.setText("Create Table");
-        btnCreate.setBounds(90, 480, 200, 50);
+        btnCreate.setBounds(90, 460, 200, 50);
         btnCreate.addActionListener(new CreateListener());
 
         btnUpdate = new JButton();
         btnUpdate.setText("Update Table");
-        btnUpdate.setBounds(90, 560, 200, 50);
+        btnUpdate.setBounds(90, 520, 200, 50);
         btnUpdate.addActionListener(new UpdateListener());
 
         btnDelete = new JButton();
         btnDelete.setText("Delete Table");
-        btnDelete.setBounds(90, 640, 200, 50);
+        btnDelete.setBounds(90, 580, 200, 50);
         btnDelete.addActionListener(new DeleteListener());
+
+        btnExport = new JButton();
+        btnExport.setText("Export table");
+        btnExport.setBounds(90, 640, 200, 50);
+        btnExport.addActionListener(new ExportListener());
+
+        btnImport = new JButton();
+        btnImport.setText("Import table");
+        btnImport.setBounds(90, 700, 200, 50);
+        btnImport.addActionListener(new ImportListener());
 
         //by default, Update and Delete Buttons are disabled
         disableUpdateDeleteButtons();
@@ -134,6 +148,8 @@ public class TableFrame extends JPanel implements ListSelectionListener {
         this.add(btnCreate);
         this.add(btnUpdate);
         this.add(btnDelete);
+        this.add(btnExport);
+        this.add(btnImport);
     }
 
     /**
@@ -157,6 +173,7 @@ public class TableFrame extends JPanel implements ListSelectionListener {
 
         btnUpdate.setEnabled(true);
         btnDelete.setEnabled(true);
+        btnExport.setEnabled(true);
     }
 
     private void disableUpdateDeleteButtons() {
@@ -167,6 +184,8 @@ public class TableFrame extends JPanel implements ListSelectionListener {
         btnDelete.setEnabled(false);
         btnUpdate.setToolTipText(ENABLE_BUTTON_ToolTipText);
 
+        btnExport.setEnabled(false);
+        btnUpdate.setToolTipText(ENABLE_BUTTON_ToolTipText);
     }
 
     class CreateListener implements ActionListener {
@@ -260,6 +279,19 @@ public class TableFrame extends JPanel implements ListSelectionListener {
         }
     }
 
+
+    class ExportListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+
+            int index = tablesList.getSelectedIndex();
+
+            CsvService.writeDataLineByLine("E:\\Facultate\\Master\\Anul I, semestrul II\\Radulescu\\test.csv", selectedDatabase, listModel.get(index).toString());
+            JOptionPane.showMessageDialog(null, "The file was successfully exported!");
+        }
+    }
+
+
+
     public void setSelectedDatabase(String selectedDatabase) {
 
         this.selectedDatabase = selectedDatabase;
@@ -274,5 +306,12 @@ public class TableFrame extends JPanel implements ListSelectionListener {
 
         this.titleLabel.setText(title);
         populateList();
+    }
+
+    class ImportListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            CsvService.importDataLineByLine("E:\\Facultate\\Master\\Anul I, semestrul II\\Radulescu\\test.csv");
+            JOptionPane.showMessageDialog(null, "The file was successfully imported!");
+        }
     }
 }
