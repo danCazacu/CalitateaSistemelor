@@ -1,17 +1,25 @@
 package main.graphicalInterface.tableRecord;
 
 import main.exception.FieldValueNotSet;
+import main.graphicalInterface.ConfirmDialog;
 import main.graphicalInterface.PersistenceActionListener;
+import main.model.Column;
 import main.model.DatabaseManagementSystem;
+import main.model.Field;
+import main.model.Table;
 
 import javax.swing.*;
+import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.*;
+import java.util.List;
 
 import static main.graphicalInterface.GIConstants.ENABLE_BUTTON_TABLE_ToolTipText;
 import static main.graphicalInterface.GIConstants.RECORDS_TITLE;
 
-public class TableContentFrame  extends JPanel {
+public class TableContentFrame extends JPanel {
 
     private static TableContentFrame tableContentFrame;
     private String selectedTable;
@@ -27,9 +35,9 @@ public class TableContentFrame  extends JPanel {
     private JScrollPane scrollPane;
     private TableModel myTableModel;
 
-    public static TableContentFrame getInstance(){
+    public static TableContentFrame getInstance() {
 
-         if(tableContentFrame == null){
+        if (tableContentFrame == null) {
 
             tableContentFrame = new TableContentFrame();
         }
@@ -37,7 +45,7 @@ public class TableContentFrame  extends JPanel {
         return tableContentFrame;
     }
 
-    private TableContentFrame(){
+    private TableContentFrame() {
 
         this.setLayout(null);
         this.setBounds(0, 40, 350, 750);
@@ -55,6 +63,7 @@ public class TableContentFrame  extends JPanel {
         TABLE RECORDS
          */
         tableContent = new JTable();
+        myTableModel = new TableModel();
         populateTable();
 
         scrollPane = new JScrollPane(tableContent);
@@ -139,17 +148,70 @@ public class TableContentFrame  extends JPanel {
         }
     }
 
-    class DeleteListener extends PersistenceActionListener {
+    class DeleteListener implements ActionListener {
         @Override
-        public void beforePersist(ActionEvent e) {
+        public void actionPerformed(ActionEvent e) {
 
+            //int index = tablesList.getSelectedIndex();
+            boolean isSthSelected = false;
+            for (int i = 0; i < tableContent.getRowCount() && !isSthSelected; i++) {
+
+                if (tableContent.getValueAt(i, 0).equals(Boolean.TRUE)) {
+
+                    isSthSelected = true;
+                }
+            }
+
+            String titleConfirmDelete = "Confirm Delete Records";
+            String msgConfirmDelete = "Are you sure you want to delete selected records from \"" + selectedTable + "\" Table from \"" + selectedDatabase + "\" Database ?";
+
+            ConfirmDialog deleteDialog = new ConfirmDialog(titleConfirmDelete, msgConfirmDelete);
+            boolean delete = deleteDialog.confirm();
+
+            if (delete) {
+
+                // save selected rows in a list
+                List<Integer> selectedRows = new ArrayList<>();
+                for (int i = 0; i < tableContent.getModel().getRowCount(); i++) {
+
+                    if (tableContent.getValueAt(i, 0).equals(Boolean.TRUE)) {
+
+                        selectedRows.add(Integer.valueOf(i));
+                    }
+                }
+
+                //go through selected rows list
+                // remove row from table model - first element from selected rows list
+                // decrement list values (because values had changed, one value was deleted)
+                while (selectedRows.size() > 0) {
+
+                    databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable).deleteRow(selectedRows.get(0));
+                    //decrement the rest of the index
+
+                    for (int i = 0; i < selectedRows.size(); i++) {
+
+                        selectedRows.set(i, selectedRows.get(i) - 1);
+                    }
+                    selectedRows.remove(0);
+
+                }
+
+                //refresh the table content
+                setSelectedTable(selectedTable);
+            }
+
+            if (tableContent.getRowCount() == 0) { //No records left, disable update,delete buttons
+
+                disableUpdateDeleteButtons();
+            }
         }
     }
 
 
     private void populateTable() {
 
-        if(selectedDatabase != null && selectedTable != null) {
+        myTableModel.fireTableDataChanged();
+        if (selectedDatabase != null && selectedTable != null) {
 
             try {
                 myTableModel = new TableModel(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable));
@@ -159,6 +221,7 @@ public class TableContentFrame  extends JPanel {
             }
 
             tableContent = new JTable(myTableModel);
+            tableContent.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         }
     }
 
@@ -183,5 +246,16 @@ public class TableContentFrame  extends JPanel {
     public void setSelectedDatabase(String selectedDatabase) {
 
         this.selectedDatabase = selectedDatabase;
+    }
+
+    public void setAreRowsSelected(boolean areRowsSelected) {
+
+        if (areRowsSelected) {
+
+            enableDeleteUpdateButtons();
+        } else {
+
+            disableUpdateDeleteButtons();
+        }
     }
 }

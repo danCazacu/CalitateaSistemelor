@@ -10,48 +10,60 @@ import java.util.List;
 
 public class TableModel extends AbstractTableModel {
 
-    private Table table ;
+    private Table table;
     private String[] columnNames;
     private Class[] columnTypes;
     private Object[][] data;
 
-    public TableModel(Table table) throws FieldValueNotSet {
+    public TableModel(){}
 
-        this.table = table;
-        columnNames = new String[table.getColumnNames().size()];
-        columnTypes = new Class[table.getColumnNames().size()];
+    public TableModel(Table inputTable) throws FieldValueNotSet {
 
-        for(int i = 0; i < table.getColumnNames().size(); i++){
+        this.table = inputTable;
+        columnNames = new String[this.table.getColumnNames().size() + 1];
+        columnTypes = new Class[this.table.getColumnNames().size() + 1];
 
-            columnNames[i] = table.getColumnNames().get(i);
+        columnNames[0] = "Select";
+        columnTypes[0] = Boolean.class;
 
-            if(table.getColumn(table.getColumnNames().get(i)).getType().equals(Column.Type.INT)){
+        for (int i = 0; i < this.table.getColumnNames().size(); i++) {
 
-                columnTypes[i] = Integer.class;
-            }else {
+            columnNames[i + 1] = this.table.getColumnNames().get(i);
 
-                columnTypes[i] = String.class;
+            if (this.table.getColumn(this.table.getColumnNames().get(i)).getType().equals(Column.Type.INT)) {
+
+                columnTypes[i + 1] = Integer.class;
+            } else {
+
+                columnTypes[i + 1] = String.class;
             }
         }
 
-        data = new Object[table.getNumberOfRows()][table.getColumnNames().size()];
-        int columnIndex = 0;
-        for(Column column : this.table.getData().keySet()){
+        data = new Object[this.table.getNumberOfRows()][this.table.getColumnNames().size() + 1];
+
+        int columnIndex = 1;
+        for (Column column : this.table.getData().keySet()) {
 
             List<Field> fieldValues = this.table.getData().get(column);
             int rowIndex = 0;
-            for(Field field : fieldValues){
+            for (Field field : fieldValues) {
 
-                if(field.isIntValueSet()) {
+                if (field.isIntValueSet()) {
 
                     data[rowIndex++][columnIndex] = field.getIntValue();
-                }else{
+                } else {
 
                     data[rowIndex++][columnIndex] = field.getStringValue();
                 }
             }
 
             columnIndex++;
+        }
+
+        //set the first column to false: Boolean (not selected)
+        for (int i = 0; i < this.table.getNumberOfRows(); i++) {
+
+            data[i][0] = false;
         }
     }
 
@@ -66,7 +78,7 @@ public class TableModel extends AbstractTableModel {
      */
     @Override
     public int getRowCount() {
-        return table.getNumberOfRows();
+        return this.table.getNumberOfRows();
     }
 
     /**
@@ -79,7 +91,7 @@ public class TableModel extends AbstractTableModel {
      */
     @Override
     public int getColumnCount() {
-        return table.getColumnNames().size();
+        return this.table.getColumnNames().size() + 1;
     }
 
     /**
@@ -120,6 +132,10 @@ public class TableModel extends AbstractTableModel {
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
 
+        if (columnIndex == 0) {
+
+            return true;
+        }
         return false;
     }
 
@@ -133,5 +149,48 @@ public class TableModel extends AbstractTableModel {
     public Class<?> getColumnClass(int columnIndex) {
 
         return columnTypes[columnIndex];
+    }
+
+    /**
+     * This empty implementation is provided so users don't have to implement
+     * this method if their data model is not editable.
+     *
+     * @param aValue      value to assign to cell
+     * @param rowIndex    row of cell
+     * @param columnIndex column of cell
+     */
+    @Override
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+
+        if (columnIndex == 0) {
+
+            if (data[rowIndex][columnIndex].equals(Boolean.FALSE)) {
+
+                data[rowIndex][columnIndex] = true;
+                TableContentFrame.getInstance().setAreRowsSelected(true);
+            } else {
+
+                data[rowIndex][columnIndex] = false;
+
+                //disable button delete button if nothing is selected
+                boolean isRowSelected = false;
+                for (int i = 0; i < getRowCount() && !isRowSelected; i++) {
+
+                    if (data[i][0].equals(Boolean.TRUE)) {
+
+                        isRowSelected = true;
+                    }
+                }
+
+                if (isRowSelected) {
+
+                    TableContentFrame.getInstance().setAreRowsSelected(true);
+
+                } else {
+
+                    TableContentFrame.getInstance().setAreRowsSelected(false);
+                }
+            }
+        }
     }
 }
