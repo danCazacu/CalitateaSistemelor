@@ -9,4 +9,6 @@ public class Constants {
     public static final String DATABASE = "database";
     public static final String TABLE = "table";
     public static final String WHERE = "where";
+    public static final String INTO = "into";
+    public static final String COLUMN = "column";
 }

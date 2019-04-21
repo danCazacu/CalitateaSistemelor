@@ -68,7 +68,32 @@ public class Field{
     public Column.Type getType() {
         return type;
     }
+    public boolean equals(Field field){
+        if(!field.getType().equals(this.getType()))
+            return false;
+        if(field.isIntValueSet()!=this.isIntValueSet())
+            return false;
+        if(field.isStringValueSet()!=this.isStringValueSet())
+            return false;
+        if(field.isStringValueSet()){
+            try {
+                if(!field.getStringValue().equals(this.getStringValue()))
+                    return false;
+            } catch (FieldValueNotSet fieldValueNotSet) {
+                fieldValueNotSet.printStackTrace();
+            }
+        }
+        if(field.isIntValueSet()){
+            try {
+                if(!field.getIntValue().equals(this.getIntValue()))
+                    return false;
+            } catch (FieldValueNotSet fieldValueNotSet) {
+                fieldValueNotSet.printStackTrace();
+            }
+        }
 
+        return true;
+    }
     /**
      * Uses equalsIgnoreCase for string value match
      * @param obj

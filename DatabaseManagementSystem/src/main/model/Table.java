@@ -219,16 +219,17 @@ public class Table {
     public void insertColumn(Column column) throws ColumnAlreadyExists {
         if (this.data.keySet().contains(column))
             throw new ColumnAlreadyExists(column.getName());
+
+        this.data.put(column,new ArrayList<>());
         if (column.getType().equals(Column.Type.STRING)) {
-            ArrayList<Field> columnData = new ArrayList<>();
             for (int i = 0; i < getNumberOfRows(); i++) {
-                columnData.add(new Field(""));
+                this.data.get(column).add(new Field(""));
             }
+
         }
         if (column.getType().equals(Column.Type.INT)) {
-            ArrayList<Field> columnData = new ArrayList<>();
             for (int i = 0; i < getNumberOfRows(); i++) {
-                columnData.add(new Field(0));
+                this.data.get(column).add(new Field(0));
             }
 
         }
