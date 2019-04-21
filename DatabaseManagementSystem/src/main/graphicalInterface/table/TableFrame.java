@@ -1,8 +1,12 @@
 package main.graphicalInterface.table;
 
+import main.exception.AlreadyExists;
+import main.exception.DoesNotExist;
+import main.exception.InvalidValue;
 import main.graphicalInterface.ConfirmDialog;
 import main.graphicalInterface.InputTextPopUp;
 import main.graphicalInterface.PersistenceActionListener;
+import main.graphicalInterface.tableRecord.InvalidEmptyName;
 import main.graphicalInterface.tableRecord.TableContentFrame;
 import main.model.DatabaseManagementSystem;
 import main.model.Table;
@@ -129,9 +133,13 @@ public class TableFrame extends JPanel implements ListSelectionListener {
         listModel.clear();
 
         if (selectedDatabase != null) {
-            for (Table table : databaseManagementSystem.getDatabase(selectedDatabase).getTables()) {
+            try {
+                for (Table table : databaseManagementSystem.getDatabase(selectedDatabase).getTables()) {
 
-                listModel.addElement(table.getName());
+                    listModel.addElement(table.getName());
+                }
+            } catch (DoesNotExist ignored) {
+                //doesNotExist.printStackTrace();
             }
         }
     }
@@ -161,6 +169,7 @@ public class TableFrame extends JPanel implements ListSelectionListener {
             tableContentFrame.setSelectedTable(listModel.get(tablesList.getSelectedIndex()).toString());
         } else {
 
+            tableContentFrame.setSelectedTable(null);
             disableUpdateDeleteExportButtons();
         }
     }
@@ -193,23 +202,21 @@ public class TableFrame extends JPanel implements ListSelectionListener {
             Object input = inputTextPopUp.openPopUp(ENTER_TABLE_MESSAGE, false);
 
             while (input != null) {
-                // user didn't pressed Cancel
-                if (input.toString().trim().equals("")) {
 
-                    // can't add table with empty name
-                    input = inputTextPopUp.openPopUp(CREATE_NEW_TABLE_EMPTY_NAME, true);
-                } else if (databaseManagementSystem.getDatabase(selectedDatabase).getTable(input.toString().trim()) != null) {
+                try {
+                    // user didn't pressed Cancel
+                    if (input.toString().trim().equals("")) {
 
-                    //already exist a database with this name, reopen popup with proper message
-                    input = inputTextPopUp.openPopUp(WRONG_TABLE_NAME_ALREADY_EXISTS, true);
-                } else if(input.toString().trim().contains("\"")) {
-
-                    input = inputTextPopUp.openPopUp(WRONG_TABLE_NAME_ESCAPE_CHARACTER, true);
-                }else{
-
+                        // can't add table with empty name
+                        throw new InvalidEmptyName();
+                    }
                     databaseManagementSystem.getDatabase(selectedDatabase).createTable(input.toString(), new ArrayList<>());
                     populateList();
                     break;
+
+                } catch (AlreadyExists | InvalidEmptyName | DoesNotExist | InvalidValue exception) {
+
+                    input = inputTextPopUp.openPopUp(exception.getMessage(), true);
                 }
             }
         }
@@ -227,18 +234,12 @@ public class TableFrame extends JPanel implements ListSelectionListener {
 
             while (input != null) {
                 // user didn't pressed Cancel
-                if (input.toString().trim().equals("")) {
+                try {
+                    if (input.toString().trim().equals("")) {
 
-                    // can't rename table to empty name
-                    input = inputTextPopUp.openPopUp(UPDATE_TABLE_EMPTY_NAME, true);
-                } else if (databaseManagementSystem.getDatabase(selectedDatabase).getTable(input.toString().trim()) != null) {
-
-                    //already exist a table in the selected database with this name, reopen popup with proper message
-                    input = inputTextPopUp.openPopUp(WRONG_TABLE_NAME_ALREADY_EXISTS, true);
-                } else if(input.toString().trim().contains("\"")) {
-
-                    input = inputTextPopUp.openPopUp(WRONG_TABLE_NAME_ESCAPE_CHARACTER, true);
-                }else{
+                        // can't rename table to empty name
+                        throw new InvalidEmptyName();
+                    }
 
                     String newName = input.toString().trim();
 
@@ -250,11 +251,25 @@ public class TableFrame extends JPanel implements ListSelectionListener {
 
                     if (update) {
 
+                        Table existTable = null;
+                        try {
+                            existTable = databaseManagementSystem.getDatabase(selectedDatabase).getTable(newName);
+
+                        } catch (DoesNotExist ignored) {
+                        }
+                        if (existTable != null) {
+
+                            throw new AlreadyExists(newName);
+                        }
                         databaseManagementSystem.getDatabase(selectedDatabase).getTable(currentName).setName(newName);
                         populateList();
+                        disableUpdateDeleteExportButtons();
                     }
-
                     break;
+                } catch (InvalidEmptyName | DoesNotExist | InvalidValue | AlreadyExists exception) {
+
+                    input = inputTextPopUp.openPopUp(exception.getMessage(), true);
+
                 }
             }
         }
@@ -274,7 +289,11 @@ public class TableFrame extends JPanel implements ListSelectionListener {
 
             if (delete) {
 
-                databaseManagementSystem.getDatabase(selectedDatabase).deleteTable(listModel.get(index).toString());
+                try {
+                    databaseManagementSystem.getDatabase(selectedDatabase).deleteTable(listModel.get(index).toString());
+                } catch (DoesNotExist ignored) {
+                    //doesNotExist.printStackTrace();
+                }
                 //listModel.remove(index);
                 populateList();
             }
@@ -291,6 +310,7 @@ public class TableFrame extends JPanel implements ListSelectionListener {
         public void beforePersist(ActionEvent e) {
 
         }
+
     }
 
     public void setSelectedDatabase(String selectedDatabase) {
