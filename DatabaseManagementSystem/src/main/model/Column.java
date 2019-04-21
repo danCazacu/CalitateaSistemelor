@@ -66,4 +66,9 @@ public class Column {
 
         return this.name.equalsIgnoreCase(column.name) && this.type.equals(column.type);
     }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

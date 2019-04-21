@@ -2,11 +2,12 @@ package main.graphicalInterface.tableRecord;
 
 import main.exception.*;
 import main.graphicalInterface.ConfirmDialog;
-import main.graphicalInterface.InputTextPopUp;
 import main.graphicalInterface.PersistenceActionListener;
 import main.model.*;
+import main.service.FilteringService;
 
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import static main.graphicalInterface.GIConstants.*;
+import static main.service.FilteringService.validate;
 
 public class TableContentFrame extends JPanel {
 
@@ -294,6 +296,43 @@ public class TableContentFrame extends JPanel {
         @Override
         public void beforePersist(ActionEvent e) {
 
+            String title = "Please select columns and optionally add where clause";
+            UpdateColumnNamePanel updateColumnNamePanel = null;
+
+            try {
+                updateColumnNamePanel = new UpdateColumnNamePanel(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable));
+            } catch (DoesNotExist doesNotExist) {
+                //doesNotExist.printStackTrace();
+            }
+
+            Object result = updateColumnNamePanel.openPopUp(title, false);
+            while (!result.equals(JOptionPane.CANCEL_OPTION) && updateColumnNamePanel != null) {
+
+                try {
+
+                    Column columnToBeRenamed = (Column) updateColumnNamePanel.lstColumns.getSelectedItem();
+                    String newName = updateColumnNamePanel.txtNewColumnName.getText().trim();
+
+                    if(newName.isEmpty())
+                        throw new InvalidEmptyName("You can not rename with empty!");
+
+                    Table selectedTableDB =  databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable);
+                    if(selectedTableDB.getColumnNames().contains(newName))
+                        throw new AlreadyExists(newName);
+
+                    FilteringService.validate(newName);
+
+                    selectedTableDB.getColumn(columnToBeRenamed.getName()).setName(newName);
+                    setSelectedTable(selectedTable);
+                    break; // all worked fine; can go further
+                } catch (InvalidEmptyName | AlreadyExists | InvalidValue exception) {
+
+                    result = updateColumnNamePanel.openPopUp(exception.getMessage(), true);
+                } catch (DoesNotExist ignored) {
+
+                    //ignored.printStackTrace();
+                }
+            }
         }
     }
 
@@ -433,6 +472,7 @@ public class TableContentFrame extends JPanel {
     public void setSelectedDatabase(String selectedDatabase) {
 
         this.selectedDatabase = selectedDatabase;
+        this.selectedTable = null;
         disableButtonsWithoutDelete();
     }
 
