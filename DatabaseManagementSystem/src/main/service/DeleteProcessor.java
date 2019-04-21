@@ -1,6 +1,8 @@
 package main.service;
 
+import main.exception.DoesNotExist;
 import main.exception.InvalidCommand;
+import main.exception.InvalidValue;
 import main.exception.TypeMismatchException;
 import main.model.*;
 import main.util.Constants;
@@ -36,9 +38,11 @@ public class DeleteProcessor {
         if (line.length <= 2)
             throw new InvalidCommand("Missing database name");
         String name = line[2];
-        if (DatabaseManagementSystem.getInstance().getDatabase(name) == null)
-            System.out.println("No such database name");
-        DatabaseManagementSystem.getInstance().deleteDatabase(name);
+        try {
+            DatabaseManagementSystem.getInstance().deleteDatabase(name);
+        } catch (DoesNotExist doesNotExist) {
+            throw new InvalidCommand(doesNotExist.getMessage());
+        }
     }
 
     private void processDeleteTable(String[] line) throws InvalidCommand {
@@ -51,14 +55,13 @@ public class DeleteProcessor {
         if (line.length <= 5)
             throw new InvalidCommand("Missing database name after database keyword");
 
-        Database database = DatabaseManagementSystem.getInstance().getDatabase(line[5]);
-        if (database == null)
-            throw new InvalidCommand("No such database");
-        Table table = database.getTable(line[2]);
-        if (table == null)
-            throw new InvalidCommand("No such table");
-
-        database.deleteTable(table);
+        try {
+            Database database = DatabaseManagementSystem.getInstance().getDatabase(line[5]);
+            Table table = database.getTable(line[2]);
+            database.deleteTable(table);
+        } catch (DoesNotExist doesNotExist) {
+            throw new InvalidCommand(doesNotExist.getMessage());
+        }
     }
 
     private void processDeleteFrom(String[] line) throws InvalidCommand {
@@ -73,32 +76,22 @@ public class DeleteProcessor {
         if (line.length <= 8)
             throw new InvalidCommand("Incorrect matching clause after where keyword: ex: age > 10, name = John. Spaces are mandatory!");
         String databaseName = line[4];
-        Database database = DatabaseManagementSystem.getInstance().getDatabase(databaseName);
-        if (database == null)
-            throw new InvalidCommand("No such database");
-        Table table = database.getTable(line[2]);
-        if (table == null)
-            throw new InvalidCommand("No such table");
-        String columnName = line[6];
-        Column column = table.getColumn(columnName);
-        if (column == null)
-            throw new InvalidCommand("No such column: " + columnName);
-        FieldComparator.Sign sign = FieldComparator.Sign.getEnum(line[7]);
-        Field field = new Field();
-        String value = line[8];
-        if (column.getType().equals(Column.Type.STRING))
-            field.setValue(value);
-        if (column.getType().equals(Column.Type.INT))
-            field.setValue(Integer.parseInt(value));
-
         try {
+            Database database = DatabaseManagementSystem.getInstance().getDatabase(databaseName);
+            Table table = database.getTable(line[2]);
+            String columnName = line[6];
+            Column column = table.getColumn(columnName);
+            FieldComparator.Sign sign = FieldComparator.Sign.getEnum(line[7]);
+            Field field = new Field();
+            String value = line[8];
+            if (column.getType().equals(Column.Type.STRING))
+                field.setValue(value);
+            if (column.getType().equals(Column.Type.INT))
+                field.setValue(Integer.parseInt(value));
             Map<Column, List<Field>> rowsAffected = table.where(column.getName(), sign, field);
             table.deleteRows(rowsAffected);
-        } catch (TypeMismatchException e) {
-            throw new InvalidCommand(e.getMessage());
         } catch (Exception e) {
             throw new InvalidCommand(e.getMessage());
         }
-
     }
 }

@@ -1,7 +1,6 @@
 package main.service;
 
-import main.exception.ColumnAlreadyExists;
-import main.exception.InvalidCommand;
+import main.exception.*;
 import main.model.Column;
 import main.model.Database;
 import main.model.DatabaseManagementSystem;
@@ -41,9 +40,11 @@ public class InsertProcessor {
         if (line.length <= 2)
             throw new InvalidCommand("Missing database name");
         String name = line[2];
-        if (DatabaseManagementSystem.getInstance().getDatabase(name) != null)
-            throw new InvalidCommand("Such database already exists");
-        DatabaseManagementSystem.getInstance().createDatabase(name);
+        try {
+            DatabaseManagementSystem.getInstance().createDatabase(name);
+        } catch (AlreadyExists | InvalidValue alreadyExists) {
+            throw new InvalidCommand(alreadyExists.getMessage());
+        }
     }
 
     private void processInsertTable(String[] line) throws InvalidCommand {
@@ -54,12 +55,12 @@ public class InsertProcessor {
         if (line.length <= 4)
             throw new InvalidCommand("Missing database name");
         String tableName = line[2];
-        Database database = DatabaseManagementSystem.getInstance().getDatabase(line[4]);
-        if (database == null)
-            throw new InvalidCommand("No such database");
-        if (database.getTable(tableName) != null)
-            throw new InvalidCommand("Such table already exists");
-        database.createTable(tableName, new ArrayList<>());
+        try {
+            Database database = DatabaseManagementSystem.getInstance().getDatabase(line[4]);
+            database.createTable(tableName, new ArrayList<>());
+        } catch (DoesNotExist | InvalidValue | AlreadyExists e) {
+            throw new InvalidCommand(e.getMessage());
+        }
     }
 
     private void processInsertColumn(String[] line) throws InvalidCommand {
@@ -81,19 +82,12 @@ public class InsertProcessor {
         String columnName = line[2];
         String tableName = line[5];
         Column.Type type = Column.Type.getEnum(line[3].toLowerCase());
-
-        Database database = DatabaseManagementSystem.getInstance().getDatabase(line[7]);
-        if (database == null)
-            throw new InvalidCommand("No such database");
-        Table table = database.getTable(tableName);
-        if (table == null)
-            throw new InvalidCommand("No such table");
-
         try {
+            Database database = DatabaseManagementSystem.getInstance().getDatabase(line[7]);
+            Table table = database.getTable(tableName);
             table.insertColumn(new Column(columnName, type));
-        } catch (ColumnAlreadyExists columnAlreadyExists) {
-            throw new InvalidCommand(columnAlreadyExists.getMessage());
+        } catch (DoesNotExist | ColumnAlreadyExists | InvalidValue e) {
+            throw new InvalidCommand(e.getMessage());
         }
-
     }
 }

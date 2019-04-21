@@ -1,5 +1,7 @@
 package persistence;
 
+import main.exception.AlreadyExists;
+import main.exception.InvalidValue;
 import main.model.DatabaseManagementSystem;
 import main.persistance.DatabasePersistance;
 import main.util.DataBuilder;
@@ -16,6 +18,10 @@ public class Load {
             databasePersistance.load();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (InvalidValue invalidValue) {
+            invalidValue.printStackTrace();
+        } catch (AlreadyExists alreadyExists) {
+            alreadyExists.printStackTrace();
         }
 
     }
