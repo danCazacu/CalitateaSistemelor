@@ -1,9 +1,7 @@
 package main.model;
 
 import jdk.nashorn.internal.runtime.Debug;
-import main.exception.FieldValueNotSet;
-import main.exception.InexistentColumn;
-import main.exception.TypeMismatchException;
+import main.exception.*;
 import main.persistance.DatabasePersistance;
 
 import java.io.*;
@@ -12,7 +10,9 @@ import java.util.List;
 import java.util.Map;
 
 public class CsvService {
-    public static void writeDataLineByLine(String filePath, String databaseName, String tableName) {
+    public static final String FILE_NAME = "excel.csv";
+
+    public static void writeDataLineByLine(String filePath, String databaseName, String tableName) throws DoesNotExist {
         // first create file object for file placed at location
         // specified by filepath
         File file = new File(filePath);
@@ -118,6 +118,10 @@ public class CsvService {
             inexistentColumn.printStackTrace();
         } catch (TypeMismatchException e) {
             e.printStackTrace();
+        } catch (InvalidValue invalidValue) {
+            invalidValue.printStackTrace();
+        } catch (DoesNotExist doesNotExist) {
+            doesNotExist.printStackTrace();
         }
     }
 }

@@ -12,12 +12,15 @@ import main.graphicalInterface.database.DatabaseFrame;
 import main.model.CsvService;
 import main.model.DatabaseManagementSystem;
 import main.model.Table;
+import main.persistance.DatabasePersistance;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
 
 import static main.graphicalInterface.GIConstants.*;
@@ -125,6 +128,7 @@ public class TableFrame extends JPanel implements ListSelectionListener {
         btnExportTable.setBounds(90, 670, 200, 50);
         btnExportTable.addActionListener(new ExportListener());
 
+
         //by default, Update and Delete Buttons are disabled
         disableUpdateDeleteExportButtons();
 
@@ -155,7 +159,6 @@ public class TableFrame extends JPanel implements ListSelectionListener {
         this.add(btnUpdate);
         this.add(btnDelete);
         this.add(btnExportTable);
-        this.add(btnImport);
     }
 
     /**
@@ -315,7 +318,12 @@ public class TableFrame extends JPanel implements ListSelectionListener {
 
             int index = tablesList.getSelectedIndex();
 
-            CsvService.writeDataLineByLine("E:\\Facultate\\Master\\Anul I, semestrul II\\Radulescu\\test.csv", selectedDatabase, listModel.get(index).toString());
+            try {
+                String absolutePath = DatabasePersistance.cwd() + File.separator + CsvService.FILE_NAME;
+                CsvService.writeDataLineByLine(absolutePath, selectedDatabase, listModel.get(index).toString());
+            } catch (DoesNotExist doesNotExist) {
+                doesNotExist.printStackTrace();
+            }
             JOptionPane.showMessageDialog(null, "The file was successfully exported!");
         }
     }
@@ -338,10 +346,4 @@ public class TableFrame extends JPanel implements ListSelectionListener {
         populateList();
     }
 
-    class ImportListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            CsvService.importDataLineByLine("E:\\Facultate\\Master\\Anul I, semestrul II\\Radulescu\\test.csv");
-            JOptionPane.showMessageDialog(null, "The file was successfully imported!");
-        }
-    }
 }

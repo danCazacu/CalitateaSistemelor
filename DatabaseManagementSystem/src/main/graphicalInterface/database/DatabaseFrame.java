@@ -8,6 +8,7 @@ import main.graphicalInterface.InputTextPopUp;
 import main.graphicalInterface.PersistenceActionListener;
 import main.graphicalInterface.table.TableFrame;
 import main.graphicalInterface.tableRecord.InvalidEmptyName;
+import main.model.CsvService;
 import main.model.Database;
 import main.model.DatabaseManagementSystem;
 import main.model.Table;
@@ -15,9 +16,11 @@ import main.model.Table;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import static main.graphicalInterface.GIConstants.*;
 
@@ -281,11 +284,17 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
         }
     }
 
-    class ImportListener extends PersistenceActionListener {
-        @Override
-        public void beforePersist(ActionEvent e) {
+    class ImportListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
 
-            //TODO call the csv importer
+            JFileChooser chooser = new JFileChooser();
+            FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                    "CSV Files", "csv");
+            chooser.setFileFilter(filter);
+            int returnVal = chooser.showOpenDialog(btnImportTable);
+            String absPath = chooser.getSelectedFile().getAbsolutePath();
+            CsvService.importDataLineByLine(absPath);
+            JOptionPane.showMessageDialog(null, "The file was successfully imported!");
         }
     }
 }
