@@ -41,7 +41,7 @@ public class DatabaseManagementSystem {
      * @param name - name of database
      * @return true of such database with name exists, false if does not exist
      */
-    private boolean exists(String name){
+    public boolean exists(String name){
         Database database = getDatabase(name);
         return database != null;
     }
