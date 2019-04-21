@@ -2,9 +2,11 @@ package main.graphicalInterface.tableRecord;
 
 import main.exception.FieldValueNotSet;
 import main.model.Column;
+import main.model.Field;
 import main.model.Table;
 
 import javax.swing.table.AbstractTableModel;
+import java.util.List;
 
 public class TableModel extends AbstractTableModel {
 
@@ -33,8 +35,24 @@ public class TableModel extends AbstractTableModel {
         }
 
         data = new Object[table.getNumberOfRows()][table.getColumnNames().size()];
+        int columnIndex = 0;
+        for(Column column : this.table.getData().keySet()){
 
-        System.out.println();
+            List<Field> fieldValues = this.table.getData().get(column);
+            int rowIndex = 0;
+            for(Field field : fieldValues){
+
+                if(field.isIntValueSet()) {
+
+                    data[rowIndex++][columnIndex] = field.getIntValue();
+                }else{
+
+                    data[rowIndex++][columnIndex] = field.getStringValue();
+                }
+            }
+
+            columnIndex++;
+        }
     }
 
     /**
@@ -89,12 +107,7 @@ public class TableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
 
-        if(columnTypes[columnIndex].equals(Integer.class)){
-
-            return 0;
-        }
-
-        return "0";
+        return data[rowIndex][columnIndex];
     }
 
     /**
@@ -108,28 +121,6 @@ public class TableModel extends AbstractTableModel {
     public boolean isCellEditable(int rowIndex, int columnIndex) {
 
         return false;
-    }
-
-    /**
-     * This empty implementation is provided so users don't have to implement
-     * this method if their data model is not editable.
-     *
-     * @param aValue      value to assign to cell
-     * @param rowIndex    row of cell
-     * @param columnIndex column of cell
-     */
-    @Override
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-
-        if(columnTypes[columnIndex].equals(Integer.class)){
-
-            data[rowIndex][columnIndex] = 0;
-        }else{
-
-            data[rowIndex][columnIndex] = "0";
-        }
-
-        fireTableCellUpdated(rowIndex, columnIndex);
     }
 
     /**

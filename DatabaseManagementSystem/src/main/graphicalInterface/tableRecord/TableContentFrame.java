@@ -49,7 +49,7 @@ public class TableContentFrame  extends JPanel {
          */
         titleLabel = new JLabel(RECORDS_TITLE, SwingConstants.CENTER);
         titleLabel.setFont(new Font("Serif", Font.BOLD, 20));
-        titleLabel.setBounds(0, 20, 350, 20);
+        titleLabel.setBounds(0, 20, 350, 25);
 
         /*
         TABLE RECORDS
@@ -159,25 +159,6 @@ public class TableContentFrame  extends JPanel {
             }
 
             tableContent = new JTable(myTableModel);
-
-            System.out.println(myTableModel.getColumnCount() + "\t" + myTableModel.getRowCount());
-           /* for(int colCount = 0;  colCount < columns.length ; colCount++) {
-
-                List<Field> lstFields = modelTable.getData().get(modelTable.getColumn(columns[colCount]));
-                if (lstFields != null) {
-                    int rowCount = 0;
-                    for (Field field : lstFields) {
-
-                        if (field.isIntValueSet()) {
-
-                            tableContent.setValueAt(field.getIntValue(), rowCount++, colCount );
-                        } else {
-
-                            tableContent.setValueAt(field.getStringValue(), rowCount++, colCount +);
-                        }
-                    }
-                }
-            }*/
         }
     }
 
