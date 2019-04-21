@@ -176,6 +176,35 @@ public class Table {
         return data.get(column).size();
     }
 
+    public boolean deleteRow(int rowNumber) {
+        if (rowNumber < getNumberOfRows()) {
+            for (Column column : data.keySet()) {
+                data.get(column).remove(rowNumber);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public void deleteRows(Map<Column,List<Field>> rowsAffected) throws Exception {
+        for (Column dataColumn: data.keySet()) {
+            List<Field> affectedRow = rowsAffected.get(dataColumn);
+            List<Field> dataRow = data.get(dataColumn);
+            for (Field affectedRowField: affectedRow) {
+                if(!dataRow.contains(affectedRowField))
+                    throw new Exception("Field not match");
+            }
+        }
+
+        for (Column dataColumn: data.keySet()) {
+            List<Field> affectedRow = rowsAffected.get(dataColumn);
+            List<Field> dataRow = data.get(dataColumn);
+            for (Field affectedRowField: affectedRow) {
+                dataRow.remove(affectedRowField);
+            }
+        }
+    }
+
     public void deleteColumn(Column column) {
         data.remove(column);
     }
@@ -250,7 +279,7 @@ public class Table {
 
     public static String toString(Map<Column, List<Field>> input) {
         StringBuilder stringBuilder = new StringBuilder();
-        if(input.keySet().size() == 0)
+        if (input.keySet().size() == 0)
             return stringBuilder.toString();
 
         for (Column column : input.keySet()) {
@@ -285,7 +314,7 @@ public class Table {
             outputstream.write(column.getType().toString().getBytes());
             outputstream.write("\n".getBytes());
 
-            for (Field field:data.get(column)) {
+            for (Field field : data.get(column)) {
                 try {
                     field.persist(outputstream);
                 } catch (FieldValueNotSet fieldValueNotSet) {

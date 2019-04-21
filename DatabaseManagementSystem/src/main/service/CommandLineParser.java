@@ -5,6 +5,8 @@ import main.exception.TypeMismatchException;
 import main.model.*;
 import main.util.Constants;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class CommandLineParser {
@@ -136,9 +138,11 @@ public class CommandLineParser {
             field.setValue(Integer.parseInt(value));
 
         try {
-            table.where(column.getName(),sign,field);
-            //must implement deletion
+            Map<Column, List<Field>> rowsAffected = table.where(column.getName(),sign,field);
+            table.deleteRows(rowsAffected);
         } catch (TypeMismatchException e) {
+            throw new InvalidCommand(e.getMessage());
+        } catch (Exception e) {
             throw new InvalidCommand(e.getMessage());
         }
 
