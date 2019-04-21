@@ -15,8 +15,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DevTest {
     @BeforeAll
     public static void createTableInsertData() {
-        DataBuilder.buildeDataOnce();
-        DataBuilder.buildeDataSecondTime();
+//        DataBuilder.buildeDataOnce();
+//        DataBuilder.buildeDataSecondTime();
     }
 
     @Test()

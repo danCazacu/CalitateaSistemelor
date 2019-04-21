@@ -1,22 +1,27 @@
 package main.model;
 
+import main.exception.AlreadyExists;
+import main.exception.DoesNotExist;
+import main.exception.InvalidValue;
 import main.persistance.PersistenceContants;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-
+import static main.service.FilteringService.validate;
 public class Database {
     private String name;
     private List<Table> tables;
 
-    public Database(String name) {
+    public Database(String name) throws InvalidValue {
+        validate(name);
         this.name = name;
         this.tables = new ArrayList<>();
     }
 
-    public Database(String name, List<Table> tables) {
+    public Database(String name, List<Table> tables) throws InvalidValue {
+        validate(name);
         this.tables = tables;
         this.name = name;
     }
@@ -37,7 +42,8 @@ public class Database {
      * Use this to change the name of database
      * @param name
      */
-    public void setName(String name) {
+    public void setName(String name) throws InvalidValue {
+        validate(name);
         this.name = name;
     }
 
@@ -47,20 +53,32 @@ public class Database {
      * @return true if this database contains such table, false if not
      */
     public boolean exists(String tableName){
-        Table table = getTable(tableName);
+        Table table = null;
+        try {
+            table = getTable(tableName);
+        } catch (DoesNotExist ignored) {
+
+        }
         return table!=null;
     }
 
-    public Table createTable(String name, List<Column> columnNames) {
-        Table exists = getTable(name);
+    public Table createTable(String name, List<Column> columnNames) throws AlreadyExists, InvalidValue {
+        validate(name);
+        Table exists = null;
+        try {
+            exists = getTable(name);
+        } catch (DoesNotExist ignored) {
+
+        }
         if (exists != null)
-            return exists;
+            throw new AlreadyExists(exists.getName());
         return createTable(new Table(name,columnNames));
     }
 
-    public Table createTable(Table table) {
+    public Table createTable(Table table) throws AlreadyExists, InvalidValue {
+        validate(table.getName());
         if (tables.contains(table))
-            return table;
+            throw new AlreadyExists(table.getName());
         tables.add(table);
         return table;
     }
@@ -69,7 +87,9 @@ public class Database {
      * delete table by instance
      * @param table
      */
-    public void deleteTable(Table table) {
+    public void deleteTable(Table table) throws DoesNotExist {
+        if(!tables.contains(table))
+            throw new DoesNotExist(table.getName());
         tables.remove(table);
     }
 
@@ -77,7 +97,7 @@ public class Database {
      * delete table by its name
      * @param tableName
      */
-    public void deleteTable(String tableName) {
+    public void deleteTable(String tableName) throws DoesNotExist {
         Table table = this.getTable(tableName);
         if (table != null)
             deleteTable(table);
@@ -88,12 +108,12 @@ public class Database {
      * @param name
      * @return Table instance that has the name in paramter, returns NULL if no such table
      */
-    public Table getTable(String name) {
+    public Table getTable(String name) throws DoesNotExist {
         for (Table table : tables) {
             if (table.getName().equalsIgnoreCase(name))
                 return table;
         }
-        return null;
+        throw new DoesNotExist(name);
     }
     @Override
     public int hashCode() {
