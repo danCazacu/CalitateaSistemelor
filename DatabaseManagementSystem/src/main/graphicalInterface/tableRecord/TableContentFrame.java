@@ -1,23 +1,19 @@
 package main.graphicalInterface.tableRecord;
 
-import main.exception.ColumnAlreadyExists;
-import main.exception.DoesNotExist;
-import main.exception.FieldValueNotSet;
-import main.exception.InvalidValue;
+import main.exception.*;
 import main.graphicalInterface.ConfirmDialog;
+import main.graphicalInterface.InputTextPopUp;
 import main.graphicalInterface.PersistenceActionListener;
-import main.model.Column;
-import main.model.DatabaseManagementSystem;
-import main.model.FieldComparator;
+import main.model.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import static main.graphicalInterface.GIConstants.ENABLE_BUTTON_TABLE_ToolTipText;
-import static main.graphicalInterface.GIConstants.RECORDS_TITLE;
+import static main.graphicalInterface.GIConstants.*;
 
 public class TableContentFrame extends JPanel {
 
@@ -30,7 +26,8 @@ public class TableContentFrame extends JPanel {
     private JButton btnSelect;
     private JButton btnInsertColumn;
     private JButton btnInsertRecord;
-    private JButton btnUpdate;
+    private JButton btnUpdateColumnName;
+    private JButton btnUpdateFieldValue;
     private JButton btnDelete;
     private JTable tableContent;
     private JScrollPane scrollPane;
@@ -91,10 +88,15 @@ public class TableContentFrame extends JPanel {
         btnInsertRecord.setBounds(185, 550, 150, 50);
         btnInsertRecord.addActionListener(new InsertRecordListener());
 
-        btnUpdate = new JButton();
-        btnUpdate.setText("UPDATE");
-        btnUpdate.setBounds(90, 610, 200, 50);
-        btnUpdate.addActionListener(new UpdateListener());
+        btnUpdateColumnName = new JButton();
+        btnUpdateColumnName.setText("UPDATE COLUMN NAME");
+        btnUpdateColumnName.setBounds(20, 610, 150, 50);
+        btnUpdateColumnName.addActionListener(new UpdateColumnListener());
+
+        btnUpdateFieldValue = new JButton();
+        btnUpdateFieldValue.setText("UPDATE RECORD");
+        btnUpdateFieldValue.setBounds(185, 610, 150, 50);
+        btnUpdateFieldValue.addActionListener(new UpdateFieldListener());
 
         btnDelete = new JButton();
         btnDelete.setText("DELETE");
@@ -115,7 +117,8 @@ public class TableContentFrame extends JPanel {
         this.add(btnSelect);
         this.add(btnInsertColumn);
         this.add(btnInsertRecord);
-        this.add(btnUpdate);
+        this.add(btnUpdateColumnName);
+        this.add(btnUpdateFieldValue);
         this.add(btnDelete);
     }
 
@@ -127,7 +130,7 @@ public class TableContentFrame extends JPanel {
     private void disableDeleteButton() {
 
         btnDelete.setEnabled(false);
-        btnUpdate.setToolTipText(ENABLE_BUTTON_TABLE_ToolTipText);
+        btnDelete.setToolTipText(ENABLE_BUTTON_TABLE_ToolTipText);
 
     }
 
@@ -135,21 +138,93 @@ public class TableContentFrame extends JPanel {
         @Override
         public void beforePersist(ActionEvent e) {
 
+            String title = "Please select columns and optionally add where clause";
             SelectPanel selectPanel = null;
+
             try {
                 selectPanel = new SelectPanel(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable));
-            } catch (DoesNotExist ignored) {
-               // doesNotExist.printStackTrace();
+            } catch (DoesNotExist doesNotExist) {
+                doesNotExist.printStackTrace();
             }
 
-            String title = "Please select columns and optionally add where clause";
-            int messageType = JOptionPane.QUESTION_MESSAGE;
+            Object result = selectPanel.openPopUp(title, false);
+            while (!result.equals(JOptionPane.CANCEL_OPTION) && selectPanel != null) {
+                try {
 
-            int result = JOptionPane.showConfirmDialog(null, selectPanel,
-                    title, JOptionPane.OK_CANCEL_OPTION, messageType);
-            if (result == JOptionPane.OK_OPTION) {
+                    if (selectPanel.getLstColumns().getSelectedValuesList().size() == 0) {
 
+                        throw new InvalidColumnSelection();
+                    }
 
+                    Table originalTable = databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable);
+                    List<Column> lstSelectedColumns = new ArrayList<>();
+                    List<SelectPanel.CheckListItem> selectedItems = selectPanel.getLstColumns().getSelectedValuesList();
+
+                    for (int i = 0; i < selectedItems.size(); i++) {
+
+                        Column column = originalTable.getColumn(String.valueOf(selectedItems.get(i)));
+                        lstSelectedColumns.add(column);
+                    }
+
+                    if (selectPanel.getWhereCheckBox().isSelected()) {
+
+                        FieldComparator.Sign operator = (FieldComparator.Sign) selectPanel.getCbOperators().getSelectedItem();
+                        //System.out.println("operator: " + operator);
+
+                        String matchValue = selectPanel.getTextMatchValue().getText().trim();
+                        //System.out.println("value: " + matchValue);
+
+                        if (matchValue.isEmpty()) {
+                            throw new InvalidEmptyName("Can't do match with empty value");
+                        }
+
+                        if (lstSelectedColumns.get(0).getType().equals(Column.Type.INT)) {
+
+                            try {
+                                Integer.parseInt(matchValue);
+                            } catch (NumberFormatException exceptionNumber) {
+
+                                throw new TypeMismatchException(Column.Type.STRING, Column.Type.INT, lstSelectedColumns.get(0).getName());
+                            }
+                        }
+
+                        Table filteredTable = new Table(originalTable.getName(), new ArrayList<>(originalTable.getData().keySet()));
+
+                        Field field = new Field();
+                        if (lstSelectedColumns.get(0).getType().equals(Column.Type.INT)) {
+
+                            field.isIntValueSet();
+                            field.setValue(Integer.parseInt(matchValue));
+                        } else {
+
+                            field.isStringValueSet();
+                            field.setValue(matchValue);
+                        }
+
+                        Map<Column, List<Field>> filteredRows = originalTable.where(lstSelectedColumns.get(0).getName(), operator, field);
+
+                        for (Column col : filteredTable.getData().keySet()) {
+                            filteredTable.getData().put(col, filteredRows.get(col));
+                        }
+
+                        new ShowTableAfterSelect(filteredTable);
+                    } else {
+
+                        Table filteredTable = new Table(originalTable.getName(), lstSelectedColumns);
+                        Map<Column, List<Field>> selectResult = originalTable.select(originalTable.getData(), lstSelectedColumns);
+                        for (Column col : filteredTable.getData().keySet()) {
+                            filteredTable.getData().put(col, selectResult.get(col));
+                        }
+                        new ShowTableAfterSelect(filteredTable);
+                    }
+
+                    break;
+                } catch (InvalidEmptyName | InvalidColumnSelection | InvalidValue | TypeMismatchException exception) {
+
+                    result = selectPanel.openPopUp(exception.getMessage(), true);
+                } catch (FieldValueNotSet | DoesNotExist ignored) {
+                    //fieldValueNotSet.printStackTrace();
+                }
             }
         }
     }
@@ -186,7 +261,7 @@ public class TableContentFrame extends JPanel {
 
                     try {
 
-                        if(columnName.getText().trim().isEmpty())
+                        if (columnName.getText().trim().isEmpty())
                             throw new InvalidEmptyName();
                         Column newColumn = new Column(columnName.getText().trim(), (Column.Type) combo.getSelectedItem());
 
@@ -200,7 +275,7 @@ public class TableContentFrame extends JPanel {
                         title = exception.getMessage();
                         messageType = JOptionPane.ERROR_MESSAGE;
                     }
-                }else{
+                } else {
 
                     cancelPressed = true;
                 }
@@ -215,12 +290,20 @@ public class TableContentFrame extends JPanel {
         }
     }
 
-    class UpdateListener extends PersistenceActionListener {
+    class UpdateColumnListener extends PersistenceActionListener {
         @Override
         public void beforePersist(ActionEvent e) {
 
         }
     }
+
+    class UpdateFieldListener extends PersistenceActionListener {
+        @Override
+        public void beforePersist(ActionEvent e) {
+
+        }
+    }
+
 
     class DeleteListener extends PersistenceActionListener {
         @Override
@@ -292,12 +375,10 @@ public class TableContentFrame extends JPanel {
         if (selectedDatabase != null && selectedTable != null) {
 
             try {
-                myTableModel = new TableModel(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable));
-            } catch (FieldValueNotSet fieldValueNotSet) {
+                myTableModel = new TableModel(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable), false);
+            } catch (FieldValueNotSet | DoesNotExist fieldValueNotSet) {
 
-                fieldValueNotSet.printStackTrace();
-            } catch (DoesNotExist ignored) {
-                //doesNotExist.printStackTrace();
+                //fieldValueNotSet.printStackTrace();
             }
 
             tableContent = new JTable(myTableModel);
@@ -309,8 +390,10 @@ public class TableContentFrame extends JPanel {
 
         btnSelect.setEnabled(false);
         btnSelect.setToolTipText(ENABLE_BUTTON_TABLE_ToolTipText);
-        btnUpdate.setEnabled(false);
-        btnUpdate.setToolTipText(ENABLE_BUTTON_TABLE_ToolTipText);
+        btnUpdateColumnName.setEnabled(false);
+        btnUpdateColumnName.setToolTipText(ENABLE_BUTTON_TABLE_ToolTipText);
+        btnUpdateFieldValue.setEnabled(false);
+        btnUpdateFieldValue.setToolTipText(ENABLE_BUTTON_TABLE_ToolTipText);
         btnInsertColumn.setEnabled(false);
         btnInsertColumn.setToolTipText(ENABLE_BUTTON_TABLE_ToolTipText);
         btnInsertRecord.setEnabled(false);
@@ -321,7 +404,8 @@ public class TableContentFrame extends JPanel {
     public void enableButtonsWithoutDelete() {
 
         btnSelect.setEnabled(true);
-        btnUpdate.setEnabled(true);
+        btnUpdateColumnName.setEnabled(true);
+        btnUpdateFieldValue.setEnabled(true);
         btnInsertColumn.setEnabled(true);
         btnInsertRecord.setEnabled(true);
     }
