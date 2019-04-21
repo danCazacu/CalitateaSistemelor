@@ -11,4 +11,5 @@ public class Constants {
     public static final String WHERE = "where";
     public static final String INTO = "into";
     public static final String COLUMN = "column";
+    public static final String NAME = "name";
 }
