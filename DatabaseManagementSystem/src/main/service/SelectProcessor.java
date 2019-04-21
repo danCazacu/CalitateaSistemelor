@@ -25,10 +25,17 @@ public class SelectProcessor {
             throw new InvalidCommand("Missing from keyword after table name");
         if (line.length <= 5)
             throw new InvalidCommand("Missing database name after from keyword");
-        if (line.length > 6 && !line[6].equalsIgnoreCase(Constants.WHERE))
-            if (line.length <= 10)
+        if (line.length > 6) {
+            if (!line[6].equalsIgnoreCase(Constants.WHERE))
+                throw new InvalidCommand("No where clause");
+            if (line.length <= 9)
                 throw new InvalidCommand("Incorrect matching clause after where keyword: ex: age > 10, name = John. Spaces are mandatory!");
-
+            try {
+                FieldComparator.Sign.getEnum(line[8]);
+            }catch (IllegalArgumentException e){
+                throw new InvalidCommand("Invalid operator: "+line[8]);
+            }
+        }
         String tableName = line[3];
         String databaseName = line[5];
         try {
@@ -50,7 +57,7 @@ public class SelectProcessor {
                 }
             }
             Map<Column, List<Field>> affectedColumns = null;
-            if(line.length==10) { //means we have a where clause
+            if (line.length == 10) { //means we have a where clause
                 String columnName = line[7];
                 Column column = table.getColumn(columnName);
                 FieldComparator.Sign sign = FieldComparator.Sign.getEnum(line[8]);
@@ -66,10 +73,10 @@ public class SelectProcessor {
 //                for (Column col : columnsSelected) {
 //                    result.put(col, affectedColumns.get(col));
 //                }
-            }else {
+            } else {
                 affectedColumns = table.getData();
             }
-            System.out.println(Table.toString(table.select(affectedColumns,columnsSelected)));
+            System.out.println(Table.toString(table.select(affectedColumns, columnsSelected)));
 
 
         } catch (DoesNotExist | InvalidValue | TypeMismatchException e) {
