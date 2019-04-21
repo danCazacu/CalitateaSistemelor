@@ -23,6 +23,8 @@
   #### UPDATE
   -update database [database_name] name [new_database_name]
   
-  -update table [table_name] from [database_name] name 
+  -update table [table_name] from [database_name] name [new_table_name]
   
-  -update data [table_name] from [database_name] set [column_name] = [value] where [column_name] [operator] [value]
+  -update data [table_name] from [database_name] set [new_value] where [column_name] [operator] [value]
+
+  -update column [column_name] from [table_name] from [database_name] name [new_column_name]
