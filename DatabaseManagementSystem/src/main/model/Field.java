@@ -1,7 +1,9 @@
 package main.model;
 
 import main.exception.FieldValueNotSet;
-import main.persistance.PersistenceContants;
+import main.exception.InvalidValue;
+
+import static main.service.FilteringService.validate;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -17,7 +19,8 @@ public class Field{
 
     }
 
-    public Field(String val){
+    public Field(String val) throws InvalidValue {
+        validate(val);
         setValue(val);
     }
 
@@ -35,7 +38,8 @@ public class Field{
         return stringValue;
     }
 
-    public void setValue(String stringValue) {
+    public void setValue(String stringValue) throws InvalidValue {
+        validate(stringValue);
         this.stringValue = stringValue;
         this.intValue = null;
         this.type = Column.Type.STRING;
