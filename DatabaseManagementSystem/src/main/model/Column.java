@@ -1,5 +1,7 @@
 package main.model;
+import main.exception.InvalidValue;
 
+import static main.service.FilteringService.validate;
 public class Column {
     public enum Type {
         INT("int"),
@@ -28,7 +30,8 @@ public class Column {
     private String name;
     private Type type;
 
-    public Column(String name, Type type) {
+    public Column(String name, Type type) throws InvalidValue {
+        validate(name);
         this.name = name;
         this.type = type;
     }
