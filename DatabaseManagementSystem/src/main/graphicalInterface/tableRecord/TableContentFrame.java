@@ -147,7 +147,7 @@ public class TableContentFrame extends JPanel {
             try {
                 selectPanel = new SelectPanel(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable));
             } catch (DoesNotExist doesNotExist) {
-                doesNotExist.printStackTrace();
+
             }
 
             Object result = selectPanel.openPopUp(title, false);
@@ -226,7 +226,7 @@ public class TableContentFrame extends JPanel {
 
                     result = selectPanel.openPopUp(exception.getMessage(), true);
                 } catch (FieldValueNotSet | DoesNotExist ignored) {
-                    //fieldValueNotSet.printStackTrace();
+
                 }
             }
         }
@@ -303,7 +303,6 @@ public class TableContentFrame extends JPanel {
             try {
                 updateColumnNamePanel = new UpdateColumnNamePanel(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable));
             } catch (DoesNotExist doesNotExist) {
-                //doesNotExist.printStackTrace();
             }
 
             Object result = updateColumnNamePanel.openPopUp(title, false);
@@ -330,8 +329,6 @@ public class TableContentFrame extends JPanel {
 
                     result = updateColumnNamePanel.openPopUp(exception.getMessage(), true);
                 } catch (DoesNotExist ignored) {
-
-                    //ignored.printStackTrace();
                 }
             }
         }
@@ -348,7 +345,6 @@ public class TableContentFrame extends JPanel {
             try {
                 updateFieldPanel = new UpdateFieldPanel(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable));
             } catch (DoesNotExist doesNotExist) {
-                //doesNotExist.printStackTrace();
             }
 
             Object result = updateFieldPanel.openPopUp(title, false);
@@ -452,7 +448,6 @@ public class TableContentFrame extends JPanel {
                     try {
                         databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable).deleteRow(selectedRows.get(0));
                     } catch (DoesNotExist ignored) {
-                        //doesNotExist.printStackTrace();
                     }
                     //decrement the rest of the index
 
@@ -485,7 +480,6 @@ public class TableContentFrame extends JPanel {
                 myTableModel = new TableModel(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable), false);
             } catch (FieldValueNotSet | DoesNotExist fieldValueNotSet) {
 
-                //fieldValueNotSet.printStackTrace();
             }
 
             tableContent = new JTable(myTableModel);
