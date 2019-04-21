@@ -124,6 +124,64 @@ public class Table {
         }
     }
 
+    public void updateWhere(String columnName, FieldComparator.Sign sign, Field value, Field newValue) throws TypeMismatchException {
+        FieldComparator comparator = new FieldComparator();
+
+        Map<Column, List<Field>> tableData = this.getData();
+        for (Column col : tableData.keySet()) {
+            if (col.getName().equalsIgnoreCase(columnName)) {
+                if (!col.getType().equals(value.getType())) {
+                    throw new TypeMismatchException(col.getType(), value.getType(), col.getName());
+                }
+
+                List<Field> columnData = tableData.get(col);
+                for (Field field : columnData) {
+                    if (comparator.compareWithSign(field, value, sign)) {
+                        field.copyFrom(newValue);
+                    }
+                }
+            }
+        }
+    }
+
+    public void deleteWhere(String columnName, FieldComparator.Sign sign, Field value) throws TypeMismatchException {
+        while(deleteOneWhere(columnName,sign,value)){
+
+        }
+    }
+
+    /**
+     *  IMPORTANT!!! usage: call multiple times untill you receive false return.
+     *  This function deletes only one row at a time and it is necessary to call multiple times in order to delete all affected rows
+     * @param columnName
+     * @param sign
+     * @param value
+     * @return
+     * @throws TypeMismatchException
+     */
+    public boolean deleteOneWhere(String columnName, FieldComparator.Sign sign, Field value) throws TypeMismatchException {
+        FieldComparator comparator = new FieldComparator();
+
+        Map<Column, List<Field>> tableData = this.getData();
+        for (Column col : tableData.keySet()) {
+            if (col.getName().equalsIgnoreCase(columnName)) {
+                if (!col.getType().equals(value.getType())) {
+                    throw new TypeMismatchException(col.getType(), value.getType(), col.getName());
+                }
+
+                List<Field> columnData = tableData.get(col);
+                for(int i=0; i<columnData.size(); i++){
+                    if (comparator.compareWithSign(columnData.get(i), value, sign)) {
+                        this.deleteRow(i);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+
     /**
      * Use this as where clause. Then use other functions as actions over the result.
      *
@@ -168,12 +226,11 @@ public class Table {
      * @return trims data parameter and leaves only selected columns
      */
     public Map<Column, List<Field>> select(Map<Column, List<Field>> data, List<Column> selectColumns) {
-        for (Column column : data.keySet()) {
-            if (!selectColumns.contains(column)) {
-                data.remove(column);
-            }
+        Map<Column, List<Field>> result = new HashMap<>();
+        for (Column col : selectColumns) {
+            result.put(col, data.get(col));
         }
-        return data;
+        return result;
     }
 
     public int getNumberOfRows() {
@@ -223,7 +280,7 @@ public class Table {
         data.remove(column);
     }
 
-    public void insertColumn(Column column) throws ColumnAlreadyExists{
+    public void insertColumn(Column column) throws ColumnAlreadyExists {
         for (Column col : this.data.keySet()) {
             if (col.getName().equalsIgnoreCase(column.getName()))
                 throw new ColumnAlreadyExists(column.getName());
