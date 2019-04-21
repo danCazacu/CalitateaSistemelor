@@ -1,5 +1,6 @@
 package main.graphicalInterface.tableRecord;
 
+import main.exception.DoesNotExist;
 import main.exception.FieldValueNotSet;
 import main.model.Column;
 import main.model.Field;
@@ -30,12 +31,16 @@ public class TableModel extends AbstractTableModel {
 
             columnNames[i + 1] = this.table.getColumnNames().get(i);
 
-            if (this.table.getColumn(this.table.getColumnNames().get(i)).getType().equals(Column.Type.INT)) {
+            try {
+                if (this.table.getColumn(this.table.getColumnNames().get(i)).getType().equals(Column.Type.INT)) {
 
-                columnTypes[i + 1] = Integer.class;
-            } else {
+                    columnTypes[i + 1] = Integer.class;
+                } else {
 
-                columnTypes[i + 1] = String.class;
+                    columnTypes[i + 1] = String.class;
+                }
+            } catch (DoesNotExist ignored) {
+               // doesNotExist.printStackTrace();
             }
         }
 

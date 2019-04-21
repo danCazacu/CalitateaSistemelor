@@ -1,11 +1,16 @@
 package main.graphicalInterface.database;
 
+import main.exception.AlreadyExists;
+import main.exception.DoesNotExist;
+import main.exception.InvalidValue;
 import main.graphicalInterface.ConfirmDialog;
 import main.graphicalInterface.InputTextPopUp;
 import main.graphicalInterface.PersistenceActionListener;
 import main.graphicalInterface.table.TableFrame;
+import main.graphicalInterface.tableRecord.InvalidEmptyName;
 import main.model.Database;
 import main.model.DatabaseManagementSystem;
+import main.model.Table;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -166,28 +171,26 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
         @Override
         public void beforePersist(ActionEvent e) {
 
-            InputTextPopUp inputTextPopUp = new InputTextPopUp(CREATE_NEW_DATABASE_TITLE );
+            InputTextPopUp inputTextPopUp = new InputTextPopUp(CREATE_NEW_DATABASE_TITLE);
             Object input = inputTextPopUp.openPopUp(ENTER_DATABASE_MESSAGE, false);
 
-            while( input != null){
-                // user didn't pressed Cancel
-                if(input.toString().trim().equals("")){
+            while (input != null) {
 
-                    // can't add table with empty name
-                    input = inputTextPopUp.openPopUp(CREATE_NEW_DATABASE_EMPTY_NAME, true);
-                }
-                else if (databaseManagementSystem.getDatabase(input.toString().trim()) != null) {
+                try {
+                    // user didn't pressed Cancel
+                    if (input.toString().trim().equals("")) {
 
-                    //already exist a database with this name, reopen popup with proper message
-                    input = inputTextPopUp.openPopUp(WRONG_DATABASE_NAME_ALREADY_EXISTS, true);
-                } else if(input.toString().trim().contains("\"")) {
+                        // can't add table with empty name
+                        throw new InvalidEmptyName();
+                    }
 
-                    input = inputTextPopUp.openPopUp(WRONG_DATABASE_NAME_ESCAPE_CHARACTER, true);
-                }else{
-
-                    databaseManagementSystem.createDatabase(input.toString().trim());
+                    databaseManagementSystem.createDatabase(input.toString());
                     populateList();
                     break;
+
+                } catch (AlreadyExists | InvalidEmptyName | InvalidValue exception) {
+                    //exception.printStackTrace();
+                    input = inputTextPopUp.openPopUp(exception.getMessage(), true);
                 }
             }
         }
@@ -200,40 +203,50 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
             int index = databasesList.getSelectedIndex();
             String currentName = listModel.get(index).toString();
 
-            InputTextPopUp inputTextPopUp = new InputTextPopUp(UPDATE_DATABASE_TITLE );
+            InputTextPopUp inputTextPopUp = new InputTextPopUp(UPDATE_DATABASE_TITLE);
             Object input = inputTextPopUp.openPopUp(ENTER_NEW_DATABASE_MESSAGE, false);
 
-            while( input != null){
+            while (input != null) {
                 // user didn't pressed Cancel
-                if(input.toString().trim().equals("")){
 
-                    // can't rename database to empty name
-                    input = inputTextPopUp.openPopUp(UPDATE_DATABASE_EMPTY_NAME, true);
-                }
-                else if (databaseManagementSystem.getDatabase(input.toString().trim()) != null) {
+                try {
 
-                    //already exist a database with this name, reopen popup with proper message
-                    input = inputTextPopUp.openPopUp(WRONG_DATABASE_NAME_ALREADY_EXISTS, true);
-                } else if(input.toString().trim().contains("\"")) {
+                    if (input.toString().trim().equals("")) {
 
-                    input = inputTextPopUp.openPopUp(WRONG_DATABASE_NAME_ESCAPE_CHARACTER, true);
-                }else{
-
+                        // can't rename database to empty name
+                        throw new InvalidEmptyName();
+                    }
                     String newName = input.toString().trim();
 
                     String titleConfirmDelete = "Confirm Update Database";
-                    String msgConfirmDelete =  "Are you sure you want to change database name from \"" + currentName + "\" to \"" + newName + "\" ?";
+                    String msgConfirmDelete = "Are you sure you want to change database name from \"" + currentName + "\" to \"" + newName + "\" ?";
 
                     ConfirmDialog updateDialog = new ConfirmDialog(titleConfirmDelete, msgConfirmDelete);
                     boolean update = updateDialog.confirm();
 
-                    if(update) {
+                    if (update) {
 
+                        Database existDB = null;
+                        try {
+                            existDB = databaseManagementSystem.getDatabase(newName);
+
+                        }catch(DoesNotExist ignored){
+
+                        }
+                        if (existDB != null) {
+
+                            throw new AlreadyExists(newName);
+                        }
                         databaseManagementSystem.getDatabase(currentName).setName(newName);
                         populateList();
+                        tableFrame.setSelectedDatabase(null);
+                        disableUpdateDeleteImportButtons();
                     }
-
                     break;
+
+                } catch (InvalidValue | InvalidEmptyName | DoesNotExist | AlreadyExists exception) {
+
+                    input = inputTextPopUp.openPopUp(exception.getMessage(), true);
                 }
             }
         }
@@ -246,15 +259,19 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
             int index = databasesList.getSelectedIndex();
 
             String titleConfirmDelete = "Confirm Delete Database";
-            String msgConfirmDelete =  "Are you sure you want to delete \"" + listModel.get(index).toString() + "\" Database?";
+            String msgConfirmDelete = "Are you sure you want to delete \"" + listModel.get(index).toString() + "\" Database?";
 
             ConfirmDialog deleteDialog = new ConfirmDialog(titleConfirmDelete, msgConfirmDelete);
             boolean delete = deleteDialog.confirm();
 
-            if(delete) {
+            if (delete) {
 
-                databaseManagementSystem.deleteDatabase(listModel.get(index).toString());
-                populateList();
+                try {
+                    databaseManagementSystem.deleteDatabase(listModel.get(index).toString());
+                    populateList();
+                } catch (DoesNotExist ignored) {
+                    //doesNotExist.printStackTrace();
+                }
             }
 
             if (listModel.getSize() == 0) { //No database left, disable update,delete buttons

@@ -1,18 +1,19 @@
 package main.graphicalInterface.tableRecord;
 
-import jdk.nashorn.internal.scripts.JO;
 import main.exception.ColumnAlreadyExists;
+import main.exception.DoesNotExist;
 import main.exception.FieldValueNotSet;
+import main.exception.InvalidValue;
 import main.graphicalInterface.ConfirmDialog;
 import main.graphicalInterface.PersistenceActionListener;
 import main.model.Column;
 import main.model.DatabaseManagementSystem;
+import main.model.FieldComparator;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import static main.graphicalInterface.GIConstants.ENABLE_BUTTON_TABLE_ToolTipText;
@@ -134,6 +135,22 @@ public class TableContentFrame extends JPanel {
         @Override
         public void beforePersist(ActionEvent e) {
 
+            SelectPanel selectPanel = null;
+            try {
+                selectPanel = new SelectPanel(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable));
+            } catch (DoesNotExist ignored) {
+               // doesNotExist.printStackTrace();
+            }
+
+            String title = "Please select columns and optionally add where clause";
+            int messageType = JOptionPane.QUESTION_MESSAGE;
+
+            int result = JOptionPane.showConfirmDialog(null, selectPanel,
+                    title, JOptionPane.OK_CANCEL_OPTION, messageType);
+            if (result == JOptionPane.OK_OPTION) {
+
+
+            }
         }
     }
 
@@ -149,34 +166,43 @@ public class TableContentFrame extends JPanel {
             //insertColumnPanel.add(new JLabel("Please enter the column name and select the column type")); //message
             insertColumnPanel.add(new JLabel("Column name:"));
             insertColumnPanel.add(columnName);
-            insertColumnPanel.add(Box.createHorizontalStrut(15)); // a spacer
+            insertColumnPanel.add(Box.createHorizontalBox());
+            insertColumnPanel.add(Box.createHorizontalStrut(10)); // a spacer
             insertColumnPanel.add(new JLabel("Column type:"));
             insertColumnPanel.add(combo);
             String title = "Please enter the column name and select the column type";
             int messageType = JOptionPane.QUESTION_MESSAGE;
 
-            boolean alreadyExist = true;
-            while(alreadyExist) {
+            boolean invalid = true;
+            boolean cancelPressed = false;
+            while (invalid && !cancelPressed) {
 
                 int result = JOptionPane.showConfirmDialog(null, insertColumnPanel,
                         title, JOptionPane.OK_CANCEL_OPTION, messageType);
                 if (result == JOptionPane.OK_OPTION) {
 
                     //System.out.println("column name: " + columnName.getText());
-                   // System.out.println("column type: " + combo.getSelectedItem() + combo.getSelectedItem().getClass());
+                    // System.out.println("column type: " + combo.getSelectedItem() + combo.getSelectedItem().getClass());
 
-                    Column newColumn = new Column(columnName.getText().trim(), (Column.Type) combo.getSelectedItem());
                     try {
 
+                        if(columnName.getText().trim().isEmpty())
+                            throw new InvalidEmptyName();
+                        Column newColumn = new Column(columnName.getText().trim(), (Column.Type) combo.getSelectedItem());
+
                         databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable).insertColumn(newColumn);
-                        alreadyExist = false;
+                        invalid = false;
                         setSelectedTable(selectedTable); //refresh table content
-                    } catch (ColumnAlreadyExists columnAlreadyExists) {
-                        //columnAlreadyExists.printStackTrace();
-                        alreadyExist = true;
-                        title = columnAlreadyExists.getMessage();
+
+                    } catch (ColumnAlreadyExists | InvalidEmptyName | InvalidValue | DoesNotExist exception) {
+
+                        invalid = true;
+                        title = exception.getMessage();
                         messageType = JOptionPane.ERROR_MESSAGE;
                     }
+                }else{
+
+                    cancelPressed = true;
                 }
             }
         }
@@ -233,7 +259,11 @@ public class TableContentFrame extends JPanel {
                 // decrement list values (because values had changed, one value was deleted)
                 while (selectedRows.size() > 0) {
 
-                    databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable).deleteRow(selectedRows.get(0));
+                    try {
+                        databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable).deleteRow(selectedRows.get(0));
+                    } catch (DoesNotExist ignored) {
+                        //doesNotExist.printStackTrace();
+                    }
                     //decrement the rest of the index
 
                     for (int i = 0; i < selectedRows.size(); i++) {
@@ -266,6 +296,8 @@ public class TableContentFrame extends JPanel {
             } catch (FieldValueNotSet fieldValueNotSet) {
 
                 fieldValueNotSet.printStackTrace();
+            } catch (DoesNotExist ignored) {
+                //doesNotExist.printStackTrace();
             }
 
             tableContent = new JTable(myTableModel);
@@ -273,7 +305,7 @@ public class TableContentFrame extends JPanel {
         }
     }
 
-    public void disableButtonsWithoutDelete(){
+    public void disableButtonsWithoutDelete() {
 
         btnSelect.setEnabled(false);
         btnSelect.setToolTipText(ENABLE_BUTTON_TABLE_ToolTipText);
@@ -286,7 +318,7 @@ public class TableContentFrame extends JPanel {
     }
 
 
-    public void enableButtonsWithoutDelete(){
+    public void enableButtonsWithoutDelete() {
 
         btnSelect.setEnabled(true);
         btnUpdate.setEnabled(true);
@@ -331,3 +363,4 @@ public class TableContentFrame extends JPanel {
         }
     }
 }
+
