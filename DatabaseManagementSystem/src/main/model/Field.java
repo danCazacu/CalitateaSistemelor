@@ -2,18 +2,19 @@ package main.model;
 
 import main.exception.FieldValueNotSet;
 import main.exception.InvalidValue;
+import main.exception.TypeMismatchException;
 
 import static main.service.FilteringService.validate;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class Field{
+public class Field {
     private String stringValue;
     private Integer intValue;
     private Column.Type type;
 
-    public Field(){
+    public Field() {
         stringValue = null;
         intValue = null;
 
@@ -24,7 +25,7 @@ public class Field{
         setValue(val);
     }
 
-    public Field(int val){
+    public Field(int val) {
         setValue(val);
     }
 
@@ -33,7 +34,7 @@ public class Field{
      * @throws FieldValueNotSet
      */
     public String getStringValue() throws FieldValueNotSet {
-        if(!isStringValueSet())
+        if (!isStringValueSet())
             throw new FieldValueNotSet(this);
         return stringValue;
     }
@@ -50,7 +51,7 @@ public class Field{
      * @throws FieldValueNotSet
      */
     public Integer getIntValue() throws FieldValueNotSet {
-        if(!isIntValueSet())
+        if (!isIntValueSet())
             throw new FieldValueNotSet(this);
         return intValue;
     }
@@ -61,35 +62,36 @@ public class Field{
         this.type = Column.Type.INT;
     }
 
-    public boolean isStringValueSet(){
+    public boolean isStringValueSet() {
         return stringValue != null;
     }
 
-    public boolean isIntValueSet(){
+    public boolean isIntValueSet() {
         return intValue != null;
     }
 
     public Column.Type getType() {
         return type;
     }
-    public boolean equals(Field field){
-        if(!field.getType().equals(this.getType()))
+
+    public boolean equals(Field field) {
+        if (!field.getType().equals(this.getType()))
             return false;
-        if(field.isIntValueSet()!=this.isIntValueSet())
+        if (field.isIntValueSet() != this.isIntValueSet())
             return false;
-        if(field.isStringValueSet()!=this.isStringValueSet())
+        if (field.isStringValueSet() != this.isStringValueSet())
             return false;
-        if(field.isStringValueSet()){
+        if (field.isStringValueSet()) {
             try {
-                if(!field.getStringValue().equals(this.getStringValue()))
+                if (!field.getStringValue().equals(this.getStringValue()))
                     return false;
             } catch (FieldValueNotSet fieldValueNotSet) {
                 fieldValueNotSet.printStackTrace();
             }
         }
-        if(field.isIntValueSet()){
+        if (field.isIntValueSet()) {
             try {
-                if(!field.getIntValue().equals(this.getIntValue()))
+                if (!field.getIntValue().equals(this.getIntValue()))
                     return false;
             } catch (FieldValueNotSet fieldValueNotSet) {
                 fieldValueNotSet.printStackTrace();
@@ -98,37 +100,39 @@ public class Field{
 
         return true;
     }
+
     /**
      * Uses equalsIgnoreCase for string value match
+     *
      * @param obj
      * @return
      */
     @Override
     public boolean equals(Object obj) {
-        if(!(obj instanceof Field)) {
+        if (!(obj instanceof Field)) {
             return false;
         }
 
         Field field = (Field) obj;
-        if(field.hashCode()!=this.hashCode())
+        if (field.hashCode() != this.hashCode())
             return false;
-        if(!field.getType().equals(this.getType()))
+        if (!field.getType().equals(this.getType()))
             return false;
-        if(field.isIntValueSet()!=this.isIntValueSet())
+        if (field.isIntValueSet() != this.isIntValueSet())
             return false;
-        if(field.isStringValueSet()!=this.isStringValueSet())
+        if (field.isStringValueSet() != this.isStringValueSet())
             return false;
-        if(field.isStringValueSet()){
+        if (field.isStringValueSet()) {
             try {
-                if(!field.getStringValue().equals(this.getStringValue()))
+                if (!field.getStringValue().equals(this.getStringValue()))
                     return false;
             } catch (FieldValueNotSet fieldValueNotSet) {
                 fieldValueNotSet.printStackTrace();
             }
         }
-        if(field.isIntValueSet()){
+        if (field.isIntValueSet()) {
             try {
-                if(!field.getIntValue().equals(this.getIntValue()))
+                if (!field.getIntValue().equals(this.getIntValue()))
                     return false;
             } catch (FieldValueNotSet fieldValueNotSet) {
                 fieldValueNotSet.printStackTrace();
@@ -141,16 +145,16 @@ public class Field{
     @Override
     public int hashCode() {
         int superHash = super.hashCode();
-        if(isIntValueSet()) {
+        if (isIntValueSet()) {
             try {
-                superHash+=getIntValue().hashCode();
+                superHash += getIntValue().hashCode();
             } catch (FieldValueNotSet fieldValueNotSet) {
                 fieldValueNotSet.printStackTrace();
             }
         }
-        if(isStringValueSet()) {
+        if (isStringValueSet()) {
             try {
-                superHash-=getStringValue().hashCode();
+                superHash -= getStringValue().hashCode();
             } catch (FieldValueNotSet fieldValueNotSet) {
                 fieldValueNotSet.printStackTrace();
             }
@@ -160,14 +164,14 @@ public class Field{
 
     @Override
     public String toString() {
-        if(isStringValueSet()) {
+        if (isStringValueSet()) {
             try {
                 return getStringValue();
             } catch (FieldValueNotSet fieldValueNotSet) {
                 fieldValueNotSet.printStackTrace();
             }
         }
-        if(isIntValueSet()) {
+        if (isIntValueSet()) {
             try {
                 return getIntValue().toString();
             } catch (FieldValueNotSet fieldValueNotSet) {
@@ -178,12 +182,29 @@ public class Field{
     }
 
     public void persist(OutputStream outputstream) throws IOException, FieldValueNotSet {
-        if(isStringValueSet()) {
-            outputstream.write((this.getStringValue()+"\n").getBytes());
+        if (isStringValueSet()) {
+            outputstream.write((this.getStringValue() + "\n").getBytes());
 
         }
-        if(isIntValueSet()) {
+        if (isIntValueSet()) {
             outputstream.write((this.getIntValue().toString() + "\n").getBytes());
         }
+    }
+
+    public void copyFrom(Field field) throws TypeMismatchException {
+        if (!field.getType().equals(this.getType()))
+            throw new TypeMismatchException(field, this);
+
+        try {
+            if (field.getType().equals(Column.Type.INT)) {
+                this.setValue(field.getIntValue());
+            }
+            if (field.getType().equals(Column.Type.STRING)) {
+                this.setValue(field.getStringValue());
+            }
+        } catch (InvalidValue | FieldValueNotSet ignored) {
+
+        }
+
     }
 }

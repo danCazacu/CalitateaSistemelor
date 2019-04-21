@@ -40,11 +40,12 @@ public class CommandLineParser {
                 new DeleteProcessor().processDelete(line);
                 break;
             case Constants.UPDATE:
-                processUpdate(line);
+                new UpdateProcessor().processUpdate(line);
                 break;
             case Constants.SELECT:
                 new SelectProcessor().processSelect(line);
                 break;
+
             default:
                 throw new InvalidCommand("Invalid command "+action);
         }
