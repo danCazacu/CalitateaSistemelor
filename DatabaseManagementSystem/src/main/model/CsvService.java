@@ -10,22 +10,16 @@ import java.util.List;
 import java.util.Map;
 
 public class CsvService {
-    public static final String FILE_NAME = "excel.csv";
 
-    public static void writeDataLineByLine(String filePath, String databaseName, String tableName) throws DoesNotExist {
+    public static void writeDataLineByLine(String databaseName, String tableName) throws DoesNotExist {
         // first create file object for file placed at location
         // specified by filepath
-        File file = new File(filePath);
 
         DatabaseManagementSystem databaseManagementSystem = DatabaseManagementSystem.getInstance();
         Table table = databaseManagementSystem.getDatabase(databaseName).getTable(tableName);
+        String pathWhereToSaveTable = DatabasePersistance.cwd() + File.separator + table.getName() + ".csv";
 
-
-//        String pathWhereToSaveTable = DatabasePersistance.cwd()+File.separator+table.getName();
-//        Map<Column, List<Field>> data = table.getData();
-////        table.getNumberOfRows();
-////        table.get
-////        table.getRow(i)
+        File file = new File(pathWhereToSaveTable);
 
 
         try {
@@ -72,7 +66,7 @@ public class CsvService {
     }
 
 
-    public static void importDataLineByLine(String filePath) {
+    public static boolean importDataLineByLine(String filePath, String databaseName) {
         File file = new File(filePath);
         DatabaseManagementSystem databaseManagementSystem = DatabaseManagementSystem.getInstance();
         try {
@@ -84,7 +78,7 @@ public class CsvService {
             String databaseExcel = inString.split(",")[0];
             String tableExcel = inString.split(",")[1];
 
-            Table table = databaseManagementSystem.getDatabase(databaseExcel).getTable(tableExcel);
+            Table table = databaseManagementSystem.getDatabase(databaseName).getTable(tableExcel);
             inString = inStream.readLine();
             System.out.println(inString);
 
@@ -111,6 +105,7 @@ public class CsvService {
 
             inputFile.close();
             inStream.close();
+
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -121,7 +116,8 @@ public class CsvService {
         } catch (InvalidValue invalidValue) {
             invalidValue.printStackTrace();
         } catch (DoesNotExist doesNotExist) {
-            doesNotExist.printStackTrace();
+            return false;
         }
+        return true;
     }
 }

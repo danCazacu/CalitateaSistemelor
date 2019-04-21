@@ -233,7 +233,7 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
                         try {
                             existDB = databaseManagementSystem.getDatabase(newName);
 
-                        }catch(DoesNotExist ignored){
+                        } catch (DoesNotExist ignored) {
 
                         }
                         if (existDB != null) {
@@ -286,6 +286,9 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
 
     class ImportListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
+            int index = databasesList.getSelectedIndex();
+            String currentName = listModel.get(index).toString();
+
 
             JFileChooser chooser = new JFileChooser();
             FileNameExtensionFilter filter = new FileNameExtensionFilter(
@@ -293,8 +296,12 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
             chooser.setFileFilter(filter);
             int returnVal = chooser.showOpenDialog(btnImportTable);
             String absPath = chooser.getSelectedFile().getAbsolutePath();
-            CsvService.importDataLineByLine(absPath);
-            JOptionPane.showMessageDialog(null, "The file was successfully imported!");
+            boolean result = CsvService.importDataLineByLine(absPath, currentName);
+            if (!result) {
+                JOptionPane.showMessageDialog(null, "This table name does not exist.");
+            } else {
+                JOptionPane.showMessageDialog(null, "The file was successfully imported.");
+            }
         }
     }
 }

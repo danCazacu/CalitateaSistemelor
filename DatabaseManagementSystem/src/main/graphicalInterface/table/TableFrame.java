@@ -319,8 +319,8 @@ public class TableFrame extends JPanel implements ListSelectionListener {
             int index = tablesList.getSelectedIndex();
 
             try {
-                String absolutePath = DatabasePersistance.cwd() + File.separator + CsvService.FILE_NAME;
-                CsvService.writeDataLineByLine(absolutePath, selectedDatabase, listModel.get(index).toString());
+               CsvService.writeDataLineByLine(selectedDatabase, listModel.get(index).toString());
+
             } catch (DoesNotExist doesNotExist) {
                 doesNotExist.printStackTrace();
             }
