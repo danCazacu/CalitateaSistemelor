@@ -275,7 +275,8 @@ public class TableFrame extends JPanel implements ListSelectionListener {
             if (delete) {
 
                 databaseManagementSystem.getDatabase(selectedDatabase).deleteTable(listModel.get(index).toString());
-                listModel.remove(index);
+                //listModel.remove(index);
+                populateList();
             }
 
             if (listModel.getSize() == 0) { //No table left, disable update,delete buttons
