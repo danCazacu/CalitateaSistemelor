@@ -288,4 +288,68 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
             //TODO call the csv importer
         }
     }
+
+    public JLabel getTitleLabel() {
+
+        return titleLabel;
+    }
+
+    public JList getDatabasesList() {
+
+        return databasesList;
+    }
+
+    public DefaultListModel getListModel() {
+
+        return listModel;
+    }
+
+    public JButton getBtnCreate() {
+
+        return btnCreate;
+    }
+
+    public JButton getBtnUpdate() {
+
+        return btnUpdate;
+    }
+
+    public JButton getBtnDelete() {
+        return btnDelete;
+    }
+
+    public JButton getBtnImportTable() {
+
+        return btnImportTable;
+    }
+
+    public void setDatabasesList(JList databasesList) {
+
+        this.databasesList = databasesList;
+    }
+
+    public void setListModel(DefaultListModel listModel) {
+
+        this.listModel = listModel;
+    }
+
+    public void setBtnCreate(JButton btnCreate) {
+
+        this.btnCreate = btnCreate;
+    }
+
+    public void setBtnUpdate(JButton btnUpdate) {
+
+        this.btnUpdate = btnUpdate;
+    }
+
+    public void setBtnDelete(JButton btnDelete) {
+
+        this.btnDelete = btnDelete;
+    }
+
+    public void setBtnImportTable(JButton btnImportTable) {
+
+        this.btnImportTable = btnImportTable;
+    }
 }

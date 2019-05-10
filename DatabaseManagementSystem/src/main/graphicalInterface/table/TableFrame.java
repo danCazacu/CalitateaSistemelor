@@ -328,4 +328,52 @@ public class TableFrame extends JPanel implements ListSelectionListener {
         this.titleLabel.setText(title);
         populateList();
     }
+
+    public static TableFrame getTableFrame() {
+        return tableFrame;
+    }
+
+    public DatabaseManagementSystem getDatabaseManagementSystem() {
+        return databaseManagementSystem;
+    }
+
+    public TableContentFrame getTableContentFrame() {
+        return tableContentFrame;
+    }
+
+    public JLabel getTitleLabel() {
+        return titleLabel;
+    }
+
+    public JList getTablesList() {
+        return tablesList;
+    }
+
+    public DefaultListModel getListModel() {
+        return listModel;
+    }
+
+    public JScrollPane getScrollTablesPanel() {
+        return scrollTablesPanel;
+    }
+
+    public JButton getBtnCreate() {
+        return btnCreate;
+    }
+
+    public JButton getBtnUpdate() {
+        return btnUpdate;
+    }
+
+    public JButton getBtnDelete() {
+        return btnDelete;
+    }
+
+    public JButton getBtnExportTable() {
+        return btnExportTable;
+    }
+
+    public String getSelectedDatabase() {
+        return selectedDatabase;
+    }
 }
