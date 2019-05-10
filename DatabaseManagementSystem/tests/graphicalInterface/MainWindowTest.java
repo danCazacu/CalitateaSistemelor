@@ -5,13 +5,11 @@ import main.graphicalInterface.database.DatabaseFrame;
 import main.graphicalInterface.table.TableFrame;
 import main.graphicalInterface.tableRecord.TableContentFrame;
 import main.persistance.DatabasePersistance;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -21,12 +19,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * Tests suit for {@link MainWindow}
+ */
 public class MainWindowTest {
 
-    MainWindow mainFrame;
+    private MainWindow mainFrame;
 
     @BeforeEach
-    public void setup(){
+    public void setup() {
 
         mainFrame = new MainWindow();
     }
@@ -71,8 +72,8 @@ public class MainWindowTest {
         mainFrame.dispatchEvent(new WindowEvent(mainFrame, WindowEvent.WINDOW_CLOSING));
 
         // verify
-         Mockito.verify(windowAdapterMock, times(1)).windowClosing(any());
-         Mockito.verify(databasePersistenceMock, times(1)).persist();
+        Mockito.verify(windowAdapterMock, times(1)).windowClosing(any());
+        Mockito.verify(databasePersistenceMock, times(1)).persist();
     }
 
     @Test
