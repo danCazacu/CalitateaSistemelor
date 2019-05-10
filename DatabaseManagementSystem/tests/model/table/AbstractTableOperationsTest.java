@@ -6,15 +6,17 @@ import main.model.DatabaseManagementSystem;
 import main.model.Table;
 import main.util.DataBuilder;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
 public abstract class AbstractTableOperationsTest {
 
     protected static Table table;
-    @BeforeAll
-    public static void prepare(){
+    @BeforeEach
+    public void prepare(){
         DataBuilder.buildTestData();
         try {
             table = DatabaseManagementSystem.getInstance().getDatabase(DataBuilder.DATABASE).getTable(DataBuilder.TABLE);
@@ -23,8 +25,8 @@ public abstract class AbstractTableOperationsTest {
         }
     }
 
-    @AfterAll
-    public static void clean(){
+    @AfterEach
+    public void clean(){
         try {
             DatabaseManagementSystem.getInstance().deleteDatabase(DataBuilder.DATABASE);
         } catch (DoesNotExist ignored) {
