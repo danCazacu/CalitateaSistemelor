@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 public class DeleteDatabase {
-    private static final String DATABASE_NAME = "GET_DATABASE_TEST";
+    private static final String DATABASE_NAME = "DELETE_DATABASE_TEST";
     private static final String INVALID_DATABASE_NAME = "INVALID_DATABASE_NAME";
     private static DatabaseManagementSystem dbms = DatabaseManagementSystem.getInstance();
     @BeforeEach
