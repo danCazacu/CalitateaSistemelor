@@ -8,16 +8,13 @@ import main.persistance.DatabasePersistance;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.mockito.stubbing.Answer;
 
 import javax.swing.*;
-import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import static main.graphicalInterface.GIConstants.DATABASE_MANAGEMENT_SYSTEM_TITLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 /**
@@ -27,10 +24,16 @@ public class MainWindowTest {
 
     private MainWindow mainFrame;
 
+
+    private static DatabasePersistance databasePersistanceMock;
+
     @BeforeEach
     public void setup() {
 
         mainFrame = new MainWindow();
+        databasePersistanceMock = mock(DatabasePersistance.class);
+        doNothing().when(databasePersistanceMock).persist();
+        mainFrame.setDatabasePersistance(databasePersistanceMock);
     }
 
     @Test
@@ -52,9 +55,6 @@ public class MainWindowTest {
     @Test
     public void givenMainFrameWhenCloseFrameThenDBPersist() {
 
-        // setup
-        DatabasePersistance databasePersistenceMock = mock(DatabasePersistance.class);
-
         // execute
         mainFrame.open();
         assertEquals(1, mainFrame.getWindowListeners().length);
@@ -64,14 +64,7 @@ public class MainWindowTest {
         // execute
         mainFrame.dispatchEvent(new WindowEvent(mainFrame, WindowEvent.WINDOW_CLOSING));
 
-        // verify - for checking the method mock should be used, but is not doing Code Coverage
-        /*WindowAdapter windowAdapterMock = mock(WindowAdapter.class);
-
-        doAnswer( (Answer) invocation  -> {
-            databasePersistenceMock.persist();
-            return null;
-        }).when(windowAdapterMock).windowClosing(any());
-       Mockito.verify(databasePersistenceMock, times(1)).persist(); */
+        Mockito.verify(databasePersistanceMock, times(1)).persist();
     }
 
     @Test

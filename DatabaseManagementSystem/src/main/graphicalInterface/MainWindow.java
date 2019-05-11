@@ -19,6 +19,8 @@ public class MainWindow extends JFrame {
     private TableFrame tableFrame;
     private TableContentFrame tableContentFrame;
 
+    private DatabasePersistance databasePersistance;
+
     public MainWindow(){
 
         databaseFrame = new DatabaseFrame();
@@ -36,7 +38,7 @@ public class MainWindow extends JFrame {
             @Override
             public void windowClosing(WindowEvent e) {
 
-                new DatabasePersistance().persist();
+              databasePersistance.persist();
             }
         });
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -64,5 +66,10 @@ public class MainWindow extends JFrame {
         int x = (int) ((dimension.getWidth() - frame.getWidth()) / 2);
         int y = (int) ((dimension.getHeight() - frame.getHeight()) / 2);
         frame.setLocation(x, y);
+    }
+
+    public void setDatabasePersistance(DatabasePersistance databasePersistance) {
+
+        this.databasePersistance = databasePersistance;
     }
 }

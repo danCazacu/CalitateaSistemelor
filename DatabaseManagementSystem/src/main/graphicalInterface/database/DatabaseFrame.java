@@ -10,7 +10,7 @@ import main.graphicalInterface.table.TableFrame;
 import main.graphicalInterface.tableRecord.InvalidEmptyName;
 import main.model.Database;
 import main.model.DatabaseManagementSystem;
-import main.model.Table;
+import main.persistance.DatabasePersistance;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -44,6 +44,12 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
     private JButton btnUpdate;
     private JButton btnDelete;
     private JButton btnImportTable;
+
+    private DatabasePersistance databasePersistance;
+    private DeleteListener deleteListener;
+    private CreateListener createListener;
+    private UpdateListener updateListener ;
+
 
     public DatabaseFrame() {
 
@@ -80,22 +86,34 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
         scrollDatabasesPanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 
         /*
+         Listeners for buttons
+         */
+
+        databasePersistance = new DatabasePersistance();
+        deleteListener = new DeleteListener();
+        deleteListener.setDatabasePersistence(databasePersistance);
+        createListener = new CreateListener();
+        createListener.setDatabasePersistence(databasePersistance);
+        updateListener = new UpdateListener();
+        updateListener.setDatabasePersistence(databasePersistance);
+
+        /*
         BUTTONS
          */
         btnCreate = new JButton();
         btnCreate.setText("Create Database");
         btnCreate.setBounds(90, 490, 200, 50);
-        btnCreate.addActionListener(new CreateListener());
+        btnCreate.addActionListener(createListener);
 
         btnUpdate = new JButton();
         btnUpdate.setText("Update Database");
         btnUpdate.setBounds(90, 550, 200, 50);
-        btnUpdate.addActionListener(new UpdateListener());
+        btnUpdate.addActionListener(updateListener);
 
         btnDelete = new JButton();
         btnDelete.setText("Delete Database");
         btnDelete.setBounds(90, 610, 200, 50);
-        btnDelete.addActionListener(new DeleteListener());
+        btnDelete.addActionListener(deleteListener);
 
         btnImportTable = new JButton();
         btnImportTable.setText("Import Table");
@@ -167,11 +185,11 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
     }
 
     class CreateListener extends PersistenceActionListener {
-
+        InputTextPopUp inputTextPopUp = new InputTextPopUp();
         @Override
         public void beforePersist(ActionEvent e) {
 
-            InputTextPopUp inputTextPopUp = new InputTextPopUp(CREATE_NEW_DATABASE_TITLE);
+            inputTextPopUp.setTitle(CREATE_NEW_DATABASE_TITLE);
             Object input = inputTextPopUp.openPopUp(ENTER_DATABASE_MESSAGE, false);
 
             while (input != null) {
@@ -194,16 +212,23 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
                 }
             }
         }
+
+        public void setInputTextPopUp(InputTextPopUp inputTextPopUp) {
+            this.inputTextPopUp = inputTextPopUp;
+        }
     }
 
     class UpdateListener extends PersistenceActionListener {
+
+        ConfirmDialog updateDialog = new ConfirmDialog();
+        InputTextPopUp inputTextPopUp = new InputTextPopUp();
         @Override
         public void beforePersist(ActionEvent e) {
 
             int index = databasesList.getSelectedIndex();
             String currentName = listModel.get(index).toString();
 
-            InputTextPopUp inputTextPopUp = new InputTextPopUp(UPDATE_DATABASE_TITLE);
+            inputTextPopUp.setTitle(UPDATE_DATABASE_TITLE);
             Object input = inputTextPopUp.openPopUp(ENTER_NEW_DATABASE_MESSAGE, false);
 
             while (input != null) {
@@ -221,7 +246,8 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
                     String titleConfirmDelete = "Confirm Update Database";
                     String msgConfirmDelete = "Are you sure you want to change database name from \"" + currentName + "\" to \"" + newName + "\" ?";
 
-                    ConfirmDialog updateDialog = new ConfirmDialog(titleConfirmDelete, msgConfirmDelete);
+                    updateDialog.setTitle(titleConfirmDelete);
+                    updateDialog.setMessage(msgConfirmDelete);
                     boolean update = updateDialog.confirm();
 
                     if (update) {
@@ -250,9 +276,20 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
                 }
             }
         }
+
+        public void setUpdateDialog(ConfirmDialog updateDialog) {
+            this.updateDialog = updateDialog;
+        }
+
+        public void setInputTextPopUp(InputTextPopUp inputTextPopUp) {
+            this.inputTextPopUp = inputTextPopUp;
+        }
     }
 
-    class DeleteListener extends PersistenceActionListener {
+    public class DeleteListener extends PersistenceActionListener {
+
+        ConfirmDialog deleteDialog = new ConfirmDialog();
+
         @Override
         public void beforePersist(ActionEvent e) {
 
@@ -261,12 +298,15 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
             String titleConfirmDelete = "Confirm Delete Database";
             String msgConfirmDelete = "Are you sure you want to delete \"" + listModel.get(index).toString() + "\" Database?";
 
-            ConfirmDialog deleteDialog = new ConfirmDialog(titleConfirmDelete, msgConfirmDelete);
+            deleteDialog.setTitle(titleConfirmDelete);
+            deleteDialog.setMessage(msgConfirmDelete);
+
             boolean delete = deleteDialog.confirm();
 
             if (delete) {
 
                 try {
+
                     databaseManagementSystem.deleteDatabase(listModel.get(index).toString());
                     populateList();
                 } catch (DoesNotExist ignored) {
@@ -278,6 +318,11 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
 
                 disableUpdateDeleteImportButtons();
             }
+        }
+
+        public void setConfirmDialog(ConfirmDialog confirmDialog) {
+
+            deleteDialog = confirmDialog;
         }
     }
 
@@ -297,11 +342,6 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
     public JList getDatabasesList() {
 
         return databasesList;
-    }
-
-    public DefaultListModel getListModel() {
-
-        return listModel;
     }
 
     public JButton getBtnCreate() {
@@ -331,25 +371,5 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
     public void setListModel(DefaultListModel listModel) {
 
         this.listModel = listModel;
-    }
-
-    public void setBtnCreate(JButton btnCreate) {
-
-        this.btnCreate = btnCreate;
-    }
-
-    public void setBtnUpdate(JButton btnUpdate) {
-
-        this.btnUpdate = btnUpdate;
-    }
-
-    public void setBtnDelete(JButton btnDelete) {
-
-        this.btnDelete = btnDelete;
-    }
-
-    public void setBtnImportTable(JButton btnImportTable) {
-
-        this.btnImportTable = btnImportTable;
     }
 }
