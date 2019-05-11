@@ -31,9 +31,15 @@ public class ColumnTest extends AbstractTableOperationsTest {
     public void createColumn(){
         try {
             Column column = new Column(NEW_COLUMN_NAME, Column.Type.INT);
+            Column column1 = new Column(INVALID_NEW_COLUMN_NAME, Column.Type.STRING);
             column.setName(NEW_COLUMN_NAME);
             table.insertColumn(column);
+            assertThrows(ColumnAlreadyExists.class,()->{
+                table.insertColumn(column);
+            });
+            table.insertColumn(column1);
             assertEquals(table.getColumn(NEW_COLUMN_NAME),column);
+            assertEquals(table.getColumn(INVALID_NEW_COLUMN_NAME),column1);
         } catch (InvalidValue | ColumnAlreadyExists | DoesNotExist e) {
             fail(e);
         }
