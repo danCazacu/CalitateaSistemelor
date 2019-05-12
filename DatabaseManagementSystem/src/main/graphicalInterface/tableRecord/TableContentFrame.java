@@ -1,14 +1,13 @@
 package main.graphicalInterface.tableRecord;
 
-import com.sun.org.apache.xalan.internal.xsltc.runtime.Operators;
 import main.exception.*;
 import main.graphicalInterface.ConfirmDialog;
 import main.graphicalInterface.PersistenceActionListener;
 import main.model.*;
+import main.persistance.DatabasePersistance;
 import main.service.FilteringService;
 
 import javax.swing.*;
-import javax.swing.event.TableModelEvent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -36,6 +35,14 @@ public class TableContentFrame extends JPanel {
     private JTable tableContent;
     private JScrollPane scrollPane;
     private TableModel myTableModel;
+
+    private DatabasePersistance databasePersistance;
+    private DeleteListener deleteListener;
+    private  SelectListener selectListener;
+    private InsertColumnListener insertColumnListener;
+    private InsertRecordListener insertRecordListener;
+    private UpdateColumnListener updateColumnListener;
+    private UpdateFieldListener updateFieldListener;
 
     public static TableContentFrame getInstance() {
 
@@ -75,37 +82,49 @@ public class TableContentFrame extends JPanel {
         scrollPane.setViewportView(tableContent);
 
         /*
+        Listeners for buttons
+         */
+
+        databasePersistance = new DatabasePersistance();
+        deleteListener = new DeleteListener();
+        selectListener = new SelectListener();
+        insertColumnListener = new InsertColumnListener();
+        insertRecordListener = new InsertRecordListener();
+        updateColumnListener = new UpdateColumnListener();
+        updateFieldListener = new UpdateFieldListener();
+
+        /*
         BUTTONS
          */
         btnSelect = new JButton();
         btnSelect.setText("SELECT");
         btnSelect.setBounds(90, 490, 200, 50);
-        btnSelect.addActionListener(new SelectListener());
+        btnSelect.addActionListener(selectListener);
 
         btnInsertColumn = new JButton();
         btnInsertColumn.setText("INSERT COLUMN");
         btnInsertColumn.setBounds(20, 550, 150, 50);
-        btnInsertColumn.addActionListener(new InsertColumnListener());
+        btnInsertColumn.addActionListener(insertColumnListener);
 
         btnInsertRecord = new JButton();
         btnInsertRecord.setText("INSERT RECORD");
         btnInsertRecord.setBounds(185, 550, 150, 50);
-        btnInsertRecord.addActionListener(new InsertRecordListener());
+        btnInsertRecord.addActionListener(insertRecordListener);
 
         btnUpdateColumnName = new JButton();
         btnUpdateColumnName.setText("UPDATE COLUMN NAME");
         btnUpdateColumnName.setBounds(20, 610, 150, 50);
-        btnUpdateColumnName.addActionListener(new UpdateColumnListener());
+        btnUpdateColumnName.addActionListener(updateColumnListener);
 
         btnUpdateFieldValue = new JButton();
         btnUpdateFieldValue.setText("UPDATE RECORD");
         btnUpdateFieldValue.setBounds(185, 610, 150, 50);
-        btnUpdateFieldValue.addActionListener(new UpdateFieldListener());
+        btnUpdateFieldValue.addActionListener(updateFieldListener);
 
         btnDelete = new JButton();
         btnDelete.setText("DELETE");
         btnDelete.setBounds(90, 670, 200, 50);
-        btnDelete.addActionListener(new DeleteListener());
+        btnDelete.addActionListener(deleteListener);
 
         //default all buttons are disabled
         disableButtonsWithoutDelete();
@@ -469,6 +488,9 @@ public class TableContentFrame extends JPanel {
 
 
     class DeleteListener extends PersistenceActionListener {
+
+        ConfirmDialog deleteDialog = new ConfirmDialog();
+
         @Override
         public void beforePersist(ActionEvent e) {
 
@@ -485,7 +507,8 @@ public class TableContentFrame extends JPanel {
             String titleConfirmDelete = "Confirm Delete Records";
             String msgConfirmDelete = "Are you sure you want to delete selected records from \"" + selectedTable + "\" Table from \"" + selectedDatabase + "\" Database ?";
 
-            ConfirmDialog deleteDialog = new ConfirmDialog(titleConfirmDelete, msgConfirmDelete);
+            deleteDialog.setTitle(titleConfirmDelete);
+            deleteDialog.setMessage(msgConfirmDelete);
             boolean delete = deleteDialog.confirm();
 
             if (delete) {
@@ -527,6 +550,10 @@ public class TableContentFrame extends JPanel {
 
                 disableDeleteButton();
             }
+        }
+
+        public void setDeleteDialog(ConfirmDialog deleteDialog) {
+            this.deleteDialog = deleteDialog;
         }
     }
 

@@ -7,9 +7,14 @@ public class ConfirmDialog {
     String title;
     String message;
 
-    public ConfirmDialog(String title, String message){
+    public ConfirmDialog(){
+    }
 
+    public void setTitle(String title) {
         this.title = title;
+    }
+
+    public void setMessage(String message) {
         this.message = message;
     }
 
