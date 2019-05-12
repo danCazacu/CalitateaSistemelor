@@ -22,42 +22,51 @@ public class ColumnTest extends AbstractTableOperationsTest {
             fail(doesNotExist);
         }
 
-        assertThrows(DoesNotExist.class,()->{
+        assertThrows(DoesNotExist.class, () -> {
             table.getColumn(DataBuilder.COLUMNS[0]);
         });
     }
 
+
     @Test
-    public void createColumn(){
+    public void deleteInexistentColumn() {
+        assertThrows(DoesNotExist.class, () -> {
+            table.deleteColumn(new Column("Inexistent column name", Column.Type.INT));
+        });
+    }
+
+
+    @Test
+    public void createColumn() {
         try {
             Column column = new Column(NEW_COLUMN_NAME, Column.Type.INT);
             Column column1 = new Column(INVALID_NEW_COLUMN_NAME, Column.Type.STRING);
             column.setName(NEW_COLUMN_NAME);
             table.insertColumn(column);
-            assertThrows(ColumnAlreadyExists.class,()->{
+            assertThrows(ColumnAlreadyExists.class, () -> {
                 table.insertColumn(column);
             });
             table.insertColumn(column1);
-            assertEquals(table.getColumn(NEW_COLUMN_NAME),column);
-            assertEquals(table.getColumn(INVALID_NEW_COLUMN_NAME),column1);
+            assertEquals(table.getColumn(NEW_COLUMN_NAME), column);
+            assertEquals(table.getColumn(INVALID_NEW_COLUMN_NAME), column1);
         } catch (InvalidValue | ColumnAlreadyExists | DoesNotExist e) {
             fail(e);
         }
     }
 
     @Test
-    public void getColumn(){
-        assertThrows(DoesNotExist.class,()->{
+    public void getColumn() {
+        assertThrows(DoesNotExist.class, () -> {
             table.getColumn(INVALID_NEW_COLUMN_NAME);
         });
-        assertThrows(DoesNotExist.class,()->{
+        assertThrows(DoesNotExist.class, () -> {
             table.getColumn(null);
         });
 
         try {
             Column column = new Column(NEW_COLUMN_NAME, Column.Type.INT);
             table.insertColumn(column);
-            assertEquals(table.getColumn(NEW_COLUMN_NAME),column);
+            assertEquals(table.getColumn(NEW_COLUMN_NAME), column);
             assertTrue(table.getColumnNames().contains(NEW_COLUMN_NAME));
         } catch (InvalidValue | ColumnAlreadyExists | DoesNotExist e) {
             fail(e);
@@ -66,7 +75,7 @@ public class ColumnTest extends AbstractTableOperationsTest {
     }
 
     @Test
-    public void getColumnNames(){
+    public void getColumnNames() {
         try {
             Column column = new Column(NEW_COLUMN_NAME, Column.Type.INT);
             table.insertColumn(column);
@@ -79,7 +88,7 @@ public class ColumnTest extends AbstractTableOperationsTest {
     }
 
     @Test
-    public void equals(){
+    public void equals() {
         try {
             Column first = new Column(NEW_COLUMN_NAME, Column.Type.INT);
             Column second = new Column(NEW_COLUMN_NAME, Column.Type.INT);
@@ -89,12 +98,12 @@ public class ColumnTest extends AbstractTableOperationsTest {
             assertFalse(first.equals(null));
 
         } catch (InvalidValue invalidValue) {
-           fail(invalidValue);
+            fail(invalidValue);
         }
     }
 
     @Test
-    public void hashCodeTest(){
+    public void hashCodeTest() {
         try {
             Column first = new Column(NEW_COLUMN_NAME, Column.Type.INT);
             Column second = new Column(NEW_COLUMN_NAME, Column.Type.INT);
