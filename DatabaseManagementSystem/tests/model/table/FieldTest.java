@@ -2,6 +2,8 @@ package model.table;
 
 import main.exception.FieldValueNotSet;
 import main.exception.InvalidValue;
+import main.exception.TypeMismatchException;
+import main.model.Column;
 import main.model.Field;
 import org.junit.jupiter.api.Test;
 
@@ -73,9 +75,60 @@ public class FieldTest {
             assertTrue(first.equals(second));
             assertFalse(first.equals(third));
             assertFalse(third.equals(forth));
+            assertTrue(zero.equals(zero));
+            assertTrue(forth.equals(forth));
 
         } catch (InvalidValue invalidValue) {
             invalidValue.printStackTrace();
+        }
+    }
+
+    @Test
+    public void hashCodeTest(){
+        try {
+            Field first = new Field(STRING_FIELD_VALUE);
+            Field second = new Field(STRING_FIELD_VALUE);
+            Field third = new Field(INTEGER_FIELD_VALUE);
+
+            assertTrue(first.hashCode() == first.hashCode());
+            assertTrue(second.hashCode() !=first.hashCode());
+        } catch (InvalidValue invalidValue) {
+            fail(invalidValue);
+        }
+    }
+
+    @Test
+    public void copyFrom(){
+        try {
+            Field second = new Field(STRING_FIELD_VALUE);
+            Field third = new Field(INTEGER_FIELD_VALUE);
+            Field first = new Field(STRING_FIELD_VALUE+"TEST");
+            assertFalse(second.equals(first));
+            first.copyFrom(second);
+            assertTrue(first.equals(second));
+            assertThrows(TypeMismatchException.class,()->{
+               first.copyFrom(third);
+            });
+            Field forth = new Field(13);
+            third.copyFrom(forth);
+            assertTrue(third.equals(forth));
+
+        } catch (InvalidValue invalidValue) {
+            fail(invalidValue);
+        } catch (TypeMismatchException e) {
+            fail(e);
+        }
+    }
+
+    @Test
+    public void toStringTestEquals(){
+        try{
+            Field first = new Field(STRING_FIELD_VALUE);
+            Field second = new Field(STRING_FIELD_VALUE);
+            assertEquals(second.toString(),first.toString());
+
+        } catch (InvalidValue invalidValue) {
+            fail(invalidValue);
         }
     }
 

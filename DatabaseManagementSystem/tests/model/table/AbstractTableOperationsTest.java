@@ -15,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public abstract class AbstractTableOperationsTest {
 
     protected static Table table;
+    protected static String NEW_TABLE_NAME = "NEW_TABLE_NAME";
     @BeforeEach
     public void prepare(){
         DataBuilder.buildTestData();

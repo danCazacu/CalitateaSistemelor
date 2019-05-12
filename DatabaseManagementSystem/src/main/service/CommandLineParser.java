@@ -21,7 +21,7 @@ public class CommandLineParser {
         }
     }
 
-    private void parse(String line) throws InvalidCommand {
+    public void parse(String line) throws InvalidCommand {
         String[] split = line.split("\\s+");
         if (split.length > 0) {
             String action = split[0];
@@ -48,7 +48,7 @@ public class CommandLineParser {
                 break;
 
             default:
-                throw new InvalidCommand("Invalid command "+action);
+                throw new InvalidCommand("Invalid command " + action);
         }
     }
 
