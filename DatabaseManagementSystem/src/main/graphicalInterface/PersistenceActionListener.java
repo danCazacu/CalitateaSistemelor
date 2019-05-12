@@ -18,6 +18,9 @@ public abstract class PersistenceActionListener implements ActionListener {
 
         beforePersist(e);
 
+        if(databasePersistance == null){
+            databasePersistance = new DatabasePersistance();
+        }
        databasePersistance.persist();
     }
 

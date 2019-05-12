@@ -13,22 +13,22 @@ import java.awt.event.ItemListener;
 public class UpdateFieldPanel {
 
     JLabel lblNewValue;
-    JTextField txtNewValue;
+    private JTextField txtNewValue;
 
     JLabel lblColumns;
-    JComboBox<Column> lstColumns;
+    private JComboBox<Column> lstColumns;
 
     JLabel lblWhere;
 
     JLabel lblOperator;
-    JComboBox<FieldComparator.Sign> cbOperators;
+    private JComboBox<FieldComparator.Sign> cbOperators;
 
     JLabel lblMatchValue;
-    JTextField textMatchValue;
+    private JTextField textMatchValue;
 
     JPanel contentPanel;
 
-    Table table;
+    private Table table;
 
 
     public void setTable(Table inputTable) {
@@ -80,4 +80,19 @@ public class UpdateFieldPanel {
         return result;
     }
 
+    public JTextField getTxtNewValue() {
+        return txtNewValue;
+    }
+
+    public JComboBox<Column> getLstColumns() {
+        return lstColumns;
+    }
+
+    public JComboBox<FieldComparator.Sign> getCbOperators() {
+        return cbOperators;
+    }
+
+    public JTextField getTextMatchValue() {
+        return textMatchValue;
+    }
 }
