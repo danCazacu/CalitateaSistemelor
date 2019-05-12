@@ -7,7 +7,7 @@ import java.awt.event.ActionListener;
 
 public abstract class PersistenceActionListener implements ActionListener {
 
-
+    DatabasePersistance databasePersistance;
     /**
      * Invoked when an action occurs.
      *
@@ -18,8 +18,13 @@ public abstract class PersistenceActionListener implements ActionListener {
 
         beforePersist(e);
 
-        new DatabasePersistance().persist();
+       databasePersistance.persist();
     }
 
     public abstract void beforePersist(ActionEvent e);
+
+    public void setDatabasePersistence(DatabasePersistance databasePersistance) {
+
+        this.databasePersistance = databasePersistance;
+    }
 }

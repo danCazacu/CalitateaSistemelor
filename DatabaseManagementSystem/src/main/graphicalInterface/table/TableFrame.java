@@ -11,6 +11,7 @@ import main.graphicalInterface.tableRecord.TableContentFrame;
 import main.model.CsvService;
 import main.model.DatabaseManagementSystem;
 import main.model.Table;
+import main.persistance.DatabasePersistance;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -48,6 +49,11 @@ public class TableFrame extends JPanel implements ListSelectionListener {
     private JButton btnExportTable;
 
     private String selectedDatabase;
+
+    private DatabasePersistance databasePersistance;
+    private DeleteListener deleteListener;
+    private CreateListener createListener;
+    private UpdateListener updateListener ;
 
     public static TableFrame getInstance() {
 
@@ -101,23 +107,35 @@ public class TableFrame extends JPanel implements ListSelectionListener {
         scrollTablesPanel.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollTablesPanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 
+          /*
+         Listeners for buttons
+         */
+
+        databasePersistance = new DatabasePersistance();
+        deleteListener = new DeleteListener();
+        deleteListener.setDatabasePersistence(databasePersistance);
+        createListener = new CreateListener();
+        createListener.setDatabasePersistence(databasePersistance);
+        updateListener = new UpdateListener();
+        updateListener.setDatabasePersistence(databasePersistance);
+
         /*
         BUTTONS
          */
         btnCreate = new JButton();
         btnCreate.setText("Create Table");
         btnCreate.setBounds(90, 490, 200, 50);
-        btnCreate.addActionListener(new CreateListener());
+        btnCreate.addActionListener(createListener);
 
         btnUpdate = new JButton();
         btnUpdate.setText("Update Table");
         btnUpdate.setBounds(90, 550, 200, 50);
-        btnUpdate.addActionListener(new UpdateListener());
+        btnUpdate.addActionListener(updateListener);
 
         btnDelete = new JButton();
         btnDelete.setText("Delete Table");
         btnDelete.setBounds(90, 610, 200, 50);
-        btnDelete.addActionListener(new DeleteListener());
+        btnDelete.addActionListener(deleteListener);
 
         btnExportTable = new JButton();
         btnExportTable.setText("Export Table");
@@ -197,10 +215,13 @@ public class TableFrame extends JPanel implements ListSelectionListener {
     }
 
     class CreateListener extends PersistenceActionListener {
+
+        InputTextPopUp inputTextPopUp = new InputTextPopUp();
+
         @Override
         public void beforePersist(ActionEvent e) {
 
-            InputTextPopUp inputTextPopUp = new InputTextPopUp(CREATE_NEW_TABLE_TITLE);
+            inputTextPopUp.setTitle(CREATE_NEW_TABLE_TITLE);
             Object input = inputTextPopUp.openPopUp(ENTER_TABLE_MESSAGE, false);
 
             while (input != null) {
@@ -222,16 +243,23 @@ public class TableFrame extends JPanel implements ListSelectionListener {
                 }
             }
         }
+
+        public void setInputTextPopUp(InputTextPopUp inputTextPopUp) {
+            this.inputTextPopUp = inputTextPopUp;
+        }
     }
 
     class UpdateListener extends PersistenceActionListener {
+
+        ConfirmDialog updateDialog = new ConfirmDialog();
+        InputTextPopUp inputTextPopUp = new InputTextPopUp();
         @Override
         public void beforePersist(ActionEvent e) {
 
             int index = tablesList.getSelectedIndex();
             String currentName = listModel.get(index).toString();
 
-            InputTextPopUp inputTextPopUp = new InputTextPopUp(UPDATE_TABLE_TITLE);
+            inputTextPopUp.setTitle(UPDATE_TABLE_TITLE);
             Object input = inputTextPopUp.openPopUp(ENTER_NEW_TABLE_MESSAGE, false);
 
             while (input != null) {
@@ -245,10 +273,11 @@ public class TableFrame extends JPanel implements ListSelectionListener {
 
                     String newName = input.toString().trim();
 
-                    String titleConfirmDelete = "Confirm Update Table";
-                    String msgConfirmDelete = "Are you sure you want to change table name from \"" + currentName + "\" to \"" + newName + "\" ?";
+                    String titleConfirmUpdate = "Confirm Update Table";
+                    String msgConfirmUpdate = "Are you sure you want to change table name from \"" + currentName + "\" to \"" + newName + "\" ?";
 
-                    ConfirmDialog updateDialog = new ConfirmDialog(titleConfirmDelete, msgConfirmDelete);
+                    updateDialog.setTitle(titleConfirmUpdate);
+                    updateDialog.setMessage(msgConfirmUpdate);
                     boolean update = updateDialog.confirm();
 
                     if (update) {
@@ -275,9 +304,20 @@ public class TableFrame extends JPanel implements ListSelectionListener {
                 }
             }
         }
+
+        public void setUpdateDialog(ConfirmDialog updateDialog) {
+            this.updateDialog = updateDialog;
+        }
+
+        public void setInputTextPopUp(InputTextPopUp inputTextPopUp) {
+            this.inputTextPopUp = inputTextPopUp;
+        }
     }
 
     class DeleteListener extends PersistenceActionListener {
+
+        ConfirmDialog deleteDialog = new ConfirmDialog();
+
         @Override
         public void beforePersist(ActionEvent e) {
 
@@ -286,7 +326,8 @@ public class TableFrame extends JPanel implements ListSelectionListener {
             String titleConfirmDelete = "Confirm Delete Table";
             String msgConfirmDelete = "Are you sure you want to delete \"" + listModel.get(index).toString() + "\" Table from \"" + selectedDatabase + "\" Database ?";
 
-            ConfirmDialog deleteDialog = new ConfirmDialog(titleConfirmDelete, msgConfirmDelete);
+            deleteDialog.setTitle(titleConfirmDelete);
+            deleteDialog.setMessage(msgConfirmDelete);
             boolean delete = deleteDialog.confirm();
 
             if (delete) {
@@ -304,6 +345,10 @@ public class TableFrame extends JPanel implements ListSelectionListener {
 
                 disableUpdateDeleteExportButtons();
             }
+        }
+
+        public void setDeleteDialog(ConfirmDialog deleteDialog) {
+            this.deleteDialog = deleteDialog;
         }
     }
 
@@ -339,5 +384,53 @@ public class TableFrame extends JPanel implements ListSelectionListener {
 
         this.titleLabel.setText(title);
         populateList();
+    }
+
+    public static TableFrame getTableFrame() {
+        return tableFrame;
+    }
+
+    public DatabaseManagementSystem getDatabaseManagementSystem() {
+        return databaseManagementSystem;
+    }
+
+    public TableContentFrame getTableContentFrame() {
+        return tableContentFrame;
+    }
+
+    public JLabel getTitleLabel() {
+        return titleLabel;
+    }
+
+    public JList getTablesList() {
+        return tablesList;
+    }
+
+    public DefaultListModel getListModel() {
+        return listModel;
+    }
+
+    public JScrollPane getScrollTablesPanel() {
+        return scrollTablesPanel;
+    }
+
+    public JButton getBtnCreate() {
+        return btnCreate;
+    }
+
+    public JButton getBtnUpdate() {
+        return btnUpdate;
+    }
+
+    public JButton getBtnDelete() {
+        return btnDelete;
+    }
+
+    public JButton getBtnExportTable() {
+        return btnExportTable;
+    }
+
+    public String getSelectedDatabase() {
+        return selectedDatabase;
     }
 }

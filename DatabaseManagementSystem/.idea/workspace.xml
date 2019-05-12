@@ -2,26 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="710c2758-7a73-4f9c-a72a-2685f741a8e2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/tests/model/database/AbstractDatabaseCreateTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/model/database/AbstractDatabaseTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/model/database/CreateTable.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/model/database/DeleteTable.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/model/database/Exists.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/model/database/GetTable.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/model/database/UpdateName.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/model/dbms/CreateDatabase.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/model/dbms/DeleteDatabase.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/model/dbms/Exists.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/model/dbms/GetDatabase.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/model/dbms/UpdateDatabaseName.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/model/table/AbstractTableOperationsTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/model/table/ColumnTestCase.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/exception/FieldValueNotSet.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/persistence/Persistence.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/exception/NotSameFieldType.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/exception/TypeMismatchException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/exception/TypeMismatchException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/exception/WrongTypeInColumnException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/model/Field.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/model/Field.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/model/FieldComparator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/model/FieldComparator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/model/Table.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/model/Table.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/persistance/DatabasePersistance.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/persistance/DatabasePersistance.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/util/DataBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/util/DataBuilder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/database/DevTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/graphicalInterface/MainWindowTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/persistence/Load.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/persistence/Persist.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/database/DevTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/tests/database/DevTest.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -30,48 +22,63 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/DatabaseManagementSystem$CreateDatabase.ic" NAME="CreateDatabase Coverage Results" MODIFIED="1556981639568" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="true">
-      <FILTER>model.dbms.*</FILTER>
-    </SUITE>
-    <SUITE FILE_PATH="coverage/DatabaseManagementSystem$All_in_DatabaseManagementSystem.ic" NAME="All in DatabaseManagementSystem Coverage Results" MODIFIED="1557062592009" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
-  </component>
-  <component name="CoverageViewManager">
-    <option name="myElementSize" value="224" />
-  </component>
-  <component name="DatabaseView">
-    <option name="SHOW_INTERMEDIATE" value="true" />
-    <option name="GROUP_DATA_SOURCES" value="true" />
-    <option name="GROUP_SCHEMA" value="true" />
-    <option name="GROUP_CONTENTS" value="false" />
-    <option name="SORT_POSITIONED" value="false" />
-    <option name="SHOW_EMPTY_GROUPS" value="false" />
-    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
-    <option name="HIDDEN_KINDS">
-      <set />
-    </option>
-    <expand />
-    <select />
-  </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/tests/model/table/AbstractTableOperationsTest.java">
+        <entry file="file://$PROJECT_DIR$/src/main/model/Table.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
-              <caret line="14" column="13" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
+            <state relative-caret-position="252">
+              <caret line="144" column="76" lean-forward="true" selection-start-line="144" selection-start-column="76" selection-end-line="144" selection-end-column="76" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="method#getColumnsByColumnNames#0;class#Table#0" />
+                <element signature="method#getRow#0;class#Table#0" />
+                <element signature="e#5751#5752#0" expanded="true" />
+                <element signature="e#5785#5786#0" expanded="true" />
+                <element signature="method#hashCode#0;class#Table#0" />
+                <element signature="method#equals#0;class#Table#0" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/tests/model/table/ColumnTestCase.java">
+        <entry file="jar://C:/Program Files/Java/jdk1.8.0_201/src.zip!/java/util/List.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="247">
-              <caret line="16" column="32" lean-forward="true" selection-start-line="16" selection-start-column="32" selection-end-line="16" selection-end-column="32" />
+            <state relative-caret-position="118">
+              <caret line="621" column="8" selection-start-line="621" selection-start-column="8" selection-end-line="621" selection-end-column="8" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="jar://C:/Program Files/Java/jdk1.8.0_201/src.zip!/java/util/ArrayList.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="175">
+              <caret line="320" column="28" selection-start-line="320" selection-start-column="22" selection-end-line="320" selection-end-column="28" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/exception/TypeMismatchException.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="289">
+              <caret line="17" selection-start-line="17" selection-end-line="17" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#325#326#0" expanded="true" />
+                <element signature="e#403#404#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/model/DatabaseManagementSystem.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="164">
+              <caret line="11" selection-start-line="11" selection-end-line="11" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -80,39 +87,12 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/model/Database.java">
+        <entry file="file://$PROJECT_DIR$/tests/database/DevTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="493">
-              <caret line="44" column="16" selection-start-line="44" selection-start-column="16" selection-end-line="44" selection-end-column="16" />
+            <state relative-caret-position="207">
+              <caret line="35" selection-start-line="35" selection-end-line="35" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#848#849#0" expanded="true" />
-                <element signature="e#884#885#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/tests/model/dbms/UpdateDatabaseName.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
-              <caret line="10" selection-start-line="10" selection-end-line="11" selection-end-column="52" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/model/Table.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="408">
-              <caret line="36" column="45" selection-start-line="36" selection-start-column="45" selection-end-line="36" selection-end-column="45" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#686#687#0" expanded="true" />
-                <element signature="e#713#714#0" expanded="true" />
-                <element signature="e#878#879#0" expanded="true" />
-                <element signature="e#905#906#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -121,8 +101,39 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/util/DataBuilder.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="20" column="4" selection-start-line="20" selection-start-column="4" selection-end-line="20" selection-end-column="4" />
+            <state relative-caret-position="1309">
+              <caret line="96" column="9" lean-forward="true" selection-start-line="96" selection-start-column="9" selection-end-line="96" selection-end-column="9" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/model/Column.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="26">
+              <caret line="7" column="24" selection-start-line="7" selection-start-column="24" selection-end-line="7" selection-end-column="24" />
+              <folding>
+                <element signature="e#278#279#0" expanded="true" />
+                <element signature="e#305#306#0" expanded="true" />
+                <element signature="e#334#335#0" expanded="true" />
+                <element signature="e#361#362#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/model/Field.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="113">
+              <caret line="108" column="38" selection-start-line="108" selection-start-column="30" selection-end-line="108" selection-end-column="38" />
+              <folding>
+                <element signature="e#283#284#0" expanded="true" />
+                <element signature="e#312#313#0" expanded="true" />
+                <element signature="e#340#341#0" expanded="true" />
+                <element signature="e#369#370#0" expanded="true" />
+                <element signature="method#setValue#0;class#Field#0" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -181,42 +192,19 @@
         <option value="$PROJECT_DIR$/tests/persistence/Persistence.java" />
         <option value="$PROJECT_DIR$/src/main/exception/TypeMismatchException.java" />
         <option value="$PROJECT_DIR$/src/main/model/FieldComparator.java" />
+        <option value="$PROJECT_DIR$/src/main/util/DataBuilder.java" />
         <option value="$PROJECT_DIR$/src/main/model/Table.java" />
         <option value="$PROJECT_DIR$/tests/database/DevTest.java" />
         <option value="$PROJECT_DIR$/src/main/model/Field.java" />
-        <option value="$PROJECT_DIR$/src/main/graphicalInterface/database/DatabaseFrame.java" />
-        <option value="$PROJECT_DIR$/src/main/model/CsvService.java" />
-        <option value="$PROJECT_DIR$/src/main/graphicalInterface/table/TableFrame.java" />
-        <option value="$PROJECT_DIR$/persistance.txt" />
-        <option value="$PROJECT_DIR$/src/main/service/FilteringService.java" />
-        <option value="$PROJECT_DIR$/tests/model/dbms/GetDatabas.java" />
-        <option value="$PROJECT_DIR$/tests/model/dbms/Exists.java" />
-        <option value="$PROJECT_DIR$/tests/model/dbms/DeleteDatabase.java" />
-        <option value="$PROJECT_DIR$/tests/model/dbms/GetDatabase.java" />
-        <option value="$PROJECT_DIR$/tests/model/database/createTable.java" />
-        <option value="$PROJECT_DIR$/tests/model/database/AbstractDatabaseTest.java" />
-        <option value="$PROJECT_DIR$/tests/model/database/AbstractDatabaseCreateTest.java" />
-        <option value="$PROJECT_DIR$/tests/model/database/DeleteTable.java" />
-        <option value="$PROJECT_DIR$/tests/model/database/CreateTable.java" />
-        <option value="$PROJECT_DIR$/tests/model/database/GetTable.java" />
-        <option value="$PROJECT_DIR$/tests/model/database/Exists.java" />
-        <option value="$PROJECT_DIR$/tests/model/dbms/CreateDatabase.java" />
-        <option value="$PROJECT_DIR$/tests/model/database/UpdateName.java" />
-        <option value="$PROJECT_DIR$/tests/model/dbms/UpdateDatabaseNAme.java" />
-        <option value="$PROJECT_DIR$/tests/model/dbms/UpdateDatabaseName.java" />
-        <option value="$PROJECT_DIR$/src/main/util/DataBuilder.java" />
-        <option value="$PROJECT_DIR$/tests/model/table/AbstractTableOperationsTest.java" />
-        <option value="$PROJECT_DIR$/tests/model/table/Column.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-120" />
-    <option name="y" value="-20" />
-    <option name="width" value="1945" />
-    <option name="height" value="1105" />
+    <option name="x" value="-29" />
+    <option name="y" value="-19" />
+    <option name="width" value="1944" />
+    <option name="height" value="1104" />
   </component>
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
@@ -284,28 +272,13 @@
               <item name="DatabaseManagementSystem" type="b2602c69:ProjectViewProjectNode" />
               <item name="DatabaseManagementSystem" type="462c0819:PsiDirectoryNode" />
               <item name="tests" type="462c0819:PsiDirectoryNode" />
-              <item name="model" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="DatabaseManagementSystem" type="b2602c69:ProjectViewProjectNode" />
-              <item name="DatabaseManagementSystem" type="462c0819:PsiDirectoryNode" />
-              <item name="tests" type="462c0819:PsiDirectoryNode" />
-              <item name="model" type="462c0819:PsiDirectoryNode" />
               <item name="database" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="DatabaseManagementSystem" type="b2602c69:ProjectViewProjectNode" />
               <item name="DatabaseManagementSystem" type="462c0819:PsiDirectoryNode" />
               <item name="tests" type="462c0819:PsiDirectoryNode" />
-              <item name="model" type="462c0819:PsiDirectoryNode" />
-              <item name="dbms" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="DatabaseManagementSystem" type="b2602c69:ProjectViewProjectNode" />
-              <item name="DatabaseManagementSystem" type="462c0819:PsiDirectoryNode" />
-              <item name="tests" type="462c0819:PsiDirectoryNode" />
-              <item name="model" type="462c0819:PsiDirectoryNode" />
-              <item name="table" type="462c0819:PsiDirectoryNode" />
+              <item name="persistence" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -321,18 +294,13 @@
     <property name="Repository.Attach.Sources" value="false" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1557342854359" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1555182434226" />
     <property name="extract.method.default.visibility" value="private" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
-  </component>
-  <component name="RecentsManager">
-    <key name="CopyClassDialog.RECENTS_KEY">
-      <recent name="main.model" />
-    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -346,89 +314,51 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="JUnit.ColumnTestCase">
-    <configuration name="All in DatabaseManagementSystem" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="JUnit.DevTest">
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true">
+      <option name="MAIN_CLASS_NAME" value="main.Main" />
       <module name="DatabaseManagementSystem" />
-      <option name="PACKAGE_NAME" value="" />
-      <option name="TEST_OBJECT" value="package" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ColumnTestCase" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="DevTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="DatabaseManagementSystem" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="model.table.*" />
+          <option name="PATTERN" value="database.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="model.table" />
-      <option name="MAIN_CLASS_NAME" value="model.table.ColumnTestCase" />
+      <option name="PACKAGE_NAME" value="database" />
+      <option name="MAIN_CLASS_NAME" value="database.DevTest" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Exists" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="Persistence" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="DatabaseManagementSystem" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="model.database.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="model.database" />
-      <option name="MAIN_CLASS_NAME" value="model.database.Exists" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="UpdateDatabaseName" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="DatabaseManagementSystem" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="model.dbms.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="model.dbms" />
-      <option name="MAIN_CLASS_NAME" value="model.dbms.UpdateDatabaseName" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="UpdateName" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="DatabaseManagementSystem" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="model.database.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="model.database" />
-      <option name="MAIN_CLASS_NAME" value="model.database.UpdateName" />
+      <option name="PACKAGE_NAME" value="persistence" />
+      <option name="MAIN_CLASS_NAME" value="persistence.Persistence" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <list>
-      <item itemvalue="JUnit.All in DatabaseManagementSystem" />
-      <item itemvalue="JUnit.Exists" />
-      <item itemvalue="JUnit.UpdateDatabaseName" />
-      <item itemvalue="JUnit.UpdateName" />
-      <item itemvalue="JUnit.ColumnTestCase" />
+      <item itemvalue="Application.Main" />
+      <item itemvalue="JUnit.DevTest" />
+      <item itemvalue="JUnit.Persistence" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.ColumnTestCase" />
-        <item itemvalue="JUnit.All in DatabaseManagementSystem" />
-        <item itemvalue="JUnit.UpdateDatabaseName" />
-        <item itemvalue="JUnit.UpdateName" />
-        <item itemvalue="JUnit.Exists" />
+        <item itemvalue="JUnit.DevTest" />
+        <item itemvalue="JUnit.Persistence" />
+        <item itemvalue="Application.Main" />
       </list>
     </recent_temporary>
   </component>
@@ -445,12 +375,6 @@
       <workItem from="1554131340858" duration="22000" />
       <workItem from="1555005553288" duration="6286000" />
       <workItem from="1555165228642" duration="11175000" />
-      <workItem from="1555944865641" duration="1484000" />
-      <workItem from="1556975101291" duration="8186000" />
-      <workItem from="1557036906965" duration="4617000" />
-      <workItem from="1557048737059" duration="364000" />
-      <workItem from="1557057327986" duration="4551000" />
-      <workItem from="1557342695231" duration="226000" />
     </task>
     <task id="LOCAL-00001" summary="Implemented hashCode for Field">
       <created>1555010054390</created>
@@ -473,57 +397,49 @@
       <option name="project" value="LOCAL" />
       <updated>1555170809317</updated>
     </task>
-    <task id="LOCAL-00004" summary="Merged and released">
-      <created>1555872311486</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1555872311486</updated>
-    </task>
-    <option name="localTasksCounter" value="5" />
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="Exists - 2019.05.05 at 11h 03m 52s.xml">
-      <configuration name="Exists" configurationId="JUnit" />
+    <history-entry file="DevTest - 2019.04.13 at 20h 40m 12s.xml">
+      <configuration name="DevTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="All_in_DatabaseManagementSystem - 2019.05.05 at 11h 04m 17s.xml">
-      <configuration name="All in DatabaseManagementSystem" configurationId="JUnit" />
+    <history-entry file="DevTest - 2019.04.13 at 20h 40m 44s.xml">
+      <configuration name="DevTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="All_in_DatabaseManagementSystem - 2019.05.05 at 11h 05m 33s.xml">
-      <configuration name="All in DatabaseManagementSystem" configurationId="JUnit" />
+    <history-entry file="DevTest - 2019.04.13 at 20h 44m 26s.xml">
+      <configuration name="DevTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="UpdateDatabaseName - 2019.05.05 at 16h 14m 16s.xml">
-      <configuration name="UpdateDatabaseName" configurationId="JUnit" />
+    <history-entry file="DevTest - 2019.04.13 at 20h 46m 29s.xml">
+      <configuration name="DevTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="UpdateName - 2019.05.05 at 16h 15m 01s.xml">
-      <configuration name="UpdateName" configurationId="JUnit" />
+    <history-entry file="DevTest - 2019.04.13 at 20h 47m 15s.xml">
+      <configuration name="DevTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="UpdateDatabaseName - 2019.05.05 at 16h 15m 07s.xml">
-      <configuration name="UpdateDatabaseName" configurationId="JUnit" />
+    <history-entry file="DevTest - 2019.04.13 at 20h 48m 42s.xml">
+      <configuration name="DevTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="UpdateDatabaseName - 2019.05.05 at 16h 17m 50s.xml">
-      <configuration name="UpdateDatabaseName" configurationId="JUnit" />
+    <history-entry file="DevTest - 2019.04.13 at 20h 51m 20s.xml">
+      <configuration name="DevTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="UpdateDatabaseName - 2019.05.05 at 16h 18m 08s.xml">
-      <configuration name="UpdateDatabaseName" configurationId="JUnit" />
+    <history-entry file="DevTest - 2019.04.13 at 20h 58m 26s.xml">
+      <configuration name="DevTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="All_in_DatabaseManagementSystem - 2019.05.05 at 16h 23m 21s.xml">
-      <configuration name="All in DatabaseManagementSystem" configurationId="JUnit" />
+    <history-entry file="DevTest - 2019.04.13 at 21h 07m 16s.xml">
+      <configuration name="DevTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="ColumnTestCase - 2019.05.05 at 16h 49m 14s.xml">
-      <configuration name="ColumnTestCase" configurationId="JUnit" />
+    <history-entry file="DevTest - 2019.04.13 at 21h 08m 40s.xml">
+      <configuration name="DevTest" configurationId="JUnit" />
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="37678000" />
+    <option name="totallyTimeSpent" value="17483000" />
   </component>
-  <component name="TodoView" selected-index="4" />
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.3067114" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2624161" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -532,18 +448,17 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3286119" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.33144477" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.44192636" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.2733711" />
+      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.42634562" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
-      <window_info anchor="bottom" id="Terminal" order="10" weight="0.3286119" />
+      <window_info anchor="bottom" id="Terminal" order="10" />
       <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
       <window_info anchor="bottom" id="Messages" order="12" weight="0.3286119" />
-      <window_info anchor="bottom" id="Duplicate detector" order="13" weight="0.3286119" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -552,10 +467,9 @@
       <window_info anchor="right" id="Maven" order="5" />
       <window_info anchor="right" id="Capture Analysis" order="6" />
       <window_info anchor="right" id="Palette&#9;" order="7" />
-      <window_info anchor="right" id="Database" order="8" weight="0.3295302" />
+      <window_info anchor="right" id="Database" order="8" />
       <window_info anchor="right" id="Maven Projects" order="9" />
       <window_info anchor="right" x="0" y="0" width="434" height="856" id="Documentation" order="10" side_tool="true" weight="0.32995737" />
-      <window_info anchor="right" id="Coverage" order="11" side_tool="true" weight="0.3295302" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -565,15 +479,13 @@
     <MESSAGE value="Implemented hashCode for Field" />
     <MESSAGE value="Implemented FieldComparator" />
     <MESSAGE value="Insert/delete column from table&#10;more exceptions&#10;refactored selection method&#10;string to enum for FieldComparator.Sign" />
-    <MESSAGE value="Merged and released" />
-    <MESSAGE value="preliminary tests for model" />
-    <option name="LAST_COMMIT_MESSAGE" value="preliminary tests for model" />
+    <option name="LAST_COMMIT_MESSAGE" value="Insert/delete column from table&#10;more exceptions&#10;refactored selection method&#10;string to enum for FieldComparator.Sign" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/../../CalitateaSistemelor2/DatabaseManagementSystem/tests/database/DevTest.java</url>
+          <url>file://$PROJECT_DIR$/tests/database/DevTest.java</url>
           <line>35</line>
           <properties />
           <option name="timeStamp" value="4" />
@@ -614,9 +526,164 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/tests/persistence/Persistence.java" />
-    <entry file="file://$PROJECT_DIR$/src/main/exception/NotSameFieldType.java" />
-    <entry file="file://$PROJECT_DIR$/src/main/exception/WrongTypeInColumnException.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/persistance.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/controller.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/model/StringField.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/model/IntegerField.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/util/Constants.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="6" column="37" selection-start-line="6" selection-start-column="37" selection-end-line="6" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/service/CommandLineParser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="19" column="46" lean-forward="true" selection-start-line="19" selection-start-column="46" selection-end-line="19" selection-end-column="46" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/model/Record.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/service/ManagementService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="7" column="32" lean-forward="true" selection-start-line="7" selection-start-column="32" selection-end-line="7" selection-end-column="32" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1000#1001#0" expanded="true" />
+            <element signature="e#1065#1066#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_181/src.zip!/java/util/HashMap.java" />
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_181/src.zip!/java/util/Map.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/exception/InvalidCommand.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="13" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="17" selection-start-line="17" selection-end-line="17" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/query/QueryData.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/exception/InexistentColumn.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="7" column="1" selection-start-line="7" selection-start-column="1" selection-end-line="7" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_181/src.zip!/java/lang/Object.java" />
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_201/src.zip!/java/lang/Comparable.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="542">
+          <caret line="135" column="15" selection-start-line="135" selection-start-column="15" selection-end-line="135" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_201/src.zip!/java/lang/Integer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="218">
+          <caret line="1232" column="22" selection-start-line="1232" selection-start-column="22" selection-end-line="1232" selection-end-column="22" />
+          <folding>
+            <element signature="e#46394#46395#0" expanded="true" />
+            <element signature="e#46458#46459#0" expanded="true" />
+            <element signature="e#47036#47037#0" expanded="true" />
+            <element signature="e#47092#47093#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_201/src.zip!/java/lang/String.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="226">
+          <caret line="1152" column="15" selection-start-line="1152" selection-start-column="15" selection-end-line="1152" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/query/Query.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="901">
+          <caret line="53" column="9" lean-forward="true" selection-start-line="53" selection-start-column="9" selection-end-line="53" selection-end-column="9" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/exception/ColumnAlreadyExists.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="4" column="51" selection-start-line="4" selection-start-column="51" selection-end-line="4" selection-end-column="51" />
+          <folding>
+            <element signature="e#126#127#0" expanded="true" />
+            <element signature="e#151#152#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/exception/FieldValueNotSet.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" column="41" selection-start-line="5" selection-start-column="41" selection-end-line="5" selection-end-column="41" />
+          <folding>
+            <element signature="e#195#196#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/persistance/DatabasePersistance.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="374">
+          <caret line="22" column="49" selection-start-line="22" selection-start-column="49" selection-end-line="22" selection-end-column="49" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/persistence/Persistence.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="6" column="13" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="13" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/exception/NotSameFieldType.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="6" selection-start-line="6" selection-end-line="8" selection-end-column="5" />
+          <folding>
+            <element signature="e#149#150#0" expanded="true" />
+            <element signature="e#227#228#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/exception/WrongTypeInColumnException.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="6" selection-start-line="6" selection-end-line="8" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/model/FieldComparator.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="289">
@@ -632,6 +699,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/model/Database.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="587">
+          <caret line="92" column="5" selection-start-line="92" selection-start-column="5" selection-end-line="92" selection-end-column="5" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/exception/TypeMismatchException.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="289">
@@ -641,6 +718,13 @@
             <element signature="e#325#326#0" expanded="true" />
             <element signature="e#403#404#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/junit/jupiter/junit-jupiter-api/5.5.0-M1/junit-jupiter-api-5.5.0-M1.jar!/org/junit/jupiter/api/AssertThrows.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="121">
+          <caret line="17" selection-start-line="17" selection-end-line="17" />
         </state>
       </provider>
     </entry>
@@ -658,6 +742,43 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/model/DatabaseManagementSystem.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="164">
+          <caret line="11" selection-start-line="11" selection-end-line="11" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/model/Column.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="26">
+          <caret line="7" column="24" selection-start-line="7" selection-start-column="24" selection-end-line="7" selection-end-column="24" />
+          <folding>
+            <element signature="e#278#279#0" expanded="true" />
+            <element signature="e#305#306#0" expanded="true" />
+            <element signature="e#334#335#0" expanded="true" />
+            <element signature="e#361#362#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/util/DataBuilder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1309">
+          <caret line="96" column="9" lean-forward="true" selection-start-line="96" selection-start-column="9" selection-end-line="96" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_201/src.zip!/java/util/ArrayList.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="175">
+          <caret line="320" column="28" selection-start-line="320" selection-start-column="22" selection-end-line="320" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/model/Field.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="113">
@@ -668,6 +789,32 @@
             <element signature="e#340#341#0" expanded="true" />
             <element signature="e#369#370#0" expanded="true" />
             <element signature="method#setValue#0;class#Field#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/database/DevTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="207">
+          <caret line="35" selection-start-line="35" selection-end-line="35" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/model/Table.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="252">
+          <caret line="144" column="76" lean-forward="true" selection-start-line="144" selection-start-column="76" selection-end-line="144" selection-end-column="76" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#getColumnsByColumnNames#0;class#Table#0" />
+            <element signature="method#getRow#0;class#Table#0" />
+            <element signature="e#5751#5752#0" expanded="true" />
+            <element signature="e#5785#5786#0" expanded="true" />
+            <element signature="method#hashCode#0;class#Table#0" />
+            <element signature="method#equals#0;class#Table#0" />
           </folding>
         </state>
       </provider>
@@ -686,393 +833,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/service/InsertProcessor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="553">
-          <caret line="130" lean-forward="true" selection-start-line="130" selection-end-line="130" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/persistance.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="644">
-          <caret line="77" column="3" selection-start-line="77" selection-start-column="3" selection-end-line="77" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/graphicalInterface/tableRecord/TableModel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="176">
-          <caret line="164" selection-start-line="164" selection-end-line="164" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/graphicalInterface/table/TableFrame.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="56" column="9" selection-start-line="56" selection-start-column="9" selection-end-line="56" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/graphicalInterface/database/DatabaseFrame.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="437">
-          <caret line="240" selection-start-line="240" selection-end-line="240" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/model/CsvService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="18" selection-start-line="18" selection-end-line="18" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_201/src.zip!/java/util/ArrayList.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4862">
-          <caret line="320" column="28" selection-start-line="320" selection-start-column="22" selection-end-line="320" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../CalitateaSistemelor2/DatabaseManagementSystem/src/main/exception/TypeMismatchException.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="17" selection-start-line="17" selection-end-line="17" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#325#326#0" expanded="true" />
-            <element signature="e#403#404#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../CalitateaSistemelor2/DatabaseManagementSystem/src/main/model/DatabaseManagementSystem.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="11" selection-start-line="11" selection-end-line="11" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../CalitateaSistemelor2/DatabaseManagementSystem/tests/database/DevTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
-          <caret line="35" selection-start-line="35" selection-end-line="35" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../CalitateaSistemelor2/DatabaseManagementSystem/src/main/util/DataBuilder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1462">
-          <caret line="96" column="9" selection-start-line="96" selection-start-column="9" selection-end-line="96" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../CalitateaSistemelor2/DatabaseManagementSystem/src/main/model/Column.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="7" column="24" selection-start-line="7" selection-start-column="24" selection-end-line="7" selection-end-column="24" />
-          <folding>
-            <element signature="e#334#335#0" expanded="true" />
-            <element signature="e#369#370#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../CalitateaSistemelor2/DatabaseManagementSystem/src/main/model/Field.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1496">
-          <caret line="108" column="7" selection-start-line="108" selection-start-column="7" selection-end-line="108" selection-end-column="7" />
-          <folding>
-            <element signature="method#setValue#0;class#Field#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../CalitateaSistemelor2/DatabaseManagementSystem/src/main/model/Table.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2108">
-          <caret line="144" column="5" selection-start-line="144" selection-start-column="5" selection-end-line="144" selection-end-column="5" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#getColumnsByColumnNames#0;class#Table#0" />
-            <element signature="method#getRow#0;class#Table#0" />
-            <element signature="method#hashCode#0;class#Table#0" />
-            <element signature="method#equals#0;class#Table#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/model/Column.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="13" lean-forward="true" selection-start-line="13" selection-end-line="13" />
-          <folding>
-            <element signature="e#334#335#0" expanded="true" />
-            <element signature="e#369#370#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="18" lean-forward="true" selection-start-line="18" selection-end-line="18" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tests/devuseless/database/DevTest.java" />
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_201/src.zip!/java/util/List.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="138">
-          <caret line="237" column="12" selection-start-line="237" selection-start-column="12" selection-end-line="237" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/service/FilteringService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="6" column="28" selection-start-line="6" selection-start-column="28" selection-end-line="6" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/exception/InvalidCommand.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="13" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/junit/jupiter/junit-jupiter-api/5.5.0-M1/junit-jupiter-api-5.5.0-M1.jar!/org/junit/jupiter/api/function/Executable.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="16" column="9" selection-start-line="16" selection-start-column="9" selection-end-line="16" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/junit/jupiter/junit-jupiter-api/5.5.0-M1/junit-jupiter-api-5.5.0-M1.jar!/org/junit/jupiter/api/AssertThrows.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="359">
-          <caret line="31" selection-start-line="31" selection-end-line="31" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tests/model/dbms/GetDatabase.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="383">
-          <caret line="46" column="9" selection-start-line="46" selection-start-column="9" selection-end-line="46" selection-end-column="9" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tests/model/dbms/DeleteDatabase.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="213">
-          <caret line="17" column="36" selection-start-line="17" selection-start-column="36" selection-end-line="17" selection-end-column="36" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/model/DatabaseManagementSystem.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="406">
-          <caret line="118" selection-start-line="118" selection-end-line="118" />
-          <folding>
-            <element signature="method#getInstance#0;class#DatabaseManagementSystem#0" />
-            <element signature="e#542#811#1" />
-            <element signature="e#615#680#0" />
-            <element signature="e#734#801#0" />
-            <element signature="e#1051#1052#0" expanded="true" />
-            <element signature="e#1083#1084#0" expanded="true" />
-            <element signature="docComment;method#createDatabase#0;class#DatabaseManagementSystem#0" />
-            <element signature="method#createDatabase#0;class#DatabaseManagementSystem#0" />
-            <element signature="docComment;method#createDatabase#1;class#DatabaseManagementSystem#0" />
-            <element signature="method#createDatabase#1;class#DatabaseManagementSystem#0" />
-            <element signature="docComment;method#deleteDatabase#0;class#DatabaseManagementSystem#0" />
-            <element signature="docComment;method#deleteDatabase#1;class#DatabaseManagementSystem#0" />
-            <element signature="docComment;method#getDatabase#0;class#DatabaseManagementSystem#0" />
-            <element signature="e#3498#3553#1" />
-            <element signature="method#finalize#0;class#DatabaseManagementSystem#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/persistance/DatabasePersistance.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="19" column="27" selection-start-line="19" selection-start-column="27" selection-end-line="19" selection-end-column="27" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tests/model/dbms/CreateDatabase.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="15" column="31" selection-start-line="15" selection-start-column="31" selection-end-line="15" selection-end-column="31" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tests/model/database/Exists.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="15" column="38" selection-start-line="15" selection-start-column="38" selection-end-line="15" selection-end-column="38" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tests/model/database/GetTable.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="14" column="11" selection-start-line="14" selection-start-column="11" selection-end-line="14" selection-end-column="11" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tests/model/database/DeleteTable.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="31" column="35" selection-start-line="31" selection-start-column="35" selection-end-line="31" selection-end-column="35" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tests/model/database/AbstractDatabaseTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="14" column="52" selection-start-line="14" selection-start-column="52" selection-end-line="14" selection-end-column="52" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tests/model/dbms/Exists.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="14" column="30" selection-start-line="14" selection-start-column="30" selection-end-line="14" selection-end-column="30" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tests/model/database/CreateTable.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="10" column="49" selection-start-line="10" selection-end-line="10" selection-end-column="49" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tests/model/database/UpdateName.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="9" column="9" lean-forward="true" selection-start-line="9" selection-start-column="9" selection-end-line="9" selection-end-column="9" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tests/model/database/AbstractDatabaseCreateTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="21" column="36" lean-forward="true" selection-start-line="21" selection-start-column="36" selection-end-line="21" selection-end-column="36" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tests/model/table/AbstractTableOperationsTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="14" column="13" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/model/Database.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="493">
-          <caret line="44" column="16" selection-start-line="44" selection-start-column="16" selection-end-line="44" selection-end-column="16" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#848#849#0" expanded="true" />
-            <element signature="e#884#885#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tests/model/dbms/UpdateDatabaseName.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="10" selection-start-line="10" selection-end-line="11" selection-end-column="52" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/model/Table.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="36" column="45" selection-start-line="36" selection-start-column="45" selection-end-line="36" selection-end-column="45" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#686#687#0" expanded="true" />
-            <element signature="e#713#714#0" expanded="true" />
-            <element signature="e#878#879#0" expanded="true" />
-            <element signature="e#905#906#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/util/DataBuilder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="20" column="4" selection-start-line="20" selection-start-column="4" selection-end-line="20" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tests/model/table/ColumnTestCase.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="247">
-          <caret line="16" column="32" lean-forward="true" selection-start-line="16" selection-start-column="32" selection-end-line="16" selection-end-column="32" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state relative-caret-position="118">
+          <caret line="621" column="8" selection-start-line="621" selection-start-column="8" selection-end-line="621" selection-end-column="8" />
         </state>
       </provider>
     </entry>
