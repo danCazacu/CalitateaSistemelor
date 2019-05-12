@@ -5,9 +5,12 @@ import javax.swing.*;
 public class InputTextPopUp {
 
     private String title;
-    public InputTextPopUp(String title){
 
-        this.title = (title);
+    public InputTextPopUp(){}
+
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public Object openPopUp(String message, boolean isReopened){

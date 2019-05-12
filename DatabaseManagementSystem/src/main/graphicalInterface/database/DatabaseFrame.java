@@ -1,19 +1,26 @@
 package main.graphicalInterface.database;
 
+import main.exception.AlreadyExists;
+import main.exception.DoesNotExist;
+import main.exception.InvalidValue;
 import main.graphicalInterface.ConfirmDialog;
 import main.graphicalInterface.InputTextPopUp;
+import main.graphicalInterface.MainWindow;
+import main.graphicalInterface.PersistenceActionListener;
 import main.graphicalInterface.table.TableFrame;
+import main.graphicalInterface.tableRecord.InvalidEmptyName;
+import main.model.CsvService;
 import main.model.Database;
 import main.model.DatabaseManagementSystem;
-import main.util.DataBuilder;
+import main.persistance.DatabasePersistance;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import static main.graphicalInterface.GIConstants.*;
 
@@ -39,6 +46,14 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
     private JButton btnCreate;
     private JButton btnUpdate;
     private JButton btnDelete;
+    private JButton btnImportTable;
+
+    private DatabasePersistance databasePersistance;
+    private DeleteListener deleteListener;
+    private CreateListener createListener;
+    private UpdateListener updateListener ;
+
+    private MainWindow mainWindow;
 
     public DatabaseFrame() {
 
@@ -53,7 +68,7 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
          */
         titleLabel = new JLabel(DATABASES_TITLE, SwingConstants.CENTER);
         titleLabel.setFont(new Font("Serif", Font.BOLD, 20));
-        titleLabel.setBounds(0, 20, 350, 20);
+        titleLabel.setBounds(0, 20, 350, 25);
 
         /*
         Database(s) List
@@ -75,27 +90,49 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
         scrollDatabasesPanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 
         /*
+         Listeners for buttons
+         */
+
+        databasePersistance = new DatabasePersistance();
+        deleteListener = new DeleteListener();
+        deleteListener.setDatabasePersistence(databasePersistance);
+        createListener = new CreateListener();
+        createListener.setDatabasePersistence(databasePersistance);
+        updateListener = new UpdateListener();
+        updateListener.setDatabasePersistence(databasePersistance);
+
+        /*
         BUTTONS
          */
         btnCreate = new JButton();
         btnCreate.setText("Create Database");
-        btnCreate.setBounds(90, 480, 200, 50);
-        btnCreate.addActionListener(new CreateListener());
+        btnCreate.setBounds(90, 490, 200, 50);
+        btnCreate.addActionListener(createListener);
 
         btnUpdate = new JButton();
         btnUpdate.setText("Update Database");
-        btnUpdate.setBounds(90, 560, 200, 50);
-        btnUpdate.addActionListener(new UpdateListener());
+        btnUpdate.setBounds(90, 550, 200, 50);
+        btnUpdate.addActionListener(updateListener);
 
         btnDelete = new JButton();
         btnDelete.setText("Delete Database");
-        btnDelete.setBounds(90, 640, 200, 50);
-        btnDelete.addActionListener(new DeleteListener());
+        btnDelete.setBounds(90, 610, 200, 50);
+        btnDelete.addActionListener(deleteListener);
+
+        btnImportTable = new JButton();
+        btnImportTable.setText("Import Table");
+        btnImportTable.setBounds(90, 670, 200, 50);
+        btnImportTable.addActionListener(new ImportListener());
 
         //default Update and Delete Buttons are disabled
-        disableUpdateDeleteButtons();
+        disableUpdateDeleteImportButtons();
 
         addPanelObjects();
+    }
+
+    public void setMainWindow(MainWindow mainWindow){
+
+        this.mainWindow = new MainWindow();
     }
 
     private void populateList() {
@@ -114,6 +151,7 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
         this.add(btnCreate);
         this.add(btnUpdate);
         this.add(btnDelete);
+        this.add(btnImportTable);
     }
 
     /**
@@ -127,120 +165,234 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
         if (databasesList.getSelectedIndex() > -1) {
 
             tableFrame.setSelectedDatabase(listModel.get(databasesList.getSelectedIndex()).toString());
-            enableDeleteUpdateButtons();
+            enableDeleteUpdateImportButtons();
         } else {
 
             tableFrame.setSelectedDatabase(null);
-            disableUpdateDeleteButtons();
+            disableUpdateDeleteImportButtons();
         }
     }
 
-    private void enableDeleteUpdateButtons() {
+    private void enableDeleteUpdateImportButtons() {
 
         btnUpdate.setEnabled(true);
         btnDelete.setEnabled(true);
+        btnImportTable.setEnabled(true);
+        btnImportTable.setToolTipText("Import table in the selected database");
     }
 
-    private void disableUpdateDeleteButtons() {
+    private void disableUpdateDeleteImportButtons() {
 
         btnUpdate.setEnabled(false);
-        btnUpdate.setToolTipText(ENABLE_BUTTON_ToolTipText);
+        btnUpdate.setToolTipText(ENABLE_BUTTON_DATABASE_ToolTipText);
 
         btnDelete.setEnabled(false);
-        btnUpdate.setToolTipText(ENABLE_BUTTON_ToolTipText);
+        btnUpdate.setToolTipText(ENABLE_BUTTON_DATABASE_ToolTipText);
 
+        btnImportTable.setEnabled(false);
+        btnImportTable.setToolTipText(ENABLE_BUTTON_DATABASE_ToolTipText);
     }
 
-    class CreateListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
+    public class CreateListener extends PersistenceActionListener {
+        InputTextPopUp inputTextPopUp = new InputTextPopUp();
+        @Override
+        public void beforePersist(ActionEvent e) {
 
-            InputTextPopUp inputTextPopUp = new InputTextPopUp(CREATE_NEW_DATABASE_TITLE );
+            inputTextPopUp.setTitle(CREATE_NEW_DATABASE_TITLE);
             Object input = inputTextPopUp.openPopUp(ENTER_DATABASE_MESSAGE, false);
 
-            while( input != null){
-                // user didn't pressed Cancel
-                if(input.toString().trim().equals("")){
+            while (input != null) {
 
-                    // can't add table with empty name
-                    input = inputTextPopUp.openPopUp(CREATE_NEW_DATABASE_EMPTY_NAME, true);
-                }
-                else if (databaseManagementSystem.getDatabase(input.toString().trim()) != null) {
+                try {
+                    // user didn't pressed Cancel
+                    if (input.toString().trim().equals("")) {
 
-                        //already exist a database with this name, reopen popup with proper message
-                        input = inputTextPopUp.openPopUp(WRONG_DATABASE_NAME_ALREADY_EXISTS, true);
-                } else {
+                        // can't add table with empty name
+                        throw new InvalidEmptyName();
+                    }
 
-                    databaseManagementSystem.createDatabase(input.toString().trim());
+                    databaseManagementSystem.createDatabase(input.toString());
                     populateList();
                     break;
+
+                } catch (AlreadyExists | InvalidEmptyName | InvalidValue exception) {
+                    //exception.printStackTrace();
+                    input = inputTextPopUp.openPopUp(exception.getMessage(), true);
                 }
             }
         }
+
+        public void setInputTextPopUp(InputTextPopUp inputTextPopUp) {
+            this.inputTextPopUp = inputTextPopUp;
+        }
     }
 
-    class UpdateListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
+    public class UpdateListener extends PersistenceActionListener {
+
+        ConfirmDialog updateDialog = new ConfirmDialog();
+        InputTextPopUp inputTextPopUp = new InputTextPopUp();
+        @Override
+        public void beforePersist(ActionEvent e) {
 
             int index = databasesList.getSelectedIndex();
             String currentName = listModel.get(index).toString();
 
-            InputTextPopUp inputTextPopUp = new InputTextPopUp(UPDATE_DATABASE_TITLE );
+            inputTextPopUp.setTitle(UPDATE_DATABASE_TITLE);
             Object input = inputTextPopUp.openPopUp(ENTER_NEW_DATABASE_MESSAGE, false);
 
-            while( input != null){
+            while (input != null) {
                 // user didn't pressed Cancel
-                if(input.toString().trim().equals("")){
 
-                    // can't rename database to empty name
-                    input = inputTextPopUp.openPopUp(UPDATE_DATABASE_EMPTY_NAME, true);
-                }
-                else if (databaseManagementSystem.getDatabase(input.toString().trim()) != null) {
+                try {
 
-                    //already exist a database with this name, reopen popup with proper message
-                    input = inputTextPopUp.openPopUp(WRONG_DATABASE_NAME_ALREADY_EXISTS, true);
-                } else {
+                    if (input.toString().trim().equals("")) {
 
+                        // can't rename database to empty name
+                        throw new InvalidEmptyName();
+                    }
                     String newName = input.toString().trim();
 
                     String titleConfirmDelete = "Confirm Update Database";
-                    String msgConfirmDelete =  "Are you sure you want to change database name from \"" + currentName + "\" to \"" + newName + "\" ?";
+                    String msgConfirmDelete = "Are you sure you want to change database name from \"" + currentName + "\" to \"" + newName + "\" ?";
 
-                    ConfirmDialog updateDialog = new ConfirmDialog(titleConfirmDelete, msgConfirmDelete);
+                    updateDialog.setTitle(titleConfirmDelete);
+                    updateDialog.setMessage(msgConfirmDelete);
                     boolean update = updateDialog.confirm();
 
-                    if(update) {
+                    if (update) {
 
+                        Database existDB = null;
+                        try {
+                            existDB = databaseManagementSystem.getDatabase(newName);
+
+                        }catch(DoesNotExist ignored){
+
+                        }
+                        if (existDB != null) {
+
+                            throw new AlreadyExists(newName);
+                        }
                         databaseManagementSystem.getDatabase(currentName).setName(newName);
                         populateList();
+                        tableFrame.setSelectedDatabase(null);
+                        disableUpdateDeleteImportButtons();
                     }
-
                     break;
+
+                } catch (InvalidValue | InvalidEmptyName | DoesNotExist | AlreadyExists exception) {
+
+                    input = inputTextPopUp.openPopUp(exception.getMessage(), true);
                 }
             }
         }
+
+        public void setUpdateDialog(ConfirmDialog updateDialog) {
+            this.updateDialog = updateDialog;
+        }
+
+        public void setInputTextPopUp(InputTextPopUp inputTextPopUp) {
+            this.inputTextPopUp = inputTextPopUp;
+        }
     }
 
-    class DeleteListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
+    public class DeleteListener extends PersistenceActionListener {
+
+        ConfirmDialog deleteDialog = new ConfirmDialog();
+
+        @Override
+        public void beforePersist(ActionEvent e) {
 
             int index = databasesList.getSelectedIndex();
 
             String titleConfirmDelete = "Confirm Delete Database";
-            String msgConfirmDelete =  "Are you sure you want to delete \"" + listModel.get(index).toString() + "\" Database?";
+            String msgConfirmDelete = "Are you sure you want to delete \"" + listModel.get(index).toString() + "\" Database?";
 
-            ConfirmDialog deleteDialog = new ConfirmDialog(titleConfirmDelete, msgConfirmDelete);
+            deleteDialog.setTitle(titleConfirmDelete);
+            deleteDialog.setMessage(msgConfirmDelete);
+
             boolean delete = deleteDialog.confirm();
 
-            if(delete) {
+            if (delete) {
 
-                databaseManagementSystem.deleteDatabase(listModel.get(index).toString());
-                listModel.remove(index);
+                try {
+
+                    databaseManagementSystem.deleteDatabase(listModel.get(index).toString());
+                    populateList();
+                } catch (DoesNotExist ignored) {
+                    //doesNotExist.printStackTrace();
+                }
             }
 
             if (listModel.getSize() == 0) { //No database left, disable update,delete buttons
 
-                disableUpdateDeleteButtons();
+                disableUpdateDeleteImportButtons();
             }
         }
+
+        public void setConfirmDialog(ConfirmDialog confirmDialog) {
+
+            deleteDialog = confirmDialog;
+        }
+    }
+
+    class ImportListener extends PersistenceActionListener {
+        @Override
+        public void beforePersist(ActionEvent e) {
+            int index = databasesList.getSelectedIndex();
+            String currentName = listModel.get(index).toString();
+
+
+            JFileChooser chooser = new JFileChooser();
+            FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                    "CSV Files", "csv");
+            chooser.setFileFilter(filter);
+            int returnVal = chooser.showOpenDialog(btnImportTable);
+            String absPath = chooser.getSelectedFile().getAbsolutePath();
+            boolean result = CsvService.importDataLineByLine(absPath, currentName);
+            if (!result) {
+                JOptionPane.showMessageDialog(null, "This table name does not exist.");
+            } else {
+                JOptionPane.showMessageDialog(null, "The file was successfully imported.");
+            }
+        }
+    }
+
+    public JLabel getTitleLabel() {
+
+        return titleLabel;
+    }
+
+    public JList getDatabasesList() {
+
+        return databasesList;
+    }
+
+    public JButton getBtnCreate() {
+
+        return btnCreate;
+    }
+
+    public JButton getBtnUpdate() {
+
+        return btnUpdate;
+    }
+
+    public JButton getBtnDelete() {
+        return btnDelete;
+    }
+
+    public JButton getBtnImportTable() {
+
+        return btnImportTable;
+    }
+
+    public void setDatabasesList(JList databasesList) {
+
+        this.databasesList = databasesList;
+    }
+
+    public void setListModel(DefaultListModel listModel) {
+
+        this.listModel = listModel;
     }
 }

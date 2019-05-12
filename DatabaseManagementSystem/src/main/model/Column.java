@@ -1,5 +1,7 @@
 package main.model;
+import main.exception.InvalidValue;
 
+import static main.service.FilteringService.validate;
 public class Column {
     public enum Type {
         INT("int"),
@@ -28,9 +30,15 @@ public class Column {
     private String name;
     private Type type;
 
-    public Column(String name, Type type) {
+    public Column(String name, Type type) throws InvalidValue {
+        validate(name);
         this.name = name;
         this.type = type;
+    }
+
+    public void setName(String name) throws InvalidValue {
+        validate(name);
+        this.name = name;
     }
 
     public String getName() {
@@ -44,15 +52,23 @@ public class Column {
     @Override
     public int hashCode() {
         int superHash = super.hashCode();
-        superHash += name.hashCode() + type.hashCode();
+        superHash += type.hashCode();
         return superHash;
     }
 
     @Override
     public boolean equals(Object obj) {
+        if(this == obj)
+            return true;
         if (!(obj instanceof Column))
             return false;
         Column column = (Column) obj;
+
         return this.name.equalsIgnoreCase(column.name) && this.type.equals(column.type);
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

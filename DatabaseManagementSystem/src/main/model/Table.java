@@ -10,11 +10,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static main.service.FilteringService.validate;
+
 public class Table {
     private Map<Column, List<Field>> data;
     private String name;
 
-    public Table(String name, List<Column> columnNames) {
+    public Table(String name, List<Column> columnNames) throws InvalidValue {
+        validate(name);
         this.name = name;
         data = new HashMap<>();
         for (Column col : columnNames) {
@@ -26,7 +29,8 @@ public class Table {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(String name) throws InvalidValue {
+        validate(name);
         this.name = name;
     }
 
@@ -52,19 +56,19 @@ public class Table {
      * @param columnName
      * @return Columns instance with name, NULL if no such column
      */
-    public Column getColumn(String columnName) {
+    public Column getColumn(String columnName) throws DoesNotExist {
         for (Column column : data.keySet()) {
             if (column.getName().equalsIgnoreCase(columnName))
                 return column;
         }
-        return null;
+        throw new DoesNotExist(columnName);
     }
 
     /**
      * @param columnNames
      * @return a list of all columns as Column class instances
      */
-    public List<Column> getColumnsByColumnNames(List<String> columnNames) {
+    public List<Column> getColumnsByColumnNames(List<String> columnNames) throws DoesNotExist {
         List<Column> columns = new ArrayList<>();
         for (String columnName : columnNames) {
             Column column = getColumn(columnName);
@@ -80,7 +84,7 @@ public class Table {
      */
     public Map<Column, Field> getRow(int rowNumber) {
         Map<Column, Field> row = new HashMap<>();
-        if (rowNumber < 0)
+        if (rowNumber < 0 || rowNumber >= getNumberOfRows())
             return row;
         for (Column column : data.keySet()) {
             row.put(column, data.get(column).get(rowNumber));
@@ -91,7 +95,8 @@ public class Table {
     /**
      * @param row - map where key is column name and field is the value that need to be inserted into that column
      */
-    public void insert(Map<String, Field> row) throws TypeMismatchException, InexistentColumn {
+    public void insert(Map<String, Field> row) throws TypeMismatchException, InexistentColumn, InvalidValue {
+        //validate row
         List<String> columnNames = getColumnNames();
         //check for invalid column names
         for (String columnName : row.keySet()) {
@@ -109,15 +114,77 @@ public class Table {
             }
         }
         //if all ok add data
-        for (String columnName : row.keySet()) {
-            for (Column col : data.keySet()) {
-                if (col.getName().equalsIgnoreCase(columnName)) {
-                    data.get(col).add(row.get(columnName));
+        for (Column col: data.keySet()) {
+            if(row.containsKey(col.getName())){
+                data.get(col).add(row.get(col.getName()));
+            } else{ // add a defalt value
+                Field field = new Field();
+                if(col.getType().equals(Column.Type.INT))
+                    field.setValue(0);
+                if(col.getType().equals(Column.Type.STRING))
+                    field.setValue("");
+                data.get(col).add(field);
+            }
+        }
+    }
+
+    public void updateWhere(String columnName, FieldComparator.Sign sign, Field value, Field newValue) throws TypeMismatchException {
+        FieldComparator comparator = new FieldComparator();
+
+        Map<Column, List<Field>> tableData = this.getData();
+        for (Column col : tableData.keySet()) {
+            if (col.getName().equalsIgnoreCase(columnName)) {
+                if (!col.getType().equals(value.getType())) {
+                    throw new TypeMismatchException(col.getType(), value.getType(), col.getName());
+                }
+
+                List<Field> columnData = tableData.get(col);
+                for (Field field : columnData) {
+                    if (comparator.compareWithSign(field, value, sign)) {
+                        field.copyFrom(newValue);
+                    }
                 }
             }
+        }
+    }
+
+    public void deleteWhere(String columnName, FieldComparator.Sign sign, Field value) throws TypeMismatchException {
+        while(deleteOneWhere(columnName,sign,value)){
 
         }
     }
+
+    /**
+     *  IMPORTANT!!! usage: call multiple times untill you receive false return.
+     *  This function deletes only one row at a time and it is necessary to call multiple times in order to delete all affected rows
+     * @param columnName
+     * @param sign
+     * @param value
+     * @return
+     * @throws TypeMismatchException
+     */
+    public boolean deleteOneWhere(String columnName, FieldComparator.Sign sign, Field value) throws TypeMismatchException {
+        FieldComparator comparator = new FieldComparator();
+
+        Map<Column, List<Field>> tableData = this.getData();
+        for (Column col : tableData.keySet()) {
+            if (col.getName().equalsIgnoreCase(columnName)) {
+                if (!col.getType().equals(value.getType())) {
+                    throw new TypeMismatchException(col.getType(), value.getType(), col.getName());
+                }
+
+                List<Field> columnData = tableData.get(col);
+                for(int i=0; i<columnData.size(); i++){
+                    if (comparator.compareWithSign(columnData.get(i), value, sign)) {
+                        this.deleteRow(i);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
 
     /**
      * Use this as where clause. Then use other functions as actions over the result.
@@ -163,36 +230,80 @@ public class Table {
      * @return trims data parameter and leaves only selected columns
      */
     public Map<Column, List<Field>> select(Map<Column, List<Field>> data, List<Column> selectColumns) {
-        for (Column column : data.keySet()) {
-            if (!selectColumns.contains(column)) {
-                data.remove(column);
-            }
+        Map<Column, List<Field>> result = new HashMap<>();
+        for (Column col : selectColumns) {
+            result.put(col, data.get(col));
         }
-        return data;
+        return result;
     }
 
     public int getNumberOfRows() {
-        Column column = (Column) data.keySet().toArray()[0];
-        return data.get(column).size();
+
+        //check if the table has anything in it
+        if (data.keySet().size() > 0) {
+
+            Column column = (Column) data.keySet().toArray()[0];
+            return data.get(column).size();
+        }
+
+        return 0;
     }
 
-    public void deleteColumn(Column column) {
+    public boolean deleteRow(int rowNumber) {
+        if (rowNumber < getNumberOfRows()) {
+            for (Column column : data.keySet()) {
+                data.get(column).remove(rowNumber);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public void deleteRows(Map<Column, List<Field>> rowsAffected) throws Exception {
+        for (Column dataColumn : data.keySet()) {
+            List<Field> affectedRow = rowsAffected.get(dataColumn);
+            List<Field> dataRow = data.get(dataColumn);
+            for (Field affectedRowField : affectedRow) {
+                if (!dataRow.contains(affectedRowField))
+                    throw new Exception("Field not match");
+            }
+        }
+
+        for (Column dataColumn : data.keySet()) {
+            List<Field> affectedRow = rowsAffected.get(dataColumn);
+            List<Field> dataRow = data.get(dataColumn);
+            for (Field affectedRowField : affectedRow) {
+                dataRow.remove(affectedRowField);
+            }
+        }
+    }
+
+    public void deleteColumn(Column column) throws DoesNotExist {
+        if (!this.data.containsKey(column))
+            throw new DoesNotExist(column.getName());
         data.remove(column);
     }
 
     public void insertColumn(Column column) throws ColumnAlreadyExists {
-        if (this.data.keySet().contains(column))
-            throw new ColumnAlreadyExists(column.getName());
+        for (Column col : this.data.keySet()) {
+            if (col.getName().equalsIgnoreCase(column.getName()))
+                throw new ColumnAlreadyExists(column.getName());
+        }
+
+        this.data.put(column, new ArrayList<>());
         if (column.getType().equals(Column.Type.STRING)) {
-            ArrayList<Field> columnData = new ArrayList<>();
             for (int i = 0; i < getNumberOfRows(); i++) {
-                columnData.add(new Field(""));
+                try {
+                    this.data.get(column).add(new Field(""));
+                } catch (InvalidValue invalidValue) {
+                    invalidValue.printStackTrace();
+                }
             }
+
         }
         if (column.getType().equals(Column.Type.INT)) {
-            ArrayList<Field> columnData = new ArrayList<>();
             for (int i = 0; i < getNumberOfRows(); i++) {
-                columnData.add(new Field(0));
+                this.data.get(column).add(new Field(0));
             }
 
         }
@@ -250,6 +361,9 @@ public class Table {
 
     public static String toString(Map<Column, List<Field>> input) {
         StringBuilder stringBuilder = new StringBuilder();
+        if (input.keySet().size() == 0)
+            return stringBuilder.toString();
+
         for (Column column : input.keySet()) {
             stringBuilder.append(column.getName() + " | ");
         }
@@ -282,7 +396,7 @@ public class Table {
             outputstream.write(column.getType().toString().getBytes());
             outputstream.write("\n".getBytes());
 
-            for (Field field:data.get(column)) {
+            for (Field field : data.get(column)) {
                 try {
                     field.persist(outputstream);
                 } catch (FieldValueNotSet fieldValueNotSet) {
