@@ -16,7 +16,19 @@ public class InsertRecordPanel {
 
     Map<JLabel, JTextField> mapColumnNameValue;
 
-    public InsertRecordPanel(Table inputTable){
+    Table inputTable;
+
+    public InsertRecordPanel(){
+
+    }
+
+    public void setInputTable(Table inputTable) {
+
+        this.inputTable = inputTable;
+        init();
+    }
+
+    private void init(){
 
         contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
@@ -53,4 +65,6 @@ public class InsertRecordPanel {
         }
         return result;
     }
+
+
 }
