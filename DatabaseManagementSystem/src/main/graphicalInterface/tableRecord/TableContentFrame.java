@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 import static main.graphicalInterface.GIConstants.*;
-import static main.service.FilteringService.validate;
 
 public class TableContentFrame extends JPanel {
 
@@ -157,7 +156,7 @@ public class TableContentFrame extends JPanel {
 
     }
 
-    class SelectListener extends PersistenceActionListener {
+    public class SelectListener extends PersistenceActionListener {
         @Override
         public void beforePersist(ActionEvent e) {
 
@@ -252,7 +251,7 @@ public class TableContentFrame extends JPanel {
         }
     }
 
-    class InsertColumnListener extends PersistenceActionListener {
+    public class InsertColumnListener extends PersistenceActionListener {
         @Override
         public void beforePersist(ActionEvent e) {
 
@@ -306,7 +305,7 @@ public class TableContentFrame extends JPanel {
         }
     }
 
-    class InsertRecordListener extends PersistenceActionListener {
+    public class InsertRecordListener extends PersistenceActionListener {
         @Override
         public void beforePersist(ActionEvent e) {
 
@@ -372,7 +371,7 @@ public class TableContentFrame extends JPanel {
         }
     }
 
-    class UpdateColumnListener extends PersistenceActionListener {
+    public class UpdateColumnListener extends PersistenceActionListener {
         @Override
         public void beforePersist(ActionEvent e) {
 
@@ -413,7 +412,7 @@ public class TableContentFrame extends JPanel {
         }
     }
 
-    class UpdateFieldListener extends PersistenceActionListener {
+    public class UpdateFieldListener extends PersistenceActionListener {
         @Override
         public void beforePersist(ActionEvent e) {
 
@@ -486,8 +485,7 @@ public class TableContentFrame extends JPanel {
         }
     }
 
-
-    class DeleteListener extends PersistenceActionListener {
+    public class DeleteListener extends PersistenceActionListener {
 
         ConfirmDialog deleteDialog = new ConfirmDialog();
 
@@ -557,7 +555,6 @@ public class TableContentFrame extends JPanel {
         }
     }
 
-
     private void populateTable() {
 
         myTableModel.fireTableDataChanged();
@@ -587,7 +584,6 @@ public class TableContentFrame extends JPanel {
         btnInsertRecord.setEnabled(false);
         btnInsertRecord.setToolTipText(ENABLE_BUTTON_TABLE_ToolTipText);
     }
-
 
     public void enableButtonsWithoutDelete() {
 
@@ -638,5 +634,29 @@ public class TableContentFrame extends JPanel {
 
     public String getSelectedTable() {
         return selectedTable;
+    }
+
+    public JButton getBtnSelect() {
+        return btnSelect;
+    }
+
+    public JButton getBtnInsertColumn() {
+        return btnInsertColumn;
+    }
+
+    public JButton getBtnInsertRecord() {
+        return btnInsertRecord;
+    }
+
+    public JButton getBtnUpdateColumnName() {
+        return btnUpdateColumnName;
+    }
+
+    public JButton getBtnUpdateFieldValue() {
+        return btnUpdateFieldValue;
+    }
+
+    public JButton getBtnDelete() {
+        return btnDelete;
     }
 }

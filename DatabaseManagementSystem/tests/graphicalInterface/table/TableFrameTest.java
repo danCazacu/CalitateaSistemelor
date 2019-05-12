@@ -111,6 +111,7 @@ public class TableFrameTest {
 
         tableFrame.setSelectedDatabase(null);
         assertEquals(TABLES_TITLE, tableFrame.getTitleLabel().getText());
+        assertExistsButtonsInFrame();
     }
 
     @Test
@@ -118,6 +119,15 @@ public class TableFrameTest {
 
         tableFrame.setSelectedDatabase(databaseManagementSystem.getDatabases().get(0).getName());
         assertEquals(tableFrame.getSelectedDatabase()+ "'s Table(s)", tableFrame.getTitleLabel().getText());
+        assertExistsButtonsInFrame();
+    }
+
+    public void assertExistsButtonsInFrame(){
+
+        assertNotNull(tableFrame.getBtnCreate());
+        assertNotNull(tableFrame.getBtnUpdate());
+        assertNotNull(tableFrame.getBtnDelete());
+        assertNotNull(tableFrame.getBtnExportTable());
     }
 
     @Test

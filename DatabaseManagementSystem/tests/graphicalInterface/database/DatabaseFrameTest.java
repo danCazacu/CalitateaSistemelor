@@ -48,7 +48,6 @@ public class DatabaseFrameTest {
     @BeforeAll
     public static void setUp() {
 
-
         confirmDialogMock = mock(ConfirmDialog.class);
         databasePersistenceMock = mock(DatabasePersistance.class);
         inputTextPopUpMock = mock(InputTextPopUp.class);
@@ -107,6 +106,10 @@ public class DatabaseFrameTest {
     public void testDatabaseFrame() {
 
         assertEquals(DATABASES_TITLE, databaseFrame.getTitleLabel().getText());
+        assertNotNull(databaseFrame.getBtnCreate());
+        assertNotNull(databaseFrame.getBtnUpdate());
+        assertNotNull(databaseFrame.getBtnDelete());
+        assertNotNull(databaseFrame.getBtnImportTable());
     }
 
     @Test
