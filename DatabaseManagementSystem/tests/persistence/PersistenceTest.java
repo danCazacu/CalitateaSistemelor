@@ -21,9 +21,15 @@ public class PersistenceTest {
     public void loadPersistTest(){
 
         //auto loads data from file
-        int primaryHashCode = DatabaseManagementSystem.getInstance().hashCode();
-        List<Database> databases = new ArrayList<>(DatabaseManagementSystem.getInstance().getDatabases());
+        DatabaseManagementSystem.getInstance().getDatabases().clear();
+
         DatabasePersistance persistance = new DatabasePersistance();
+        try {
+            persistance.load();
+        } catch (IOException | InvalidValue | AlreadyExists e) {
+            fail(e);
+        }
+        List<Database> databases = new ArrayList<>(DatabaseManagementSystem.getInstance().getDatabases());
         persistance.persist();
 
         DatabaseManagementSystem.getInstance().getDatabases().clear();
