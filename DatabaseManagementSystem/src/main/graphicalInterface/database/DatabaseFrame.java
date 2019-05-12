@@ -5,6 +5,7 @@ import main.exception.DoesNotExist;
 import main.exception.InvalidValue;
 import main.graphicalInterface.ConfirmDialog;
 import main.graphicalInterface.InputTextPopUp;
+import main.graphicalInterface.MainWindow;
 import main.graphicalInterface.PersistenceActionListener;
 import main.graphicalInterface.table.TableFrame;
 import main.graphicalInterface.tableRecord.InvalidEmptyName;
@@ -50,6 +51,7 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
     private CreateListener createListener;
     private UpdateListener updateListener ;
 
+    private MainWindow mainWindow;
 
     public DatabaseFrame() {
 
@@ -126,6 +128,11 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
         addPanelObjects();
     }
 
+    public void setMainWindow(MainWindow mainWindow){
+
+        this.mainWindow = new MainWindow();
+    }
+
     private void populateList() {
 
         listModel.clear();
@@ -184,7 +191,7 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
         btnImportTable.setToolTipText(ENABLE_BUTTON_DATABASE_ToolTipText);
     }
 
-    class CreateListener extends PersistenceActionListener {
+    public class CreateListener extends PersistenceActionListener {
         InputTextPopUp inputTextPopUp = new InputTextPopUp();
         @Override
         public void beforePersist(ActionEvent e) {
@@ -218,7 +225,7 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
         }
     }
 
-    class UpdateListener extends PersistenceActionListener {
+    public class UpdateListener extends PersistenceActionListener {
 
         ConfirmDialog updateDialog = new ConfirmDialog();
         InputTextPopUp inputTextPopUp = new InputTextPopUp();

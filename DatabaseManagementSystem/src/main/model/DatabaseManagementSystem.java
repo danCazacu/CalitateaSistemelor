@@ -11,14 +11,18 @@ import java.util.List;
 import static main.service.FilteringService.validate;
 
 public class DatabaseManagementSystem {
+
     private List<Database> databases;
     private static DatabaseManagementSystem instance = null;
+    private static DatabasePersistance databasePersistance;
 
     public static synchronized DatabaseManagementSystem getInstance() {
         if (instance == null) {
             instance = new DatabaseManagementSystem();
             try {
-                new DatabasePersistance().load();
+
+                databasePersistance = new DatabasePersistance();
+                databasePersistance.load();
             } catch (IOException | InvalidValue | AlreadyExists e) {
                 System.out.println(e.getMessage());
             }
@@ -127,6 +131,12 @@ public class DatabaseManagementSystem {
 
     @Override
     protected void finalize() throws Throwable {
-        new DatabasePersistance().persist();
+
+        databasePersistance.persist();
+    }
+
+    public void setDatabasePersistance(DatabasePersistance databasePersistance){
+
+        this.databasePersistance = databasePersistance;
     }
 }
