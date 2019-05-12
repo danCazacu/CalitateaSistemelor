@@ -9,6 +9,7 @@ import main.model.*;
 import main.persistance.DatabasePersistance;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import javax.swing.*;
@@ -241,7 +242,7 @@ public class TableContentFrameTest {
     /*
     InsertColumn Listener
      */
-    @Ignore
+    @Disabled
     @Test
     public void whenInsertColumn_CancelPressed_DoNothing(){
 
