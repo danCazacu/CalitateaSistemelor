@@ -6,7 +6,6 @@ import main.exception.InvalidValue;
 import main.graphicalInterface.ConfirmDialog;
 import main.graphicalInterface.InputTextPopUp;
 import main.graphicalInterface.MainWindow;
-import main.graphicalInterface.database.DatabaseFrame;
 import main.graphicalInterface.table.TableFrame;
 import main.graphicalInterface.tableRecord.TableContentFrame;
 import main.model.Database;
@@ -77,11 +76,11 @@ public class TableFrameTest {
         doReturn(CREATE_NEW_TABLE_NAME).when(inputTextPopUpMock).openPopUp(anyString(), anyBoolean());
 
         tableFrame = TableFrame.getInstance();
-
-        databaseManagementSystem.getDatabases().clear();
         tableFrame = TableFrame.getInstance();
 
         listModel = new DefaultListModel();
+
+        databaseManagementSystem.getDatabases().clear();
         Database database = databaseManagementSystem.createDatabase("DBTest");
         tableFrame.setSelectedDatabase(database.getName());
         int i = 0;

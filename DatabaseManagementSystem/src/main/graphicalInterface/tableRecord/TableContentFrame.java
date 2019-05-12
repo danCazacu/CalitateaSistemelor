@@ -559,7 +559,6 @@ public class TableContentFrame extends JPanel {
                         selectedRows.set(i, selectedRows.get(i) - 1);
                     }
                     selectedRows.remove(0);
-
                 }
 
                 //refresh the table content
@@ -585,7 +584,7 @@ public class TableContentFrame extends JPanel {
             try {
                 myTableModel = new TableModel(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable), false);
             } catch (FieldValueNotSet | DoesNotExist fieldValueNotSet) {
-
+                // not reachable
             }
 
             tableContent = new JTable(myTableModel);
@@ -684,5 +683,17 @@ public class TableContentFrame extends JPanel {
 
     public JLabel getTitleLabel() {
         return titleLabel;
+    }
+
+    public void setTableContent(JTable tableContent) {
+        this.tableContent = tableContent;
+    }
+
+    public void setMyTableModel(TableModel myTableModel) {
+        this.myTableModel = myTableModel;
+    }
+
+    public JTable getTableContent() {
+        return tableContent;
     }
 }
