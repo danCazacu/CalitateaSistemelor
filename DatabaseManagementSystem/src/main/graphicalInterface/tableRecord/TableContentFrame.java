@@ -86,11 +86,17 @@ public class TableContentFrame extends JPanel {
 
         databasePersistance = new DatabasePersistance();
         deleteListener = new DeleteListener();
+        deleteListener.setDatabasePersistence(databasePersistance);
         selectListener = new SelectListener();
+        selectListener.setDatabasePersistence(databasePersistance);
         insertColumnListener = new InsertColumnListener();
+        insertColumnListener.setDatabasePersistence(databasePersistance);
         insertRecordListener = new InsertRecordListener();
+        insertRecordListener.setDatabasePersistence(databasePersistance);
         updateColumnListener = new UpdateColumnListener();
+        insertRecordListener.setDatabasePersistence(databasePersistance);
         updateFieldListener = new UpdateFieldListener();
+        updateFieldListener.setDatabasePersistence(databasePersistance);
 
         /*
         BUTTONS
@@ -658,5 +664,9 @@ public class TableContentFrame extends JPanel {
 
     public JButton getBtnDelete() {
         return btnDelete;
+    }
+
+    public JLabel getTitleLabel() {
+        return titleLabel;
     }
 }

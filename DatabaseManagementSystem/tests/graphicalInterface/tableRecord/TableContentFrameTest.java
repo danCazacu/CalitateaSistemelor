@@ -7,11 +7,12 @@ import main.model.DatabaseManagementSystem;
 import main.persistance.DatabasePersistance;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.swing.*;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static main.graphicalInterface.GIConstants.RECORDS_TITLE;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 
@@ -48,6 +49,23 @@ public class TableContentFrameTest {
     public void setup() {
 
 
+    }
+
+    @Test
+    public void testTableContentFrameInit(){
+
+        assertEquals(RECORDS_TITLE, tableContentFrame.getTitleLabel().getText());
+        assertExistsButtonsInFrame();
+    }
+
+    public void assertExistsButtonsInFrame(){
+
+        assertNotNull(tableContentFrame.getBtnSelect());
+        assertNotNull(tableContentFrame.getBtnUpdateColumnName());
+        assertNotNull(tableContentFrame.getBtnUpdateFieldValue());
+        assertNotNull(tableContentFrame.getBtnInsertColumn());
+        assertNotNull(tableContentFrame.getBtnInsertRecord());
+        assertNotNull(tableContentFrame.getBtnDelete());
     }
 
     /*
