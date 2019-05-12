@@ -214,7 +214,7 @@ public class TableFrame extends JPanel implements ListSelectionListener {
         btnExportTable.setToolTipText(ENABLE_BUTTON_TABLE_ToolTipText);
     }
 
-    class CreateListener extends PersistenceActionListener {
+    public class CreateListener extends PersistenceActionListener {
 
         InputTextPopUp inputTextPopUp = new InputTextPopUp();
 
@@ -249,7 +249,7 @@ public class TableFrame extends JPanel implements ListSelectionListener {
         }
     }
 
-    class UpdateListener extends PersistenceActionListener {
+    public class UpdateListener extends PersistenceActionListener {
 
         ConfirmDialog updateDialog = new ConfirmDialog();
         InputTextPopUp inputTextPopUp = new InputTextPopUp();
@@ -314,7 +314,7 @@ public class TableFrame extends JPanel implements ListSelectionListener {
         }
     }
 
-    class DeleteListener extends PersistenceActionListener {
+    public class DeleteListener extends PersistenceActionListener {
 
         ConfirmDialog deleteDialog = new ConfirmDialog();
 
@@ -352,8 +352,7 @@ public class TableFrame extends JPanel implements ListSelectionListener {
         }
     }
 
-
-    class ExportListener implements ActionListener {
+    public class ExportListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
 
             int index = tablesList.getSelectedIndex();
@@ -367,8 +366,6 @@ public class TableFrame extends JPanel implements ListSelectionListener {
             JOptionPane.showMessageDialog(null, "The file was successfully exported!");
         }
     }
-
-
 
     public void setSelectedDatabase(String selectedDatabase) {
 
@@ -386,32 +383,12 @@ public class TableFrame extends JPanel implements ListSelectionListener {
         populateList();
     }
 
-    public static TableFrame getTableFrame() {
-        return tableFrame;
-    }
-
-    public DatabaseManagementSystem getDatabaseManagementSystem() {
-        return databaseManagementSystem;
-    }
-
-    public TableContentFrame getTableContentFrame() {
-        return tableContentFrame;
-    }
-
     public JLabel getTitleLabel() {
         return titleLabel;
     }
 
     public JList getTablesList() {
         return tablesList;
-    }
-
-    public DefaultListModel getListModel() {
-        return listModel;
-    }
-
-    public JScrollPane getScrollTablesPanel() {
-        return scrollTablesPanel;
     }
 
     public JButton getBtnCreate() {
@@ -432,5 +409,13 @@ public class TableFrame extends JPanel implements ListSelectionListener {
 
     public String getSelectedDatabase() {
         return selectedDatabase;
+    }
+
+    public void setTablesList(JList tablesList) {
+        this.tablesList = tablesList;
+    }
+
+    public void setListModel(DefaultListModel listModel) {
+        this.listModel = listModel;
     }
 }
