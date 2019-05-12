@@ -1,4 +1,4 @@
-package commandline;
+package commandline.delete;
 
 
 import main.exception.InvalidCommand;
@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class DeleteTest extends AbstractTableOperationsTest {
+public class DeleteDatabaseTest extends AbstractTableOperationsTest {
 
     CommandLineParser parser = new CommandLineParser();
     public static final String GOOD_COMMAND = "delete database "+ DataBuilder.DATABASE;
@@ -22,9 +22,10 @@ public class DeleteTest extends AbstractTableOperationsTest {
 
 
     @Test
-    public void deleteDatabaseParserTestWithWrongCommands() {
+    public void wrongCommands() {
         for (String command : wrongCommands) {
             assertThrows(InvalidCommand.class, () -> {
+                System.out.println(command);
                 parser.parse(command);
             });
 

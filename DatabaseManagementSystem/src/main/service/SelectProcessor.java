@@ -47,8 +47,6 @@ public class SelectProcessor {
                 String[] names = columns.split(",");
                 for (String name : names) {
                     Column column = table.getColumn(name);
-                    if (column == null)
-                        throw new InvalidCommand("Such column does not exist: " + name);
                     columnsSelected.add(column);
                 }
             } else {
