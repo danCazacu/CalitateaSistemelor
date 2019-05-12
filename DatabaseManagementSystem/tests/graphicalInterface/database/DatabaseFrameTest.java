@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Tests suit for {@link main.graphicalInterface.database.DatabaseFrame}
+ * Tests suit for {@link DatabaseFrame}
  */
 public class DatabaseFrameTest {
 
@@ -114,6 +114,7 @@ public class DatabaseFrameTest {
 
         // setup
         databaseFrame.getDatabasesList().setSelectedIndex(listModel.getSize());
+        databaseFrame.valueChanged(new ListSelectionEvent(listModel, listModel.getSize(), listModel.getSize(), false));
 
         // execute
         databaseFrame.valueChanged(new ListSelectionEvent(listModel, listModel.getSize(), listModel.getSize(), false));
@@ -130,6 +131,8 @@ public class DatabaseFrameTest {
 
         assertTrue(databasesList.getModel().getSize() == 3);
         databaseFrame.getDatabasesList().setSelectedIndex(selectedIndex);
+        databaseFrame.valueChanged(new ListSelectionEvent(listModel, listModel.getSize(), listModel.getSize(), false));
+        assertEnableButtons();
 
         assertTrue(listModel.getSize() > 1);
 
@@ -227,7 +230,8 @@ public class DatabaseFrameTest {
         assertNotNull(databaseFrame.getBtnUpdate());
         assertTrue(databaseFrame.getDatabasesList().getModel().getSize() > 0);
         databaseFrame.getDatabasesList().setSelectedIndex(0);
-        databaseFrame.getBtnUpdate().setEnabled(true);
+        databaseFrame.valueChanged(new ListSelectionEvent(listModel, listModel.getSize(), listModel.getSize(), false));
+        assertEnableButtons();
 
         doReturn(null).when(inputTextPopUpMock).openPopUp(anyString(), anyBoolean());
 
@@ -252,7 +256,8 @@ public class DatabaseFrameTest {
         assertTrue(databaseFrame.getDatabasesList().getModel().getSize() > 0);
         databaseFrame.getDatabasesList().setSelectedIndex(0);
         String oldDBName = databaseFrame.getDatabasesList().getSelectedValue().toString();
-        databaseFrame.getBtnUpdate().setEnabled(true);
+        databaseFrame.valueChanged(new ListSelectionEvent(listModel, listModel.getSize(), listModel.getSize(), false));
+        assertEnableButtons();
 
         doReturn("newDBName_update").when(inputTextPopUpMock).openPopUp(anyString(), anyBoolean());
 
@@ -291,7 +296,8 @@ public class DatabaseFrameTest {
         assertNotNull(databaseFrame.getBtnUpdate());
         assertTrue(databaseFrame.getDatabasesList().getModel().getSize() > 0);
         databaseFrame.getDatabasesList().setSelectedIndex(0);
-        databaseFrame.getBtnUpdate().setEnabled(true);
+        databaseFrame.valueChanged(new ListSelectionEvent(listModel, listModel.getSize(), listModel.getSize(), false));
+        assertEnableButtons();
 
         doReturn("newDBName_update").when(inputTextPopUpMock).openPopUp(anyString(), anyBoolean());
 
@@ -321,12 +327,12 @@ public class DatabaseFrameTest {
         // setup
         assertTrue(listModel.getSize() > 0);
         databaseFrame.getDatabasesList().setSelectedIndex(0);
+        databaseFrame.valueChanged(new ListSelectionEvent(listModel, listModel.getSize(), listModel.getSize(), false));
+        assertEnableButtons();
 
         // execute & verify
         int noOfDBBeforeDelete = listModel.getSize();
         assertEquals(noOfDBBeforeDelete, databaseFrame.getDatabasesList().getModel().getSize(), "Number of databases before delete");
-
-        databaseFrame.getBtnDelete().setEnabled(true);
 
         assertTrue(databaseFrame.getBtnDelete().getActionListeners().length > 0);
         DatabaseFrame.DeleteListener deleteListener = (DatabaseFrame.DeleteListener) databaseFrame.getBtnDelete().getActionListeners()[0];
@@ -348,7 +354,8 @@ public class DatabaseFrameTest {
         // setup
         assertTrue(listModel.getSize() >= 3); //at least the one added by me
         databaseFrame.getDatabasesList().setSelectedIndex(databaseFrame.getDatabasesList().getModel().getSize() - 1);
-        databaseFrame.getBtnDelete().setEnabled(true);
+        databaseFrame.valueChanged(new ListSelectionEvent(listModel, listModel.getSize(), listModel.getSize(), false));
+        assertEnableButtons();
 
         // execute & verify
         int noOfDBBeforeDelete = listModel.getSize();
@@ -392,7 +399,8 @@ public class DatabaseFrameTest {
         assertTrue(listModel.getSize() == 1);
         assertTrue(databaseFrame.getDatabasesList().getModel().getSize() == 1);
         databaseFrame.getDatabasesList().setSelectedIndex(0);
-        databaseFrame.getBtnDelete().setEnabled(true);
+        databaseFrame.valueChanged(new ListSelectionEvent(listModel, listModel.getSize(), listModel.getSize(), false));
+        assertEnableButtons();
 
         // execute & verify
         assertEquals(1, databaseFrame.getDatabasesList().getModel().getSize(), "Number of databases before delete");
@@ -410,5 +418,20 @@ public class DatabaseFrameTest {
         databaseFrame.getBtnDelete().doClick();
         int actualNoOfDBs = databaseFrame.getDatabasesList().getModel().getSize();
         assertEquals(0, actualNoOfDBs, "Number of databases after delete");
+        assertDisableButtons();
+    }
+
+    public void assertDisableButtons(){
+
+        assertFalse(databaseFrame.getBtnUpdate().isEnabled());
+        assertFalse(databaseFrame.getBtnDelete().isEnabled());
+        assertFalse(databaseFrame.getBtnImportTable().isEnabled());
+    }
+
+    public void assertEnableButtons(){
+
+        assertTrue(databaseFrame.getBtnUpdate().isEnabled());
+        assertTrue(databaseFrame.getBtnDelete().isEnabled());
+        assertTrue(databaseFrame.getBtnImportTable().isEnabled());
     }
 }

@@ -635,5 +635,8 @@ public class TableContentFrame extends JPanel {
             disableDeleteButton();
         }
     }
-}
 
+    public String getSelectedTable() {
+        return selectedTable;
+    }
+}
