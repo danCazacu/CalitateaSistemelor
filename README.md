@@ -7,7 +7,7 @@
 
   -delete table [table_name] from database [database_name] - delete table employees from database store
   
-  -delete from [table_name] from database [database_name] where [column_name] [operator] [value] - delete from employees from database store where name = John
+  -delete from [table_name] from [database_name] where [column_name] [operator] [value] - delete from employees from database store where name = John
   
   
   #### INSERT
