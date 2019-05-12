@@ -163,14 +163,16 @@ public class TableContentFrame extends JPanel {
     }
 
     public class SelectListener extends PersistenceActionListener {
+
+        SelectPanel selectPanel = new SelectPanel();
+
         @Override
         public void beforePersist(ActionEvent e) {
 
             String title = "Please select columns and optionally add where clause";
-            SelectPanel selectPanel = null;
 
             try {
-                selectPanel = new SelectPanel(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable));
+                selectPanel.setSelectedTable(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable));
             } catch (DoesNotExist doesNotExist) {
 
             }
@@ -255,6 +257,11 @@ public class TableContentFrame extends JPanel {
                 }
             }
         }
+
+        public void setSelectPanel(SelectPanel selectPanel) {
+
+            this.selectPanel = selectPanel;
+        }
     }
 
     public class InsertColumnListener extends PersistenceActionListener {
@@ -312,14 +319,16 @@ public class TableContentFrame extends JPanel {
     }
 
     public class InsertRecordListener extends PersistenceActionListener {
+
+        InsertRecordPanel insertRecordPanel = new InsertRecordPanel();
+
         @Override
         public void beforePersist(ActionEvent e) {
 
             String title = "Insert Record";
-            InsertRecordPanel insertRecordPanel = null;
 
             try {
-                insertRecordPanel = new InsertRecordPanel(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable));
+                insertRecordPanel.setInputTable(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable));
             } catch (DoesNotExist doesNotExist) {
             }
 
@@ -371,21 +380,25 @@ public class TableContentFrame extends JPanel {
 
                     result = insertRecordPanel.openPopUp(exception.getMessage(), true);
                 } catch (DoesNotExist | InexistentColumn ignored) {
-
+                    // not reachable
                 }
             }
+        }
+
+        public void setInsertRecordPanel(InsertRecordPanel insertRecordPanel) {
+            this.insertRecordPanel = insertRecordPanel;
         }
     }
 
     public class UpdateColumnListener extends PersistenceActionListener {
+        UpdateColumnNamePanel updateColumnNamePanel = new UpdateColumnNamePanel();
         @Override
         public void beforePersist(ActionEvent e) {
 
             String title = "Please select columns and optionally add where clause";
-            UpdateColumnNamePanel updateColumnNamePanel = null;
 
             try {
-                updateColumnNamePanel = new UpdateColumnNamePanel(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable));
+                updateColumnNamePanel.setInputTable(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable));
             } catch (DoesNotExist doesNotExist) {
             }
 
@@ -416,18 +429,21 @@ public class TableContentFrame extends JPanel {
                 }
             }
         }
+
+        public void setUpdateColumnNamePanel(UpdateColumnNamePanel updateColumnNamePanel) {
+            this.updateColumnNamePanel = updateColumnNamePanel;
+        }
     }
 
     public class UpdateFieldListener extends PersistenceActionListener {
+        UpdateFieldPanel updateFieldPanel = new UpdateFieldPanel();
         @Override
         public void beforePersist(ActionEvent e) {
 
-
             String title = "Update fields values using WHERE clause";
-            UpdateFieldPanel updateFieldPanel = null;
 
             try {
-                updateFieldPanel = new UpdateFieldPanel(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable));
+                updateFieldPanel.setTable(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable));
             } catch (DoesNotExist doesNotExist) {
             }
 
@@ -543,7 +559,6 @@ public class TableContentFrame extends JPanel {
                         selectedRows.set(i, selectedRows.get(i) - 1);
                     }
                     selectedRows.remove(0);
-
                 }
 
                 //refresh the table content
@@ -569,7 +584,7 @@ public class TableContentFrame extends JPanel {
             try {
                 myTableModel = new TableModel(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable), false);
             } catch (FieldValueNotSet | DoesNotExist fieldValueNotSet) {
-
+                // not reachable
             }
 
             tableContent = new JTable(myTableModel);
@@ -668,5 +683,17 @@ public class TableContentFrame extends JPanel {
 
     public JLabel getTitleLabel() {
         return titleLabel;
+    }
+
+    public void setTableContent(JTable tableContent) {
+        this.tableContent = tableContent;
+    }
+
+    public void setMyTableModel(TableModel myTableModel) {
+        this.myTableModel = myTableModel;
+    }
+
+    public JTable getTableContent() {
+        return tableContent;
     }
 }

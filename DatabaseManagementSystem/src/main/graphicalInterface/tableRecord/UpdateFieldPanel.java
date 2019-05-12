@@ -28,7 +28,16 @@ public class UpdateFieldPanel {
 
     JPanel contentPanel;
 
-    public UpdateFieldPanel(Table table) {
+    Table table;
+
+
+    public void setTable(Table inputTable) {
+
+        this.table = inputTable;
+        init();
+    }
+
+    public void init() {
 
         contentPanel = new JPanel();
 

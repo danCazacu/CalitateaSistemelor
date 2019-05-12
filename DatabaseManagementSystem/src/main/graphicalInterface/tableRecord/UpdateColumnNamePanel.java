@@ -20,7 +20,19 @@ public class UpdateColumnNamePanel {
 
     JPanel contentPanel;
 
-    public UpdateColumnNamePanel(Table table) {
+    Table table;
+
+    public UpdateColumnNamePanel(){
+
+    }
+
+
+    public void setInputTable(Table inputTable) {
+
+        this.table = inputTable;
+    }
+
+    public void init() {
 
         contentPanel = new JPanel();
         lblColumn = new JLabel("Columns: ");
@@ -50,5 +62,4 @@ public class UpdateColumnNamePanel {
         }
         return result;
     }
-
 }
