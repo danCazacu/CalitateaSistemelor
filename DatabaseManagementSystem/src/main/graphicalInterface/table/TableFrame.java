@@ -8,6 +8,7 @@ import main.graphicalInterface.InputTextPopUp;
 import main.graphicalInterface.PersistenceActionListener;
 import main.graphicalInterface.tableRecord.InvalidEmptyName;
 import main.graphicalInterface.tableRecord.TableContentFrame;
+import main.model.CsvService;
 import main.model.DatabaseManagementSystem;
 import main.model.Table;
 import main.persistance.DatabasePersistance;
@@ -17,6 +18,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import static main.graphicalInterface.GIConstants.*;
@@ -350,13 +352,23 @@ public class TableFrame extends JPanel implements ListSelectionListener {
         }
     }
 
-    class ExportListener extends PersistenceActionListener {
-        @Override
-        public void beforePersist(ActionEvent e) {
 
+    class ExportListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+
+            int index = tablesList.getSelectedIndex();
+
+            try {
+               CsvService.writeDataLineByLine(selectedDatabase, listModel.get(index).toString());
+
+            } catch (DoesNotExist doesNotExist) {
+                doesNotExist.printStackTrace();
+            }
+            JOptionPane.showMessageDialog(null, "The file was successfully exported!");
         }
-
     }
+
+
 
     public void setSelectedDatabase(String selectedDatabase) {
 
