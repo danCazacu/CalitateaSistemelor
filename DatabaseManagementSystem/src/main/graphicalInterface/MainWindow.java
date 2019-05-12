@@ -19,7 +19,7 @@ public class MainWindow extends JFrame {
     private TableFrame tableFrame;
     private TableContentFrame tableContentFrame;
 
-    private DatabasePersistance databasePersistance;
+    private DatabasePersistance databasePersistance = new DatabasePersistance();
 
     public MainWindow(){
 

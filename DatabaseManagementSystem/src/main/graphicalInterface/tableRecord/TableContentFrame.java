@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 import static main.graphicalInterface.GIConstants.*;
-import static main.service.FilteringService.validate;
 
 public class TableContentFrame extends JPanel {
 
@@ -87,11 +86,17 @@ public class TableContentFrame extends JPanel {
 
         databasePersistance = new DatabasePersistance();
         deleteListener = new DeleteListener();
+        deleteListener.setDatabasePersistence(databasePersistance);
         selectListener = new SelectListener();
+        selectListener.setDatabasePersistence(databasePersistance);
         insertColumnListener = new InsertColumnListener();
+        insertColumnListener.setDatabasePersistence(databasePersistance);
         insertRecordListener = new InsertRecordListener();
+        insertRecordListener.setDatabasePersistence(databasePersistance);
         updateColumnListener = new UpdateColumnListener();
+        insertRecordListener.setDatabasePersistence(databasePersistance);
         updateFieldListener = new UpdateFieldListener();
+        updateFieldListener.setDatabasePersistence(databasePersistance);
 
         /*
         BUTTONS
@@ -157,15 +162,17 @@ public class TableContentFrame extends JPanel {
 
     }
 
-    class SelectListener extends PersistenceActionListener {
+    public class SelectListener extends PersistenceActionListener {
+
+        SelectPanel selectPanel = new SelectPanel();
+
         @Override
         public void beforePersist(ActionEvent e) {
 
             String title = "Please select columns and optionally add where clause";
-            SelectPanel selectPanel = null;
 
             try {
-                selectPanel = new SelectPanel(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable));
+                selectPanel.setSelectedTable(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable));
             } catch (DoesNotExist doesNotExist) {
 
             }
@@ -250,9 +257,14 @@ public class TableContentFrame extends JPanel {
                 }
             }
         }
+
+        public void setSelectPanel(SelectPanel selectPanel) {
+
+            this.selectPanel = selectPanel;
+        }
     }
 
-    class InsertColumnListener extends PersistenceActionListener {
+    public class InsertColumnListener extends PersistenceActionListener {
         @Override
         public void beforePersist(ActionEvent e) {
 
@@ -306,15 +318,17 @@ public class TableContentFrame extends JPanel {
         }
     }
 
-    class InsertRecordListener extends PersistenceActionListener {
+    public class InsertRecordListener extends PersistenceActionListener {
+
+        InsertRecordPanel insertRecordPanel = new InsertRecordPanel();
+
         @Override
         public void beforePersist(ActionEvent e) {
 
             String title = "Insert Record";
-            InsertRecordPanel insertRecordPanel = null;
 
             try {
-                insertRecordPanel = new InsertRecordPanel(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable));
+                insertRecordPanel.setInputTable(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable));
             } catch (DoesNotExist doesNotExist) {
             }
 
@@ -366,21 +380,25 @@ public class TableContentFrame extends JPanel {
 
                     result = insertRecordPanel.openPopUp(exception.getMessage(), true);
                 } catch (DoesNotExist | InexistentColumn ignored) {
-
+                    // not reachable
                 }
             }
         }
+
+        public void setInsertRecordPanel(InsertRecordPanel insertRecordPanel) {
+            this.insertRecordPanel = insertRecordPanel;
+        }
     }
 
-    class UpdateColumnListener extends PersistenceActionListener {
+    public class UpdateColumnListener extends PersistenceActionListener {
+        UpdateColumnNamePanel updateColumnNamePanel = new UpdateColumnNamePanel();
         @Override
         public void beforePersist(ActionEvent e) {
 
             String title = "Please select columns and optionally add where clause";
-            UpdateColumnNamePanel updateColumnNamePanel = null;
 
             try {
-                updateColumnNamePanel = new UpdateColumnNamePanel(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable));
+                updateColumnNamePanel.setInputTable(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable));
             } catch (DoesNotExist doesNotExist) {
             }
 
@@ -411,18 +429,21 @@ public class TableContentFrame extends JPanel {
                 }
             }
         }
+
+        public void setUpdateColumnNamePanel(UpdateColumnNamePanel updateColumnNamePanel) {
+            this.updateColumnNamePanel = updateColumnNamePanel;
+        }
     }
 
-    class UpdateFieldListener extends PersistenceActionListener {
+    public class UpdateFieldListener extends PersistenceActionListener {
+        UpdateFieldPanel updateFieldPanel = new UpdateFieldPanel();
         @Override
         public void beforePersist(ActionEvent e) {
 
-
             String title = "Update fields values using WHERE clause";
-            UpdateFieldPanel updateFieldPanel = null;
 
             try {
-                updateFieldPanel = new UpdateFieldPanel(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable));
+                updateFieldPanel.setTable(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable));
             } catch (DoesNotExist doesNotExist) {
             }
 
@@ -486,8 +507,7 @@ public class TableContentFrame extends JPanel {
         }
     }
 
-
-    class DeleteListener extends PersistenceActionListener {
+    public class DeleteListener extends PersistenceActionListener {
 
         ConfirmDialog deleteDialog = new ConfirmDialog();
 
@@ -539,7 +559,6 @@ public class TableContentFrame extends JPanel {
                         selectedRows.set(i, selectedRows.get(i) - 1);
                     }
                     selectedRows.remove(0);
-
                 }
 
                 //refresh the table content
@@ -557,7 +576,6 @@ public class TableContentFrame extends JPanel {
         }
     }
 
-
     private void populateTable() {
 
         myTableModel.fireTableDataChanged();
@@ -566,7 +584,7 @@ public class TableContentFrame extends JPanel {
             try {
                 myTableModel = new TableModel(databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable), false);
             } catch (FieldValueNotSet | DoesNotExist fieldValueNotSet) {
-
+                // not reachable
             }
 
             tableContent = new JTable(myTableModel);
@@ -587,7 +605,6 @@ public class TableContentFrame extends JPanel {
         btnInsertRecord.setEnabled(false);
         btnInsertRecord.setToolTipText(ENABLE_BUTTON_TABLE_ToolTipText);
     }
-
 
     public void enableButtonsWithoutDelete() {
 
@@ -635,5 +652,48 @@ public class TableContentFrame extends JPanel {
             disableDeleteButton();
         }
     }
-}
 
+    public String getSelectedTable() {
+        return selectedTable;
+    }
+
+    public JButton getBtnSelect() {
+        return btnSelect;
+    }
+
+    public JButton getBtnInsertColumn() {
+        return btnInsertColumn;
+    }
+
+    public JButton getBtnInsertRecord() {
+        return btnInsertRecord;
+    }
+
+    public JButton getBtnUpdateColumnName() {
+        return btnUpdateColumnName;
+    }
+
+    public JButton getBtnUpdateFieldValue() {
+        return btnUpdateFieldValue;
+    }
+
+    public JButton getBtnDelete() {
+        return btnDelete;
+    }
+
+    public JLabel getTitleLabel() {
+        return titleLabel;
+    }
+
+    public void setTableContent(JTable tableContent) {
+        this.tableContent = tableContent;
+    }
+
+    public void setMyTableModel(TableModel myTableModel) {
+        this.myTableModel = myTableModel;
+    }
+
+    public JTable getTableContent() {
+        return tableContent;
+    }
+}

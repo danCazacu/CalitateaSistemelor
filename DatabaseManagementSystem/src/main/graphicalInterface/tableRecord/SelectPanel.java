@@ -25,12 +25,24 @@ public class SelectPanel {
     JPanel panelWHERE;
     JPanel contentPanel;
 
-    public SelectPanel( Table table) {
+    Table selectedTable;
+
+    public SelectPanel(){
+
+    }
+
+    public void setSelectedTable(Table table){
+
+        this.selectedTable = table;
+        init();
+    }
+
+    public void init() {
 
         contentPanel = new JPanel();
         lblColumns = new JLabel("Columns: ");
 
-        lstColumns = new JList(table.getColumnNames().toArray());
+        lstColumns = new JList(selectedTable.getColumnNames().toArray());
 
         whereCheckBox = new JCheckBox("WHERE");
 
