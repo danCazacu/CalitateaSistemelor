@@ -8,6 +8,7 @@ import java.awt.*;
 
 public class ShowTableAfterSelect {
 
+    JTable table ;
 
     public ShowTableAfterSelect(Table inputTable) throws FieldValueNotSet {
 
@@ -16,7 +17,7 @@ public class ShowTableAfterSelect {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
 
-        JTable table = new JTable(new TableModel(inputTable, true));
+        this.table = new JTable(new TableModel(inputTable, true));
 
         JScrollPane tableContainer = new JScrollPane(table);
 
@@ -30,6 +31,9 @@ public class ShowTableAfterSelect {
         int y = (int) ((dimension.getHeight() - frame.getHeight()) / 2);
         frame.setLocation(x, y);
         frame.setAlwaysOnTop(true);
+    }
 
+    public JTable getTable() {
+        return table;
     }
 }

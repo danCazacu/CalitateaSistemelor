@@ -108,7 +108,7 @@ public class SelectPanel {
         return result;
     }
 
-    class CheckListItem {
+    public static class CheckListItem {
 
         private String label;
         private boolean isSelected = false;
@@ -145,6 +145,7 @@ public class SelectPanel {
     }
 
     public JList<CheckListItem> getLstColumns() {
+
         return lstColumns;
     }
 

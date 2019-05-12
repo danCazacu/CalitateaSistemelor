@@ -13,10 +13,10 @@ import java.awt.event.ItemListener;
 public class UpdateColumnNamePanel {
 
     JLabel lblColumn;
-    JComboBox<Column> lstColumns;
+    private JComboBox<Column> lstColumns;
 
     JLabel lblNewValue;
-    JTextField txtNewColumnName;
+    private JTextField txtNewColumnName;
 
     JPanel contentPanel;
 
@@ -30,6 +30,7 @@ public class UpdateColumnNamePanel {
     public void setInputTable(Table inputTable) {
 
         this.table = inputTable;
+        init();
     }
 
     public void init() {
@@ -61,5 +62,13 @@ public class UpdateColumnNamePanel {
                     title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
         }
         return result;
+    }
+
+    public JComboBox<Column> getLstColumns() {
+        return lstColumns;
+    }
+
+    public JTextField getTxtNewColumnName() {
+        return txtNewColumnName;
     }
 }
