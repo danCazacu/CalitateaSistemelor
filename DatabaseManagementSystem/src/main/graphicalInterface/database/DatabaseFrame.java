@@ -335,7 +335,7 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
         }
     }
 
-    class ImportListener extends PersistenceActionListener {
+    public class ImportListener extends PersistenceActionListener {
         @Override
         public void beforePersist(ActionEvent e) {
             int index = databasesList.getSelectedIndex();
