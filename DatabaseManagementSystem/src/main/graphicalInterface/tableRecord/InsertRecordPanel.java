@@ -14,7 +14,7 @@ public class InsertRecordPanel {
 
     JPanel contentPanel;
 
-    Map<JLabel, JTextField> mapColumnNameValue;
+    private Map<JLabel, JTextField> mapColumnNameValue;
 
     Table inputTable;
 
@@ -66,5 +66,7 @@ public class InsertRecordPanel {
         return result;
     }
 
-
+    public Map<JLabel, JTextField> getMapColumnNameValue() {
+        return mapColumnNameValue;
+    }
 }

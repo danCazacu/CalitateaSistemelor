@@ -165,7 +165,7 @@ public class TableContentFrame extends JPanel {
     public class SelectListener extends PersistenceActionListener {
 
         SelectPanel selectPanel = new SelectPanel();
-
+        ShowTableAfterSelect showTableAfterSelect;
         @Override
         public void beforePersist(ActionEvent e) {
 
@@ -237,7 +237,7 @@ public class TableContentFrame extends JPanel {
                             filteredTable.getData().put(col, filteredRows.get(col));
                         }
 
-                        new ShowTableAfterSelect(filteredTable);
+                        showTableAfterSelect = new ShowTableAfterSelect(filteredTable);
                     } else {
 
                         Table filteredTable = new Table(originalTable.getName(), lstSelectedColumns);
@@ -245,7 +245,7 @@ public class TableContentFrame extends JPanel {
                         for (Column col : filteredTable.getData().keySet()) {
                             filteredTable.getData().put(col, selectResult.get(col));
                         }
-                        new ShowTableAfterSelect(filteredTable);
+                        showTableAfterSelect = new ShowTableAfterSelect(filteredTable);
                     }
 
                     break;
@@ -258,6 +258,10 @@ public class TableContentFrame extends JPanel {
             }
         }
 
+        public ShowTableAfterSelect getShowTableAfterSelect() {
+            return showTableAfterSelect;
+        }
+
         public void setSelectPanel(SelectPanel selectPanel) {
 
             this.selectPanel = selectPanel;
@@ -265,6 +269,10 @@ public class TableContentFrame extends JPanel {
     }
 
     public class InsertColumnListener extends PersistenceActionListener {
+
+        JPanel insertColumnPanel = new JPanel();
+        JOptionPane optionPane = new JOptionPane();
+
         @Override
         public void beforePersist(ActionEvent e) {
 
@@ -272,8 +280,6 @@ public class TableContentFrame extends JPanel {
             JComboBox<String> combo = new JComboBox(Column.Type.values());
             JTextField columnName = new JTextField(20);
 
-            JPanel insertColumnPanel = new JPanel();
-            //insertColumnPanel.add(new JLabel("Please enter the column name and select the column type")); //message
             insertColumnPanel.add(new JLabel("Column name:"));
             insertColumnPanel.add(columnName);
             insertColumnPanel.add(Box.createHorizontalBox());
@@ -287,7 +293,7 @@ public class TableContentFrame extends JPanel {
             boolean cancelPressed = false;
             while (invalid && !cancelPressed) {
 
-                int result = JOptionPane.showConfirmDialog(null, insertColumnPanel,
+                int result = optionPane.showConfirmDialog(null, insertColumnPanel,
                         title, JOptionPane.OK_CANCEL_OPTION, messageType);
                 if (result == JOptionPane.OK_OPTION) {
 
@@ -316,6 +322,14 @@ public class TableContentFrame extends JPanel {
                 }
             }
         }
+
+        public void setInsertColumnPanel(JPanel insertColumnPanel) {
+            this.insertColumnPanel = insertColumnPanel;
+        }
+
+        public void setOptionPane(JOptionPane optionPane) {
+            this.optionPane = optionPane;
+        }
     }
 
     public class InsertRecordListener extends PersistenceActionListener {
@@ -339,7 +353,7 @@ public class TableContentFrame extends JPanel {
 
                     Table selectedTableDB = databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable);
 
-                    Map<JLabel, JTextField> mapColumnValue = insertRecordPanel.mapColumnNameValue;
+                    Map<JLabel, JTextField> mapColumnValue = insertRecordPanel.getMapColumnNameValue();
                     Map<String, Field> row = new HashMap<>();
 
                     for (JLabel label : mapColumnValue.keySet()) {
@@ -391,7 +405,9 @@ public class TableContentFrame extends JPanel {
     }
 
     public class UpdateColumnListener extends PersistenceActionListener {
+
         UpdateColumnNamePanel updateColumnNamePanel = new UpdateColumnNamePanel();
+
         @Override
         public void beforePersist(ActionEvent e) {
 
@@ -407,8 +423,8 @@ public class TableContentFrame extends JPanel {
 
                 try {
 
-                    Column columnToBeRenamed = (Column) updateColumnNamePanel.lstColumns.getSelectedItem();
-                    String newName = updateColumnNamePanel.txtNewColumnName.getText().trim();
+                    Column columnToBeRenamed = (Column) updateColumnNamePanel.getLstColumns().getSelectedItem();
+                    String newName = updateColumnNamePanel.getTxtNewColumnName().getText().trim();
 
                     if (newName.isEmpty())
                         throw new InvalidEmptyName("You can not rename with empty!");
@@ -436,6 +452,7 @@ public class TableContentFrame extends JPanel {
     }
 
     public class UpdateFieldListener extends PersistenceActionListener {
+
         UpdateFieldPanel updateFieldPanel = new UpdateFieldPanel();
         @Override
         public void beforePersist(ActionEvent e) {
@@ -452,18 +469,18 @@ public class TableContentFrame extends JPanel {
 
                 try {
 
-                    String setNewValue = updateFieldPanel.txtNewValue.getText().trim();
+                    String setNewValue = updateFieldPanel.getTxtNewValue().getText().trim();
                     if (setNewValue.isEmpty())
                         throw new InvalidEmptyName("Empty new value to be set");
                     FilteringService.validate(setNewValue);
 
-                    String matchValue = updateFieldPanel.textMatchValue.getText().trim();
+                    String matchValue = updateFieldPanel.getTextMatchValue().getText().trim();
                     if (matchValue.isEmpty())
                         throw new InvalidEmptyName("Empty new value to do the match");
                     FilteringService.validate(matchValue);
 
-                    Column selectedColumn = (Column) updateFieldPanel.lstColumns.getSelectedItem();
-                    FieldComparator.Sign selectedOperator = (FieldComparator.Sign) updateFieldPanel.cbOperators.getSelectedItem();
+                    Column selectedColumn = (Column) updateFieldPanel.getLstColumns().getSelectedItem();
+                    FieldComparator.Sign selectedOperator = (FieldComparator.Sign) updateFieldPanel.getCbOperators().getSelectedItem();
 
                     Field matchValueField = new Field();
                     Field newValueField = new Field();
@@ -504,6 +521,10 @@ public class TableContentFrame extends JPanel {
 
                 }
             }
+        }
+
+        public void setUpdateFieldPanel(UpdateFieldPanel updateFieldPanel) {
+            this.updateFieldPanel = updateFieldPanel;
         }
     }
 
