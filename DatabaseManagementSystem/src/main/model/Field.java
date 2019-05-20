@@ -4,6 +4,7 @@ import main.exception.FieldValueNotSet;
 import main.exception.InvalidValue;
 import main.exception.TypeMismatchException;
 
+import static main.service.FilteringService.isValid;
 import static main.service.FilteringService.validate;
 
 import java.io.IOException;
@@ -21,11 +22,19 @@ public class Field {
     }
 
     public Field(String val) throws InvalidValue {
-        validate(val);
+
+        assert val != null : "Precondition failed: input value null or empty";
+
+        if(!val.trim().isEmpty()) {
+
+            assert isValid(val) : "Precondition failed: " + new InvalidValue(val);
+        }
         setValue(val);
+
     }
 
     public Field(int val) {
+
         setValue(val);
     }
 
@@ -36,14 +45,24 @@ public class Field {
     public String getStringValue() throws FieldValueNotSet {
         if (!isStringValueSet())
             throw new FieldValueNotSet(this);
+
+        assert this.type.equals(Column.Type.STRING) : "Post-condition failed: string value was not set correctly to field";
         return stringValue;
     }
 
     public void setValue(String stringValue) throws InvalidValue {
-        validate(stringValue);
+
+        assert stringValue != null : "Precondition failed: input value null";
+
+        if(!stringValue.trim().isEmpty()) {
+            assert isValid(stringValue) : "Precondition failed: " + new InvalidValue(stringValue);
+        }
+
         this.stringValue = stringValue;
         this.intValue = null;
         this.type = Column.Type.STRING;
+
+        assert this.stringValue.equals(stringValue) && this.intValue == null && this.type.equals(Column.Type.STRING) : "Post-condition failed: STRING value was not set correctly to the field";
     }
 
     /**
@@ -53,6 +72,8 @@ public class Field {
     public Integer getIntValue() throws FieldValueNotSet {
         if (!isIntValueSet())
             throw new FieldValueNotSet(this);
+
+        assert this.intValue != null && this.type.equals(Column.Type.INT) : "Post-condition failed: INT value was not set correctly to the field";
         return intValue;
     }
 
@@ -60,6 +81,7 @@ public class Field {
         this.intValue = intValue;
         this.stringValue = null;
         this.type = Column.Type.INT;
+        assert this.intValue != null && this.stringValue == null && this.type.equals(Column.Type.INT) : "Post-condition failed: INT value was not set correctly to the field";
     }
 
     public boolean isStringValueSet() {
@@ -71,6 +93,8 @@ public class Field {
     }
 
     public Column.Type getType() {
+
+        assert type != null: "Precondition failed: Type is null!";
         return type;
     }
 

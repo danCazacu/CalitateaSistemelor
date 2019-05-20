@@ -11,6 +11,9 @@ import java.util.Map;
 public class InsertProcessor {
 
     public void processInsert(String[] line) throws InvalidCommand {
+
+        assert line != null: "Precondition failed: input parameter can not be null";
+
         if (line.length <= 1)
             throw new InvalidCommand();
 
@@ -35,6 +38,9 @@ public class InsertProcessor {
     }
 
     private void processInsertInto(String[] line) throws InvalidCommand {
+
+        assert line != null: "Precondition failed: input parameter can not be null";
+
         if (line.length <= 2)
             throw new InvalidCommand("Missing table name");
         if (line.length <= 3 || !line[3].equalsIgnoreCase(Constants.FROM))
@@ -74,6 +80,9 @@ public class InsertProcessor {
     }
 
     private void processInsertDatabase(String[] line) throws InvalidCommand {
+
+        assert line != null: "Precondition failed: input parameter can not be null";
+
         if (line.length <= 2)
             throw new InvalidCommand("Missing database name");
         String name = line[2];
@@ -85,6 +94,9 @@ public class InsertProcessor {
     }
 
     private void processInsertTable(String[] line) throws InvalidCommand {
+
+        assert line != null: "Precondition failed: input parameter can not be null";
+
         if (line.length <= 2)
             throw new InvalidCommand("Missing table name");
         if (line.length <= 3 || !line[3].equalsIgnoreCase(Constants.INTO))
@@ -101,6 +113,9 @@ public class InsertProcessor {
     }
 
     private void processInsertColumn(String[] line) throws InvalidCommand {
+
+        assert line != null: "Precondition failed: input parameter can not be null";
+
         if (line.length <= 2)
             throw new InvalidCommand("Missing column name after keyword column");
         if (line.length <= 3)

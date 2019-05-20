@@ -15,6 +15,9 @@ import java.util.Map;
 public class SelectProcessor {
 
     public void processSelect(String[] line) throws InvalidCommand {
+
+        assert line != null: "Precondition failed: input parameter can not be null";
+
         if (line.length <= 1)
             throw new InvalidCommand("Missing column list. ex age,name,height or *");
         if (line.length <= 2 || !line[2].equalsIgnoreCase(Constants.FROM))

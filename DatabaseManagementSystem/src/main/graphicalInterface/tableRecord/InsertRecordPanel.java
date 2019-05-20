@@ -24,6 +24,8 @@ public class InsertRecordPanel {
 
     public void setInputTable(Table inputTable) {
 
+        assert inputTable != null: "Precondition failed: input table can not be null";
+
         this.inputTable = inputTable;
         init();
     }
@@ -48,7 +50,9 @@ public class InsertRecordPanel {
 
     public Object openPopUp(String title, boolean isReopened) {
 
-        Object result = null;
+        assert title != null: "Precondition failed: input title is null";
+
+        Object result;
         if (isReopened) {
 
             JLabel errorLabel = new JLabel(title);

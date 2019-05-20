@@ -4,10 +4,13 @@ import main.exception.AlreadyExists;
 import main.exception.DoesNotExist;
 import main.exception.InvalidValue;
 import main.persistance.DatabasePersistance;
+import main.service.FilteringService;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static main.service.FilteringService.isValid;
 import static main.service.FilteringService.validate;
 
 public class DatabaseManagementSystem {
@@ -38,11 +41,17 @@ public class DatabaseManagementSystem {
      * @return a list with all databases instances stored
      */
     public List<Database> getDatabases() {
+
+        assert this.databases != null : "Post-condition (get all databases) : the list is null";
         return databases;
     }
 
     public void setDatabases(List<Database> databases) {
+
+        assert databases != null : "Precondition failed: input parameter is null";
         this.databases = databases;
+
+        assert this.databases.containsAll(databases) : "Post-condition failed: The lists aren't equals";
     }
 
     /**
@@ -50,13 +59,19 @@ public class DatabaseManagementSystem {
      * @return true of such database with name exists, false if does not exist
      */
     public boolean exists(String name) {
-        Database database = null;
+
+        assert name != null && !name.trim().isEmpty() : "Precondition failed: input is empty or null";
+        assert isValid(name) : "Invariant failed: the input name is not valid " + new InvalidValue(name);
+
+        Database database;
         try {
             database = getDatabase(name);
         } catch (DoesNotExist ignored) {
-
+            return false;
         }
-        return database != null;
+
+        assert database != null && database.getName().equalsIgnoreCase(name) : "Post-condition failed: " + database.getName() + " != " + name;
+        return true;
     }
 
     /**
@@ -64,11 +79,19 @@ public class DatabaseManagementSystem {
      * @return instance of Database that was just created
      */
     public Database createDatabase(String name) throws AlreadyExists, InvalidValue {
-        validate(name);
+
+        assert name != null && !name.trim().isEmpty() : "Precondition failed: input is empty or null";
+        assert isValid(name): "Precondition failed: the name is not valid " + new InvalidValue(name);
+
         if (exists(name))
             throw new AlreadyExists(name);
+
+        assert !exists(name) : "Precondition failed (create database(name)) ... " + new AlreadyExists(name);
+
         Database database = new Database(name);
         databases.add(database);
+
+        assert exists(name) : "Post-condition failed (create database(name)) ... The database with name \"" + name + "\" was not found in databases list.";
         return database;
     }
 
@@ -79,10 +102,20 @@ public class DatabaseManagementSystem {
      * @return input parameter
      */
     public Database createDatabase(Database database) throws AlreadyExists, InvalidValue {
-        validate(database.getName());
-        if (databases.contains(database))
-            throw new AlreadyExists(database.getName());
+        assert database != null : "Precondition failed: input is null";
+
+        assert isValid(database.getName()) : "Invariant failed : database name \"" + database.getName() + "\" is not valid";
+        //validate(database.getName());
+
+     /*   if (databases.contains(database))
+            throw new AlreadyExists(database.getName());*/
+
+        assert !databases.contains(database) : "Precondition failed (create database(Database)) ... " + new AlreadyExists(database.getName());
+
         databases.add(database);
+
+        assert databases.contains(database) : "Post-condition failed (create database(Database)) ... The database was not found in databases list.";
+
         return database;
     }
 
@@ -92,9 +125,18 @@ public class DatabaseManagementSystem {
      * @param database
      */
     public void deleteDatabase(Database database) throws DoesNotExist {
+
+        assert database != null : "Precondition failed: input is null";
+
         if (!databases.contains(database))
             throw new DoesNotExist(database.getName());
+
+        assert isValid(database.getName()) : "Invariant failed : database name \"" + database.getName() + "\" is not valid";
+        assert databases.contains(database) : "Precondition failed (delete database(Database)) ... " + new DoesNotExist(database.getName());
+
         databases.remove(database);
+
+        assert !databases.contains(database) : "Post-condition failed (delete database(Database)) ... The database was still found in databases list.";
     }
 
     /**
@@ -103,9 +145,16 @@ public class DatabaseManagementSystem {
      * @param name
      */
     public void deleteDatabase(String name) throws DoesNotExist {
+
+        assert name != null && !name.trim().isEmpty() : "Precondition failed: input is empty or null";
+        assert isValid(name) : "Invariant failed : database name \"" + name + "\" is not valid";
         Database data = this.getDatabase(name);
-        if (data != null)
-            databases.remove(data);
+
+        assert data != null : "Precondition failed (delete database(name)) ... " + new DoesNotExist(name);
+        //if (data != null)
+        databases.remove(data);
+
+        assert !databases.contains(name): "Post-condition failed (delete database(Database)) ... The database was still found in databases list.";
     }
 
     /**
@@ -116,10 +165,21 @@ public class DatabaseManagementSystem {
      * @return instance of database if exists
      */
     public Database getDatabase(String name) throws DoesNotExist {
+
+        assert name != null && !name.trim().isEmpty() : "Precondition failed: input name si null or empty";
         for (Database database : databases) {
-            if (database.getName().equalsIgnoreCase(name))
+
+            assert isValid(database.getName()) : "Invariant failed: database name \"" + database.getName() + "\" is not valid";
+            assert database != null  : "Invariant failed: database null";
+
+            if (database.getName().equalsIgnoreCase(name)) {
+
+                assert database.getName().equalsIgnoreCase(name): "Post-condition failed ... the name aren't equals";
                 return database;
+            }
         }
+
+        //assert !exists(name) : "Post-condition failed (second way of exits from this function failed): database with the name \"" + name + "\" exists";
         throw new DoesNotExist(name);
     }
 

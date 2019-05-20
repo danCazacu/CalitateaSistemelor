@@ -15,7 +15,9 @@ public class InputTextPopUp {
 
     public Object openPopUp(String message, boolean isReopened){
 
-        Object result = null;
+        assert message != null : "Precondition failed: the input message is null";
+
+        Object result;
         if(isReopened){
 
             result = JOptionPane.showInputDialog(null, message, title, JOptionPane.ERROR_MESSAGE );

@@ -22,6 +22,9 @@ public class CommandLineParser {
     }
 
     public void parse(String line) throws InvalidCommand {
+
+        assert line != null: "Precondition failed: input parameter can not be null";
+
         String[] split = line.split("\\s+");
         if (split.length > 0) {
             String action = split[0];
@@ -33,6 +36,11 @@ public class CommandLineParser {
     }
 
     private void processAction(String action, String[] line) throws InvalidCommand {
+
+        assert action != null: "Precondition failed: input action parameter can not be null";
+        assert line != null: "Precondition failed: input list lines parameter can not be null";
+
+
         switch (action.toLowerCase()) {
             case Constants.INSERT:
                 new InsertProcessor().processInsert(line);

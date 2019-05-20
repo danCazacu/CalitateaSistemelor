@@ -22,5 +22,6 @@ public class Main {
             commandLineParser.startCommandLine();
 
 //        new DatabasePersistance().persist();
+
     }
 }

@@ -70,6 +70,7 @@ public class MainWindow extends JFrame {
 
     public void setDatabasePersistance(DatabasePersistance databasePersistance) {
 
+        assert databasePersistance != null : "Precondition failed: input parameter is null";
         this.databasePersistance = databasePersistance;
     }
 }

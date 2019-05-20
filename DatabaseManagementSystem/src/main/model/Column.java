@@ -1,6 +1,7 @@
 package main.model;
 import main.exception.InvalidValue;
 
+import static main.service.FilteringService.isValid;
 import static main.service.FilteringService.validate;
 public class Column {
     public enum Type {
@@ -9,6 +10,9 @@ public class Column {
         private String type;
 
         Type(String type) {
+
+            assert type != null: "Precondition failed: input parameter can not be null";
+
             this.type = type;
         }
 
@@ -31,13 +35,21 @@ public class Column {
     private Type type;
 
     public Column(String name, Type type) throws InvalidValue {
-        validate(name);
+
+        assert name != null: "Precondition failed: input name parameter can not be null";
+        assert type != null: "Precondition failed: input type parameter can not be null";
+
+
+        isValid(name);
         this.name = name;
         this.type = type;
     }
 
     public void setName(String name) throws InvalidValue {
-        validate(name);
+
+        assert name != null: "Precondition failed: input parameter can not be null";
+
+        isValid(name);
         this.name = name;
     }
 

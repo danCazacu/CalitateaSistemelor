@@ -12,6 +12,8 @@ public class ShowTableAfterSelect {
 
     public ShowTableAfterSelect(Table inputTable) throws FieldValueNotSet {
 
+        assert inputTable != null: "Precondition failed: input table can not be null!";
+
         JFrame frame = new JFrame("Table after select filter ( " + inputTable.getName() + " )");
 
         JPanel panel = new JPanel();
