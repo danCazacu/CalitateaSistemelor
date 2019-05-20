@@ -33,6 +33,7 @@ public class SelectPanel {
 
     public void setSelectedTable(Table table){
 
+        assert table != null: "Precondition failed: Input table can not be null!";
         this.selectedTable = table;
         init();
     }
@@ -95,7 +96,9 @@ public class SelectPanel {
 
     public Object openPopUp(String title, boolean isReopened) {
 
-        Object result = null;
+        assert title != null: "Precondition failed: title is null";
+
+        Object result;
         if (isReopened) {
 
             result = JOptionPane.showConfirmDialog(null, contentPanel,

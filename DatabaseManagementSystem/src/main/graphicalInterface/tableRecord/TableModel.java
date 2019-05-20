@@ -22,6 +22,9 @@ public class TableModel extends AbstractTableModel {
 
     public TableModel(Table inputTable, boolean selectPressed) throws FieldValueNotSet {
 
+        assert inputTable != null: "Precondition failed: input parameter can not be null";
+
+
         this.table = inputTable;
         this.selectedPressed = selectPressed;
 
@@ -204,6 +207,8 @@ public class TableModel extends AbstractTableModel {
      */
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+
+        assert aValue != null: "Precondition failed: input parameter can not be null";
 
         if (columnIndex == 0 && !selectedPressed) {
 

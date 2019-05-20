@@ -43,6 +43,11 @@ public class DatabasePersistance {
     }
 
     private void loadDatabase(BufferedReader bufferedReader, Database database) throws IOException, InvalidValue, AlreadyExists {
+
+        assert bufferedReader != null: "Precondition failed: input buffer reader parameter can not be null";
+        assert database != null: "Precondition failed: input database parameter can not be null";
+
+
         String line = bufferedReader.readLine();
         while (line.equalsIgnoreCase(PersistenceContants.START_TABLE)) {
             String tableName = bufferedReader.readLine();
@@ -53,6 +58,10 @@ public class DatabasePersistance {
     }
 
     private Table loadTable(BufferedReader bufferedReader, String tableName) throws IOException, InvalidValue {
+
+        assert bufferedReader != null: "Precondition failed: input buffer reader parameter can not be null";
+        assert tableName != null: "Precondition failed: input table name parameter can not be null";
+
         String line = bufferedReader.readLine();
         Map<Column, List<Field>> data = new HashMap<>();
         int rowCount = 0;
@@ -81,6 +90,11 @@ public class DatabasePersistance {
     }
 
     private ArrayList<Field> loadData(BufferedReader bufferedReader, Column.Type type, ArrayList<Field> arrayList) throws IOException, InvalidValue {
+
+        assert bufferedReader != null: "Precondition failed: input buffer reader parameter can not be null";
+        assert type != null: "Precondition failed: input column type parameter can not be null";
+        assert arrayList != null: "Precondition failed: input fields list parameter can not be null";
+
         String line = bufferedReader.readLine();
         while (!line.equalsIgnoreCase(PersistenceContants.END_COLUMN)) {
             if (type.equals(Column.Type.INT)) {

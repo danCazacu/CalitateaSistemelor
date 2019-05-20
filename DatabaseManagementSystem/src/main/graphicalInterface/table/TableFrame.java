@@ -62,6 +62,7 @@ public class TableFrame extends JPanel implements ListSelectionListener {
             tableFrame = new TableFrame();
         }
 
+        assert tableFrame != null : "Something went wrong... even if the tableFrame was not instantiated, try to return null";
         return tableFrame;
     }
 
@@ -150,6 +151,7 @@ public class TableFrame extends JPanel implements ListSelectionListener {
 
     private void populateList() {
 
+        assert listModel != null: "Precondition failed: the list model can not be null";
         listModel.clear();
 
         if (selectedDatabase != null) {
@@ -181,6 +183,9 @@ public class TableFrame extends JPanel implements ListSelectionListener {
      */
     @Override
     public void valueChanged(ListSelectionEvent e) {
+
+        assert tablesList != null: "Precondition failed, table list can not be null";
+        assert tableContentFrame != null: "Precondition failed, table frame can not be null";
 
         if (tablesList.getSelectedIndex() > -1) {
 
@@ -412,10 +417,14 @@ public class TableFrame extends JPanel implements ListSelectionListener {
     }
 
     public void setTablesList(JList tablesList) {
+
+        assert tablesList != null: "Precondition failed: table list input can not be null";
         this.tablesList = tablesList;
     }
 
     public void setListModel(DefaultListModel listModel) {
+
+        assert listModel != null: "Precondition failed: list model input can not be null";
         this.listModel = listModel;
     }
 }

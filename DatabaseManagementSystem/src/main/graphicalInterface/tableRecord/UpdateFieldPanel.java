@@ -33,6 +33,9 @@ public class UpdateFieldPanel {
 
     public void setTable(Table inputTable) {
 
+        assert inputTable != null: "Precondition failed: input parameter can not be null";
+
+
         this.table = inputTable;
         init();
     }
@@ -67,7 +70,10 @@ public class UpdateFieldPanel {
 
     public Object openPopUp(String title, boolean isReopened) {
 
-        Object result = null;
+        assert title != null: "Precondition failed: input parameter can not be null";
+
+
+        Object result;
         if (isReopened) {
 
             result = JOptionPane.showConfirmDialog(null, contentPanel,

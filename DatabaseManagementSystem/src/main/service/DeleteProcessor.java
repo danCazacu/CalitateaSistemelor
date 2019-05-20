@@ -10,26 +10,29 @@ import main.util.Constants;
 import java.util.List;
 import java.util.Map;
 
+import static main.util.Constants.*;
+
 public class DeleteProcessor {
 
     public void processDelete(String[] line) throws InvalidCommand {
-        if (line.length <= 1)
-            throw new InvalidCommand();
+        /*if (line.length <= 1)
+            throw new InvalidCommand();*/
+
+        assert line.length > 1 :  "Precondition failed: " + new InvalidCommand();
 
         String type = line[1];
+
+        assert type.equals(FROM) || type.equals(TABLE) || type.equals(DATABASE) : "Precondition failed: " + new InvalidCommand("Missing from/table/database keyword after delete");
         switch (type.toLowerCase()) {
-            case Constants.FROM:
+            case FROM:
                 processDeleteFrom(line);
                 break;
-            case Constants.TABLE:
+            case TABLE:
                 processDeleteTable(line);
                 break;
-            case Constants.DATABASE:
+            case DATABASE:
                 processDeleteDatabase(line);
                 break;
-            default:
-                throw new InvalidCommand("Missing from/table/database keyword after delete");
-
         }
 
     }
@@ -48,9 +51,9 @@ public class DeleteProcessor {
     private void processDeleteTable(String[] line) throws InvalidCommand {
         if (line.length <= 2)
             throw new InvalidCommand("Missing table name");
-        if (line.length <= 3 || !line[3].equalsIgnoreCase(Constants.FROM))
+        if (line.length <= 3 || !line[3].equalsIgnoreCase(FROM))
             throw new InvalidCommand("Missing from keyword after table name");
-        if (line.length <= 4 || !line[4].equalsIgnoreCase(Constants.DATABASE))
+        if (line.length <= 4 || !line[4].equalsIgnoreCase(DATABASE))
             throw new InvalidCommand("Missing database keyword after from keyword");
         if (line.length <= 5)
             throw new InvalidCommand("Missing database name after database keyword");
@@ -67,7 +70,7 @@ public class DeleteProcessor {
     private void processDeleteFrom(String[] line) throws InvalidCommand {
         if (line.length <= 2)
             throw new InvalidCommand("Missing table name");
-        if (line.length <= 3 || !line[3].equalsIgnoreCase(Constants.FROM))
+        if (line.length <= 3 || !line[3].equalsIgnoreCase(FROM))
             throw new InvalidCommand("Missing from keyword after table name");
         if (line.length <= 4)
             throw new InvalidCommand("Missing database name after from keyword");

@@ -12,6 +12,9 @@ import javax.xml.crypto.Data;
 
 public class UpdateProcessor {
     public void processUpdate(String[] line) throws InvalidCommand {
+
+        assert line != null: "Precondition failed: input parameter can not be null";
+
         if (line.length <= 1)
             throw new InvalidCommand();
         String type = line[1];
@@ -35,6 +38,9 @@ public class UpdateProcessor {
     }
 
     private void processUpdateColumn(String[] line) throws InvalidCommand {
+
+        assert line != null: "Precondition failed: input parameter can not be null";
+
         if (line.length <= 2)
             throw new InvalidCommand("Missing column name after column keyword");
         if (line.length <= 3 || !line[3].equalsIgnoreCase(Constants.FROM))
@@ -61,6 +67,9 @@ public class UpdateProcessor {
     }
 
     private void processUpdateTableData(String[] line) throws InvalidCommand {
+
+        assert line != null: "Precondition failed: input parameter can not be null";
+
         if (line.length <= 2)
             throw new InvalidCommand("Missing table name after table keyword");
         if (line.length <= 3 || !line[3].equalsIgnoreCase(Constants.FROM))
@@ -108,6 +117,9 @@ public class UpdateProcessor {
     }
 
     private void processUpdateTable(String[] line) throws InvalidCommand {
+
+        assert line != null: "Precondition failed: input parameter can not be null";
+
         if (line.length <= 2)
             throw new InvalidCommand("Missing table name after table keyword");
         if (line.length <= 3 || !line[3].equalsIgnoreCase(Constants.FROM))
@@ -128,6 +140,9 @@ public class UpdateProcessor {
     }
 
     public void processUpdateDatabase(String line[]) throws InvalidCommand {
+
+        assert line != null: "Precondition failed: input parameter can not be null";
+
         if (line.length <= 2)
             throw new InvalidCommand("Missing databse name after database keyword");
         if (line.length <= 3 || !line[3].equalsIgnoreCase(Constants.NAME))

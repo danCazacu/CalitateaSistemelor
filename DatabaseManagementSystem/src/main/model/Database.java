@@ -9,32 +9,56 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import static main.service.FilteringService.isValid;
 import static main.service.FilteringService.validate;
 public class Database {
     private String name;
     private List<Table> tables;
 
     public Database(String name) throws InvalidValue {
-        validate(name);
+        //validate(name);
+        assert name != null && !name.trim().isEmpty() : "Precondition failed: input is null or empty";
+        assert isValid(name) : "Precondition failed: " + new InvalidValue(name);
+
         this.name = name;
         this.tables = new ArrayList<>();
+
+        assert this.name.equalsIgnoreCase(name): "Post-condition failed: database name incorrect ( " + this.name + " != " + name + ")";
+        assert this.tables != null : "Post-condition failed: tables list is null";
+        assert this.tables.size() == 0 : "Post-condition failed: tables list not empty list";
     }
 
     public Database(String name, List<Table> tables) throws InvalidValue {
-        validate(name);
+
+        assert name != null && !name.trim().isEmpty() : "Precondition failed: input is null or empty";
+        assert isValid(name) : "Precondition failed: " + new InvalidValue(name);
+        assert tables != null : "Precondition failed: tables list is null";
+
         this.tables = tables;
         this.name = name;
+
+        assert this.name.equalsIgnoreCase(name) : "Post-condition failed: " + this.name + " != " + name ;
+        assert this.tables.containsAll(tables) : "Post-condition failed: the tables list does not contain all the tables from the input list";
     }
 
     public List<Table> getTables() {
+
+        assert tables != null;
         return tables;
     }
 
     public void setTables(List<Table> tables) {
+
+        assert tables != null : "Precondition failed: input is null";
         this.tables = tables;
+
+        assert tables.containsAll(tables) : "Post-condition failed ... the tables list does not contain all the tables from the input list";
     }
 
     public String getName() {
+
+        assert name != null && !name.trim().isEmpty();
         return name;
     }
 
@@ -43,8 +67,9 @@ public class Database {
      * @param name
      */
     public void setName(String name) throws InvalidValue {
-        validate(name);
+        assert isValid(name) : "Precondition failed... invalid name... " + new InvalidValue(name);
         this.name = name;
+        assert this.name.equals(name): "Post-condition failed ... " + this.name + " != " + name;
     }
 
     /**
@@ -53,17 +78,28 @@ public class Database {
      * @return true if this database contains such table, false if not
      */
     public boolean exists(String tableName){
-        Table table = null;
+
+        assert tableName != null && !tableName.trim().isEmpty() : "Precondition failed: null or empty input";
+        assert isValid(tableName) : "Invariant failed  " + new InvalidValue(tableName);
+        Table table;
         try {
+
             table = getTable(tableName);
         } catch (DoesNotExist ignored) {
 
+            return false;
         }
-        return table!=null;
+
+        assert table != null && table.getName().equalsIgnoreCase(tableName) : "Post-condition failed: table null or different values (" + table.getName() + " != " + tableName + ")";
+        return true;
     }
 
     public Table createTable(String name, List<Column> columnNames) throws AlreadyExists, InvalidValue {
-        validate(name);
+
+        assert name != null && !name.trim().isEmpty() : "Precondition failed: null or empty input name";
+        assert isValid(name) : "Precondition failed  " + new InvalidValue(name);
+        assert columnNames != null : "Precondition failed null columns list";
+
         Table exists = null;
         try {
             exists = getTable(name);
@@ -72,14 +108,25 @@ public class Database {
         }
         if (exists != null)
             throw new AlreadyExists(exists.getName());
-        return createTable(new Table(name,columnNames));
+
+        Table table = createTable(new Table(name, columnNames));
+        assert this.exists(name): "Post-condition failed: table was not created";
+        return table;
     }
 
     public Table createTable(Table table) throws AlreadyExists, InvalidValue {
-        validate(table.getName());
-        if (tables.contains(table))
-            throw new AlreadyExists(table.getName());
+
+        assert table != null : "Precondition failed: the input is null";
+        assert table.getName() != null && !table.getName().trim().isEmpty() : "Precondition failed: null or empty input name";
+        assert isValid(table.getName()) : "Precondition failed  " + new InvalidValue(table.getName());
+
+       /* if (tables.contains(table))
+            throw new AlreadyExists(table.getName());*/
+
+        assert !tables.contains(table): new AlreadyExists(table.getName());
         tables.add(table);
+
+        assert tables.contains(table) : "Post-condition failed: table was not created";
         return table;
     }
 
@@ -88,9 +135,14 @@ public class Database {
      * @param table
      */
     public void deleteTable(Table table) throws DoesNotExist {
+
+        assert table != null : "Precondition failed: the input is null";
+
         if(!tables.contains(table))
             throw new DoesNotExist(table.getName());
         tables.remove(table);
+
+        assert !tables.contains(table): "Post-condition table was not deleted";
     }
 
     /**
@@ -98,21 +150,38 @@ public class Database {
      * @param tableName
      */
     public void deleteTable(String tableName) throws DoesNotExist {
+
+        assert tableName != null && !tableName.trim().isEmpty() : "Precondition failed: the input is null or empty";
+        assert isValid(tableName) : "Invariant failed: " + new InvalidValue(tableName);
+
         Table table = this.getTable(tableName);
         if (table != null)
             deleteTable(table);
+
+        assert !this.exists(tableName) : "Post-condition failed, table was not deleted";
     }
 
     /**
      *
      * @param name
-     * @return Table instance that has the name in paramter, returns NULL if no such table
+     * @return Table instance that has the name in parameter, returns NULL if no such table
      */
     public Table getTable(String name) throws DoesNotExist {
+
+        assert name != null && !name.trim().isEmpty(): "Pre-condition failed: input null or empty ";
+        assert isValid(name) : "Precondition failed " + new InvalidValue(name);
+
         for (Table table : tables) {
-            if (table.getName().equalsIgnoreCase(name))
+
+            assert isValid(table.getName()) : "Invariant failed " + new InvalidValue(table.getName());
+            if (table.getName().equalsIgnoreCase(name)) {
+
+                assert table.getName().equalsIgnoreCase(name) : "Post-condition failed ... " + table.getName() + " != " + name;
                 return table;
+            }
         }
+
+        //assert exists(name) : "Post-condition failed (second way of exits from this function failed): table with the name \"" + name + "\" exists";
         throw new DoesNotExist(name);
     }
     @Override

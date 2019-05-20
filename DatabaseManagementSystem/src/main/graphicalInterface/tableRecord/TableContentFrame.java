@@ -638,6 +638,17 @@ public class TableContentFrame extends JPanel {
 
     public void setSelectedTable(String selectedTable) {
 
+        if(selectedTable != null){
+
+            try {
+                assert databaseManagementSystem.getDatabase(selectedDatabase).getTable(selectedTable) != null : "Precondition failed: input parameter is not null, but the table does not exist";
+            } catch (DoesNotExist doesNotExist) {
+                //doesNotExist.printStackTrace();
+
+                assert true: "The selected database or table does not exist!";
+            }
+        }
+
         this.selectedTable = selectedTable;
         enableButtonsWithoutDelete();
 
@@ -658,6 +669,7 @@ public class TableContentFrame extends JPanel {
 
     public void setSelectedDatabase(String selectedDatabase) {
 
+        assert selectedDatabase != null: "Precondition failed: input parameter can not be null";
         this.selectedDatabase = selectedDatabase;
         this.selectedTable = null;
         disableButtonsWithoutDelete();
@@ -707,10 +719,14 @@ public class TableContentFrame extends JPanel {
     }
 
     public void setTableContent(JTable tableContent) {
+
+        assert tableContent != null: "Precondition failed: input parameter can not be null";
         this.tableContent = tableContent;
     }
 
     public void setMyTableModel(TableModel myTableModel) {
+
+        assert myTableModel != null: "Precondition failed: input parameter can not be null";
         this.myTableModel = myTableModel;
     }
 

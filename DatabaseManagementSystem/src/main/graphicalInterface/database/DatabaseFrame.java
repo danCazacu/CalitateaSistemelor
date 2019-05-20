@@ -388,11 +388,13 @@ public class DatabaseFrame extends JPanel implements ListSelectionListener {
 
     public void setDatabasesList(JList databasesList) {
 
+        assert databasesList != null : "Precondition failed: input parameter is null";
         this.databasesList = databasesList;
     }
 
     public void setListModel(DefaultListModel listModel) {
 
+        assert listModel != null : "Precondition failed: input parameter is null";
         this.listModel = listModel;
     }
 }
