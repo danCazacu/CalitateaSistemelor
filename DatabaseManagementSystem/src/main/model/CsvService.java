@@ -13,8 +13,19 @@ public class CsvService {
         // first create file object for file placed at location
         // specified by filepath
 
+        assert databaseName != null;
+        assert tableName != null;
+
+
         DatabaseManagementSystem databaseManagementSystem = DatabaseManagementSystem.getInstance();
+
+        assert databaseManagementSystem.exists(databaseName) == true;
+
         Table table = databaseManagementSystem.getDatabase(databaseName).getTable(tableName);
+
+        assert table != null;
+
+
         String pathWhereToSaveTable = DatabasePersistance.cwd() + File.separator + table.getName() + ".csv";
 
         File file = new File(pathWhereToSaveTable);
@@ -65,8 +76,16 @@ public class CsvService {
 
 
     public static boolean importDataLineByLine(String filePath, String databaseName) {
+        assert filePath != null;
+        assert databaseName != null;
+
         File file = new File(filePath);
         DatabaseManagementSystem databaseManagementSystem = DatabaseManagementSystem.getInstance();
+
+        assert databaseManagementSystem != null;
+
+        assert databaseManagementSystem.exists(databaseName) == true;
+
         try {
             FileReader inputFile = new FileReader(file);
             BufferedReader inStream = new BufferedReader(inputFile);
@@ -116,6 +135,7 @@ public class CsvService {
         } catch (DoesNotExist doesNotExist) {
             return false;
         }
+
         return true;
     }
 }
